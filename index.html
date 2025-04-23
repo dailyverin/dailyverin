@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DailyVer - Office Supplies</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+
+    .main-header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      background: #00a378;
+      color: white;
+    }
+
+    .main-header h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .main-header p {
+      font-size: 1.2em;
+      font-weight: 300;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2em;
+      margin-top: 40px;
+      color: #00a378;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .product-card {
+      flex: 1 1 calc(25% - 20px);
+      max-width: calc(25% - 20px);
+      min-height: 320px;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      background: linear-gradient(to bottom right, #005f46, #003f31);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s;
+    }
+
+    .product-card:hover {
+      transform: scale(1.02);
+    }
+
+    .product-card .overlay {
+      background: rgba(0, 0, 0, 0.65);
+      padding: 20px;
+      height: 100%;
+      width: 100%;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-card h3 {
+      font-size: 1.3em;
+      margin-bottom: 10px;
+      color: #00ffcc;
+    }
+
+    .product-card ul {
+      list-style: disc;
+      padding-left: 20px;
+      margin: 0 0 10px 0;
+      color: white;
+    }
+
+    .product-card .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+
+    .product-card .actions a {
+      background: #00a378;
+      padding: 10px 14px;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.9em;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .why-us, .contact-form {
+      padding: 40px 20px;
+      background: white;
+      max-width: 900px;
+      margin: auto;
+      border-radius: 10px;
+      margin-top: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .why-us ul {
+      padding-left: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    button {
+      background: #00a378;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .floating-buttons {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .floating-buttons a {
+      background: #00a378;
+      color: white;
+      padding: 12px;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 18px;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #003f31;
+      color: white;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 992px) {
+      .product-card {
+        flex: 1 1 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .product-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="main-header">
+  <h1>Welcome to DailyVer</h1>
+  <p>Your Trusted Partner for Government Office Supplies</p>
+</header>
+
+<h2 class="section-title">Products We Offer</h2>
+
+<section class="products">
+  <div class="product-card">
+    <div class="overlay">
+      <div>
+        <h3>Stationery Items</h3>
+        <ul>
+          <li>Kangaro</li>
+          <li>Luxor</li>
+          <li>Oddy</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <a href="#">WhatsApp</a>
+        <a href="#">Email</a>
+        <a href="#">Form</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <div class="overlay">
+      <div>
+        <h3>Printers & Toners</h3>
+        <ul>
+          <li>HP</li>
+          <li>Canon</li>
+          <li>Samsung</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <a href="#">WhatsApp</a>
+        <a href="#">Email</a>
+        <a href="#">Form</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-card" style="background-image: url('https://images.unsplash.com/photo-1517336714731-489689fd1ca8');">
+    <div class="overlay">
+      <div>
+        <h3>Computers & Laptops</h3>
+        <ul>
+          <li>Dell</li>
+          <li>HP</li>
+          <li>Lenovo</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <a href="#">WhatsApp</a>
+        <a href="#">Email</a>
+        <a href="#">Form</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <div class="overlay">
+      <div>
+        <h3>Cleaning Items</h3>
+        <ul>
+          <li>Dettol</li>
+          <li>Lizol</li>
+          <li>Scotch-Brite</li>
+        </ul>
+      </div>
+      <div class="actions">
+        <a href="#">WhatsApp</a>
+        <a href="#">Email</a>
+        <a href="#">Form</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why-us">
+  <h2 class="section-title">Why Choose Us?</h2>
+  <ul>
+    <li>Authorized supplier for government procurement on GeM portal</li>
+    <li>Pan-India service with trusted brands</li>
+    <li>Transparent pricing and reliable service</li>
+    <li>Dedicated support team for order assistance</li>
+  </ul>
+</section>
+
+<section class="contact-form">
+  <h2 class="section-title">Send Your Query</h2>
+  <form>
+    <input type="text" placeholder="Your Name" required />
+    <input type="email" placeholder="Your Email" required />
+    <input type="tel" placeholder="Your Phone" />
+    <textarea rows="4" placeholder="Your Message or Product Requirement" required></textarea>
+    <button type="submit">Send Query</button>
+  </form>
+</section>
+
+<div class="floating-buttons">
+  <a href="tel:+919999999999" title="Call">&#128222;</a>
+  <a href="mailto:info@dailyver.in" title="Email">&#9993;</a>
+  <a href="https://wa.me/919999999999" target="_blank" title="WhatsApp">&#128241;</a>
+</div>
+
+<footer>
+  &copy; 2025 DailyVer. All rights reserved.
+</footer>
+
+</body>
+</html>
