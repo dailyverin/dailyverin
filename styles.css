@@ -100,6 +100,23 @@ nav a {
   background-color: #00775c;
 }
 
+/* anywhere after your button rules */
+
+button {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+
 .hero-img {
   flex: 1;
   min-width: 300px;
