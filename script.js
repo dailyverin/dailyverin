@@ -25,3 +25,13 @@ if (navToggle && navMenu) {
     navMenu.classList.toggle('show');
   });
 }
+// Smooth scroll for any button[data-target]
+document.querySelectorAll('button[data-target]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const selector = btn.getAttribute('data-target');
+    const el = document.querySelector(selector);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
