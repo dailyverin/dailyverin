@@ -3,99 +3,84 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dailyver - Office Supplies</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Dailyver</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;700;900&family=Public+Sans:wght@400;500;700;900&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans:wght@400;500;700;900&family=Public+Sans:wght@400;500;700;900"
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <style>
-      body {
-        font-family: 'Public Sans', 'Noto Sans', sans-serif;
-      }
-    </style>
   </head>
-  <body class="bg-neutral-50 text-[#141414]">
+  <body class="bg-neutral-50 text-[#141414]" style="font-family: 'Public Sans', 'Noto Sans', sans-serif">
     <div class="min-h-screen flex flex-col">
       <!-- Header -->
-      <header class="flex flex-col sm:flex-row items-center justify-between border-b border-gray-200 px-4 sm:px-6 lg:px-10 py-4 gap-4 sm:gap-0">
-        <div class="flex items-center gap-3">
-          <!-- Logo SVG -->
-          <div class="w-6 h-6">
-            <!-- Your SVG here -->
-          </div>
+      <header class="border-b border-[#ededed] px-4 sm:px-6 md:px-10 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="w-5 h-5">[Logo SVG]</div>
           <h2 class="text-lg font-bold">Dailyver</h2>
         </div>
-        <nav class="flex flex-wrap justify-center gap-4 text-sm font-medium">
-          <a href="#">Home</a>
-          <a href="#">Products</a>
-          <a href="#">About Us</a>
-          <a href="#">Contact</a>
+        <nav class="hidden md:flex items-center gap-8">
+          <a class="text-sm font-medium" href="#">Home</a>
+          <a class="text-sm font-medium" href="#">Products</a>
+          <a class="text-sm font-medium" href="#">About Us</a>
+          <a class="text-sm font-medium" href="#">Contact</a>
         </nav>
+        <div class="hidden md:flex gap-2 ml-4">
+          <button class="h-10 px-4 bg-black text-white rounded-full text-sm font-bold">Submit Query</button>
+          <button class="h-10 px-2.5 bg-[#ededed] text-[#141414] rounded-full text-sm font-bold">[WhatsApp]</button>
+          <button class="h-10 px-2.5 bg-[#ededed] text-[#141414] rounded-full text-sm font-bold">[Phone]</button>
+          <button class="h-10 px-2.5 bg-[#ededed] text-[#141414] rounded-full text-sm font-bold">[Mail]</button>
+        </div>
       </header>
 
       <!-- Hero Section -->
-      <section class="bg-cover bg-center bg-no-repeat text-white px-4 sm:px-8 lg:px-20 py-12"
-        style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url('your-background-image-url')">
-        <div class="max-w-4xl mx-auto text-center space-y-6">
-          <h1 class="text-3xl sm:text-4xl font-black leading-tight">Your Trusted Partner for Office Supplies</h1>
-          <p class="text-base sm:text-lg font-normal">Dailyver provides a comprehensive range of office supplies tailored for government offices in India.</p>
-          <button class="bg-black text-white font-bold text-sm sm:text-base px-6 py-2 rounded-full">Explore Products</button>
+      <section class="p-4 sm:p-8 md:px-40 flex-1 flex items-center justify-center">
+        <div
+          class="w-full rounded-xl text-center text-white bg-cover bg-center py-10 px-4 sm:px-8"
+          style="background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4)), url('your-hero-image.jpg');"
+        >
+          <h1 class="text-3xl sm:text-4xl font-black mb-3">Your Trusted Partner for Office Supplies</h1>
+          <p class="text-sm sm:text-base mb-6">
+            Dailyver provides a comprehensive range of office supplies tailored for government offices in India.
+          </p>
+          <button class="h-10 px-5 bg-black text-white rounded-full text-sm sm:text-base font-bold">Explore Products</button>
         </div>
       </section>
 
       <!-- Products Section -->
-      <section class="px-4 sm:px-8 lg:px-20 py-10">
-        <h2 class="text-2xl font-bold mb-6">Products We Offer</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Example Product Card -->
-          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div class="aspect-video bg-cover bg-center" style="background-image: url('product-img-url')"></div>
-            <div class="p-4">
-              <p class="font-medium text-base">Stationery Items</p>
-              <p class="text-sm text-neutral-500">Authorized Brands: Brand A, Brand B</p>
-              <p class="text-sm text-neutral-500">Enquire</p>
-            </div>
+      <section class="px-4 sm:px-8 md:px-40">
+        <h2 class="text-xl font-bold mb-4">Products We Offer</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Product Card Template -->
+          <div class="flex flex-col">
+            <div class="aspect-video rounded-xl bg-center bg-cover" style="background-image: url('product1.jpg');"></div>
+            <h3 class="font-medium mt-2">Stationery Items</h3>
+            <p class="text-sm text-neutral-500">Authorized Brands: A, B, C</p>
           </div>
-          <!-- Repeat for each product -->
+          <!-- Repeat similar blocks for more products -->
         </div>
       </section>
 
-      <!-- Contact Form -->
-      <section class="px-4 sm:px-8 lg:px-20 py-10 max-w-xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6">Submit Your Query</h2>
-        <form class="space-y-6">
-          <div>
-            <label class="block mb-2 font-medium">Name</label>
-            <input type="text" placeholder="Your Name" class="w-full h-12 px-4 rounded-xl bg-[#ededed] focus:outline-none" />
-          </div>
-          <div>
-            <label class="block mb-2 font-medium">Email</label>
-            <input type="email" placeholder="Your Email" class="w-full h-12 px-4 rounded-xl bg-[#ededed] focus:outline-none" />
-          </div>
-          <div>
-            <label class="block mb-2 font-medium">Phone</label>
-            <input type="tel" placeholder="Your Phone Number" class="w-full h-12 px-4 rounded-xl bg-[#ededed] focus:outline-none" />
-          </div>
-          <div>
-            <label class="block mb-2 font-medium">Message</label>
-            <textarea rows="4" placeholder="Your Message" class="w-full px-4 py-3 rounded-xl bg-[#ededed] focus:outline-none"></textarea>
-          </div>
-          <button type="submit" class="bg-black text-white font-bold px-6 py-2 rounded-full">Submit</button>
+      <!-- Query Form -->
+      <section class="px-4 sm:px-8 md:px-40 py-10">
+        <h2 class="text-xl font-bold mb-4">Submit Your Query</h2>
+        <form class="grid gap-4 max-w-lg">
+          <input type="text" placeholder="Your Name" class="h-12 px-4 bg-[#ededed] rounded-xl" />
+          <input type="email" placeholder="Your Email" class="h-12 px-4 bg-[#ededed] rounded-xl" />
+          <input type="text" placeholder="Your Phone Number" class="h-12 px-4 bg-[#ededed] rounded-xl" />
+          <textarea placeholder="Your Message" class="min-h-[120px] px-4 py-3 bg-[#ededed] rounded-xl"></textarea>
+          <button class="h-10 px-5 bg-black text-white rounded-full text-sm font-bold w-max">Submit</button>
         </form>
       </section>
 
       <!-- Footer -->
-      <footer class="mt-auto px-4 sm:px-8 lg:px-20 py-8 text-center text-sm text-neutral-500">
-        <div class="flex flex-wrap justify-center gap-6 mb-4">
-          <a href="#">Home</a>
-          <a href="#">Products</a>
-          <a href="#">About Us</a>
-          <a href="#">Contact</a>
+      <footer class="bg-white border-t mt-10 py-8 px-4 sm:px-6 md:px-10 text-center">
+        <div class="flex flex-wrap justify-center gap-4 mb-3">
+          <a class="text-sm text-neutral-500" href="#">Home</a>
+          <a class="text-sm text-neutral-500" href="#">Products</a>
+          <a class="text-sm text-neutral-500" href="#">About Us</a>
+          <a class="text-sm text-neutral-500" href="#">Contact</a>
         </div>
-        <p>© 2024 Dailyver. All rights reserved.</p>
+        <p class="text-sm text-neutral-500">© 2024 Dailyver. All rights reserved.</p>
       </footer>
     </div>
   </body>
