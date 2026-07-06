@@ -911,8 +911,20 @@
             if (!dateStr || dateStr.trim() === '' || dateStr.trim() === 'N/A') return null;
             const clean = dateStr.trim();
 
+            const spaceParts = clean.split(' ');
+            const datePart = spaceParts[0].trim();
+            const timePart = spaceParts[1] ? spaceParts[1].trim() : '';
+
+            let hour = 0, minute = 0, second = 0;
+            if (timePart) {
+                const tParts = timePart.split(':');
+                if (tParts.length >= 1) hour = parseInt(tParts[0], 10) || 0;
+                if (tParts.length >= 2) minute = parseInt(tParts[1], 10) || 0;
+                if (tParts.length >= 3) second = parseInt(tParts[2], 10) || 0;
+            }
+
             // Handle standard slash/dash formats manually to prevent timezone offset and US format parsing mishaps
-            const parts = clean.split(/[-/.]/);
+            const parts = datePart.split(/[-/.]/);
             if (parts.length === 3) {
                 const p0 = parts[0].trim();
                 const p1 = parts[1].trim();
@@ -924,7 +936,7 @@
                     const month = parseInt(p1, 10);
                     const year = parseInt(p2, 10);
                     if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                        const dateObj = new Date(year, month - 1, day);
+                        const dateObj = new Date(year, month - 1, day, hour, minute, second);
                         if (!isNaN(dateObj.getTime())) {
                             return dateObj;
                         }
@@ -935,7 +947,7 @@
                     const month = parseInt(p1, 10);
                     const day = parseInt(p2, 10);
                     if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                        const dateObj = new Date(year, month - 1, day);
+                        const dateObj = new Date(year, month - 1, day, hour, minute, second);
                         if (!isNaN(dateObj.getTime())) {
                             return dateObj;
                         }
@@ -947,6 +959,19 @@
             if (!isNaN(d1.getTime())) return d1;
 
             return null;
+        }
+
+        function formatDateTimeLocal(timestamp) {
+            if (!timestamp) return "";
+            const date = new Date(timestamp);
+            const pad = n => String(n).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            const MM = pad(date.getMonth() + 1);
+            const dd = pad(date.getDate());
+            const HH = pad(date.getHours());
+            const mm = pad(date.getMinutes());
+            const ss = pad(date.getSeconds());
+            return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
         }
 
         function evaluateDeadline(order) {
@@ -1102,11 +1127,25 @@
                 logSyncEvent("Initialized Overwatch memory pipeline.");
                 switchTab('DASHBOARD');
                 renderUI();
+                startAutomaticBackgroundPolling();
             } else {
                 loginWrapper.classList.remove("hidden");
                 appWrapper.classList.add("hidden");
             }
         };
+
+        function startAutomaticBackgroundPolling() {
+            // Background polling every 12 seconds to match the Android App's live updates
+            setInterval(async () => {
+                const isAuthenticated = sessionStorage.getItem("admin_authenticated") === "true";
+                if (isAuthenticated && state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                    console.log("Background Polling: Pulling live comments and tasks...");
+                    await syncCommentsFromScript();
+                    await syncTasksFromScript();
+                    renderUI();
+                }
+            }, 12000);
+        }
 
         function verifyAdminLogin() {
             const userIn = document.getElementById("login-username").value.trim();
@@ -1127,6 +1166,7 @@
                 logSyncEvent(`Access Granted: Logged in successfully as '${correctId}'.`);
                 switchTab('DASHBOARD');
                 renderUI();
+                startAutomaticBackgroundPolling();
             } else {
                 errorLabel.classList.remove("hidden");
                 // Reset password input
@@ -1404,6 +1444,8 @@
                 if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
                     logSyncEvent("Apps Script configured. Down-syncing comments...");
                     await syncCommentsFromScript();
+                    logSyncEvent("Apps Script configured. Down-syncing tasks...");
+                    await syncTasksFromScript();
                 }
 
                 logSyncEvent(`Synchronized successfully! Total compiled records: ${parsedGemsList.length}`);
@@ -1443,6 +1485,51 @@
                 }
             } catch (e) {
                 logSyncEvent(`Comments down-sync issue: ${e.message}`);
+            }
+        }
+
+        async function syncTasksFromScript() {
+            try {
+                const response = await fetch(state.metadata.appsScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "get_tasks" }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const body = await response.json();
+                if (body && body.tasks) {
+                    logSyncEvent(`Received ${body.tasks.length} tasks from Google Apps Script.`);
+                    
+                    const remoteTasks = body.tasks.map((t, idx) => {
+                        const parsedAdded = parseRobustDate(t.addedTime);
+                        const addedTime = parsedAdded ? parsedAdded.getTime() : (Date.now() - (body.tasks.length - idx) * 1000);
+                        const parsedCompleted = parseRobustDate(t.completionTime);
+                        const completionTime = parsedCompleted ? parsedCompleted.getTime() : null;
+                        
+                        const nameLower = t.taskName.toLowerCase();
+                        let priority = "Medium";
+                        if (nameLower.includes("high") || nameLower.includes("emergency") || nameLower.includes("critical") || nameLower.includes("urgent")) {
+                            priority = "High";
+                        } else if (nameLower.includes("low")) {
+                            priority = "Low";
+                        }
+                        
+                        const existing = state.tasks.find(localT => localT.name === t.taskName);
+                        
+                        return {
+                            id: existing ? existing.id : (addedTime + idx),
+                            name: t.taskName,
+                            addedTime: addedTime,
+                            status: t.status.toUpperCase(),
+                            completionTime: completionTime,
+                            priority: existing ? existing.priority : priority
+                        };
+                    });
+                    
+                    state.tasks = remoteTasks;
+                    saveToLocalStorage();
+                }
+            } catch (e) {
+                logSyncEvent(`Tasks down-sync issue: ${e.message}`);
             }
         }
 
@@ -2390,7 +2477,7 @@
 
             // Apps Script write-back integration
             if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
-                syncTaskWithScript(newTask, "add_task");
+                syncTaskWithScript(newTask, "add");
             }
 
             renderUI();
@@ -2405,7 +2492,8 @@
                 logSyncEvent(`Local Action: Toggled task '${task.name.substring(0, 15)}...' to ${task.status}.`);
 
                 if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
-                    syncTaskWithScript(task, "update_task");
+                    const action = task.status === 'DONE' ? 'complete' : 'undo';
+                    syncTaskWithScript(task, action);
                 }
 
                 renderUI();
@@ -2419,10 +2507,6 @@
                 saveToLocalStorage();
                 logSyncEvent(`Local Action: Deleted task '${task.name.substring(0, 15)}...'.`);
 
-                if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
-                    syncTaskWithScript(task, "delete_task");
-                }
-
                 renderUI();
             }
         }
@@ -2435,9 +2519,9 @@
                     body: JSON.stringify({
                         action: action,
                         taskName: task.name,
-                        addedTime: new Date(task.addedTime).toISOString(),
+                        addedTime: formatDateTimeLocal(task.addedTime),
                         status: task.status.toLowerCase(),
-                        completionTime: task.completionTime ? new Date(task.completionTime).toISOString() : ""
+                        completionTime: task.completionTime ? formatDateTimeLocal(task.completionTime) : ""
                     }),
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -2662,7 +2746,7 @@
                         action: action,
                         orderId: orderId,
                         comment: commentText,
-                        timestamp: new Date().toISOString()
+                        timestamp: formatDateTimeLocal(new Date())
                     }),
                     headers: { 'Content-Type': 'application/json' }
                 });
