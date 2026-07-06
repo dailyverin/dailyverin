@@ -910,21 +910,42 @@
         function parseRobustDate(dateStr) {
             if (!dateStr || dateStr.trim() === '' || dateStr.trim() === 'N/A') return null;
             const clean = dateStr.trim();
+
+            // Handle standard slash/dash formats manually to prevent timezone offset and US format parsing mishaps
+            const parts = clean.split(/[-/.]/);
+            if (parts.length === 3) {
+                const p0 = parts[0].trim();
+                const p1 = parts[1].trim();
+                const p2 = parts[2].trim();
+
+                if (p2.length === 4) {
+                    // dd-MM-yyyy or d-M-yyyy
+                    const day = parseInt(p0, 10);
+                    const month = parseInt(p1, 10);
+                    const year = parseInt(p2, 10);
+                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                        const dateObj = new Date(year, month - 1, day);
+                        if (!isNaN(dateObj.getTime())) {
+                            return dateObj;
+                        }
+                    }
+                } else if (p0.length === 4) {
+                    // yyyy-MM-dd
+                    const year = parseInt(p0, 10);
+                    const month = parseInt(p1, 10);
+                    const day = parseInt(p2, 10);
+                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                        const dateObj = new Date(year, month - 1, day);
+                        if (!isNaN(dateObj.getTime())) {
+                            return dateObj;
+                        }
+                    }
+                }
+            }
+
             const d1 = new Date(clean);
             if (!isNaN(d1.getTime())) return d1;
 
-            // Handle standard slash/dash formats manually to prevent timezone offset mishaps
-            const parts = clean.split(/[-/.]/);
-            if (parts.length === 3) {
-                // Determine whether it starts with year or day
-                if (parts[0].length === 4) {
-                    // yyyy-MM-dd
-                    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                } else if (parts[2].length === 4) {
-                    // dd-MM-yyyy
-                    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-                }
-            }
             return null;
         }
 
