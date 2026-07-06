@@ -229,7 +229,10 @@
                     <!-- Revenue Card -->
                     <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
                         <div>
-                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Total Revenue</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Total Revenue</span>
+                                <svg class="w-4 h-4 text-govTeal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
                             <h3 id="kpi-revenue" class="text-2xl font-extrabold text-softGreyText mt-1">₹0.00</h3>
                         </div>
                         <div class="text-xs text-activeGreen font-semibold flex items-center space-x-1 mt-2">
@@ -239,7 +242,10 @@
                     <!-- Profit Card -->
                     <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
                         <div>
-                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Estimated Profit</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Estimated Profit</span>
+                                <svg class="w-4 h-4 text-activeGreen animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            </div>
                             <h3 id="kpi-profit" class="text-2xl font-extrabold text-softGreyText mt-1">🔒 LOCKED</h3>
                         </div>
                         <div class="text-xs text-mutedText flex items-center space-x-1 mt-2">
@@ -249,7 +255,10 @@
                     <!-- Outstanding Deliveries -->
                     <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
                         <div>
-                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Awaiting Dispatch</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Awaiting Dispatch</span>
+                                <svg class="w-4 h-4 text-warningOrange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
                             <h3 id="kpi-awaiting-dispatch" class="text-2xl font-extrabold text-warningOrange mt-1">0</h3>
                         </div>
                         <div class="text-xs text-mutedText flex items-center space-x-1 mt-2">
@@ -259,12 +268,128 @@
                     <!-- Urgent Alerts -->
                     <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
                         <div>
-                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Critical Alerts</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Critical Alerts</span>
+                                <svg class="w-4 h-4 text-alertPink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            </div>
                             <h3 id="kpi-critical" class="text-2xl font-extrabold text-alertPink mt-1">0</h3>
                         </div>
                         <div class="text-xs text-alertPink font-semibold flex items-center space-x-1 mt-2">
                             <span class="animate-pulse">●</span>
                             <span>Overdue / Partial CRAC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Operational KPIs (New - matching Android App richness) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Monthly Booking Progress -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
+                        <div>
+                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">Monthly Progress</span>
+                            <div class="flex items-baseline space-x-1.5 mt-1">
+                                <h4 id="sub-kpi-monthly-rev" class="text-lg font-extrabold text-softGreyText">₹0.00</h4>
+                                <span id="sub-kpi-monthly-count" class="text-xs text-mutedText font-medium">(0 orders)</span>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-mutedText mt-2 border-t border-outlineColor/40 pt-2 flex items-center justify-between">
+                            <span>Active Month:</span>
+                            <span id="sub-kpi-monthly-label" class="font-bold text-govTeal text-[11px]">N/A</span>
+                        </div>
+                    </div>
+
+                    <!-- CRAC Acceptance Performance -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
+                        <div>
+                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">CRAC Performance</span>
+                            <div class="grid grid-cols-2 gap-1 mt-1.5">
+                                <div>
+                                    <span class="text-[10px] text-mutedText block">Approved</span>
+                                    <span id="sub-kpi-crac-approved" class="text-sm font-bold text-activeGreen">0</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-mutedText block">Disputed</span>
+                                    <span id="sub-kpi-crac-disputed" class="text-sm font-bold text-alertPink">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-mutedText mt-1.5 border-t border-outlineColor/40 pt-1.5 flex items-center justify-between">
+                            <span>Pending:</span>
+                            <span id="sub-kpi-crac-pending" class="font-bold text-infoBlue">0 orders</span>
+                        </div>
+                    </div>
+
+                    <!-- Booking Comparison (Today vs Yesterday) -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
+                        <div>
+                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">Booking Comparison</span>
+                            <div class="grid grid-cols-2 gap-1 mt-1.5 border-r border-outlineColor/30">
+                                <div>
+                                    <span class="text-[9px] text-mutedText block">Today</span>
+                                    <span id="sub-kpi-booking-today" class="text-[11px] font-extrabold text-softGreyText">₹0 (0)</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] text-mutedText block">Yesterday</span>
+                                    <span id="sub-kpi-booking-yest" class="text-[11px] font-medium text-mutedText">₹0 (0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-mutedText mt-1.5 border-t border-outlineColor/40 pt-1.5 flex items-center justify-between">
+                            <span>Relative Growth:</span>
+                            <span id="sub-kpi-booking-growth" class="font-bold text-activeGreen">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Delivery SLA Urgency Counter -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
+                        <div>
+                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">SLA Delivery Urgency</span>
+                            <div class="grid grid-cols-2 gap-1 mt-1.5">
+                                <div>
+                                    <span class="text-[10px] text-mutedText block">Critical (≤1d)</span>
+                                    <span id="sub-kpi-sla-critical" class="text-sm font-bold text-alertPink">0</span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] text-mutedText block">Approaching</span>
+                                    <span id="sub-kpi-sla-approaching" class="text-sm font-bold text-warningOrange">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] text-mutedText mt-1.5 border-t border-outlineColor/40 pt-1.5 flex items-center justify-between">
+                            <span>Total SLA Tracked:</span>
+                            <span id="sub-kpi-sla-tracked" class="font-bold text-softGreyText">0 items</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mission Control: Operational Flow Pipeline (Brand New Tally Grid!) -->
+                <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                    <h4 class="font-black text-softGreyText text-xs uppercase tracking-wider mb-4 text-govTeal">GeM Mission Control &bull; Pipeline Tally</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-softGreyText inline-block mb-1"></span>
+                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Received (New)</span>
+                            <span id="tally-received" class="text-lg font-black text-softGreyText block mt-1">0</span>
+                        </div>
+                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-warningOrange inline-block mb-1 animate-pulse"></span>
+                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Dispatched</span>
+                            <span id="tally-dispatched" class="text-lg font-black text-warningOrange block mt-1">0</span>
+                        </div>
+                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-infoBlue inline-block mb-1"></span>
+                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Awaiting CRAC</span>
+                            <span id="tally-awaiting-crac" class="text-lg font-black text-infoBlue block mt-1">0</span>
+                        </div>
+                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-activeGreen inline-block mb-1"></span>
+                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">CRAC Approved</span>
+                            <span id="tally-crac-done" class="text-lg font-black text-activeGreen block mt-1">0</span>
+                        </div>
+                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center col-span-2 md:col-span-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-alertPink inline-block mb-1"></span>
+                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Disputed / Alert</span>
+                            <span id="tally-disputed" class="text-lg font-black text-alertPink block mt-1">0</span>
                         </div>
                     </div>
                 </div>
@@ -295,6 +420,51 @@
                         <div id="dash-alerts-list" class="space-y-3 flex-1 overflow-y-auto max-h-64">
                             <!-- Populated dynamically -->
                             <p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Expected Delivery Deadlines SLA & Category Share Row (New - matching Android App richness) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Expected Delivery Deadlines Tracker (Left - 2 columns) -->
+                    <div class="lg:col-span-2 bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="font-bold text-softGreyText text-sm">Expected Delivery Deadline SLA Tracker</h4>
+                                <p class="text-xs text-mutedText">Tracks upcoming and overdue delivery milestones against the 15-day limit</p>
+                            </div>
+                            <span class="text-[10px] text-alertPink font-bold bg-alertPink/10 px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">SLA Gate</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead>
+                                    <tr class="text-[10px] font-bold text-mutedText uppercase tracking-wider border-b border-outlineColor/60 pb-2">
+                                        <th class="pb-2">Contract No</th>
+                                        <th class="pb-2">Item & Firm</th>
+                                        <th class="pb-2">Order Date</th>
+                                        <th class="pb-2">Expected Date</th>
+                                        <th class="pb-2 text-right">Time Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-sla-table-body" class="divide-y divide-outlineColor/40">
+                                    <!-- Dynamic rows -->
+                                    <tr>
+                                        <td colspan="5" class="py-4 text-center text-mutedText">All delivery schedules are on track.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Category Market Share and Revenue Distribution (Right - 1 column) -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col">
+                        <div class="mb-4">
+                            <h4 class="font-bold text-softGreyText text-sm">Revenue Share by Category</h4>
+                            <p class="text-xs text-mutedText">Total booking value distribution</p>
+                        </div>
+                        <div id="dash-category-share-list" class="space-y-4 flex-1 overflow-y-auto max-h-64">
+                            <!-- Dynamic category progress bars -->
+                            <p class="text-xs text-mutedText py-4 text-center">No category data calculated.</p>
                         </div>
                     </div>
                 </div>
@@ -1386,6 +1556,233 @@
             // KPI 4: Alert counter
             const alertCount = getAlertItems().length;
             document.getElementById("kpi-critical").innerText = alertCount;
+
+            // 1. Monthly Progress Metrics
+            const refDate = getReferenceDate();
+            const refMonth = refDate.getMonth();
+            const refYear = refDate.getFullYear();
+            const monthlyLabel = refDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+            const monthlyGems = state.gems.filter(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                if (isCancelled) return false;
+                const d = parseRobustDate(g.orderDate);
+                return d && d.getMonth() === refMonth && d.getFullYear() === refYear;
+            });
+            const monthlyRevenue = monthlyGems.reduce((sum, g) => sum + g.revenue, 0);
+            const monthlyCount = monthlyGems.length;
+
+            document.getElementById("sub-kpi-monthly-rev").innerText = `₹${monthlyRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            document.getElementById("sub-kpi-monthly-count").innerText = `(${monthlyCount} order${monthlyCount !== 1 ? 's' : ''})`;
+            document.getElementById("sub-kpi-monthly-label").innerText = monthlyLabel;
+
+            // 2. CRAC Performance Metrics
+            const cracApproved = state.gems.filter(g => g.cracStatus.trim().toUpperCase() === "TRUE").length;
+            const cracDisputed = state.gems.filter(g => g.cracStatus.trim().toUpperCase() === "FALSE").length;
+            const cracPending = state.gems.filter(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                const isShipped = g.trackingNumber && g.trackingNumber.trim() !== "";
+                const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
+                return !isCancelled && !isCracDone && isShipped;
+            }).length;
+
+            document.getElementById("sub-kpi-crac-approved").innerText = cracApproved;
+            document.getElementById("sub-kpi-crac-disputed").innerText = cracDisputed;
+            document.getElementById("sub-kpi-crac-pending").innerText = `${cracPending} order${cracPending !== 1 ? 's' : ''}`;
+
+            // 3. Booking Comparison (Today vs Yesterday)
+            const todayStr = refDate.toISOString().split('T')[0];
+            const yestDate = new Date(refDate);
+            yestDate.setDate(yestDate.getDate() - 1);
+            const yestStr = yestDate.toISOString().split('T')[0];
+
+            const todayGems = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === todayStr);
+            const todayRevenue = todayGems.reduce((sum, g) => sum + g.revenue, 0);
+            const todayCount = todayGems.length;
+
+            const yestGems = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === yestStr);
+            const yestRevenue = yestGems.reduce((sum, g) => sum + g.revenue, 0);
+            const yestCount = yestGems.length;
+
+            let growthPct = 0;
+            if (yestRevenue > 0) {
+                growthPct = ((todayRevenue - yestRevenue) / yestRevenue) * 100;
+            } else if (todayRevenue > 0) {
+                growthPct = 100;
+            }
+
+            document.getElementById("sub-kpi-booking-today").innerText = `₹${todayRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${todayCount})`;
+            document.getElementById("sub-kpi-booking-yest").innerText = `₹${yestRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${yestCount})`;
+            
+            const growthEl = document.getElementById("sub-kpi-booking-growth");
+            if (growthPct > 0) {
+                growthEl.innerText = `+${growthPct.toFixed(0)}%`;
+                growthEl.className = "font-bold text-activeGreen text-[11px]";
+            } else if (growthPct < 0) {
+                growthEl.innerText = `${growthPct.toFixed(0)}%`;
+                growthEl.className = "font-bold text-alertPink text-[11px]";
+            } else {
+                growthEl.innerText = "0%";
+                growthEl.className = "font-bold text-mutedText text-[11px]";
+            }
+
+            // 4. Delivery SLA Urgency Counter & Expected SLA Table
+            const deliverySlaList = [];
+            state.gems.forEach(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                const isShipped = g.trackingNumber && g.trackingNumber.trim() !== "";
+                const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
+                const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
+                const isClosedOrShipped = isShipped || isCracDone || isDelivered;
+
+                if (!isCancelled && !isClosedOrShipped) {
+                    const orderDate = parseRobustDate(g.orderDate);
+                    if (orderDate) {
+                        const expected = new Date(orderDate);
+                        expected.setDate(expected.getDate() + 15);
+                        const diffMs = expected.getTime() - refDate.getTime();
+                        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                        deliverySlaList.push({
+                            order: g,
+                            daysLeft: daysLeft,
+                            expectedDateStr: expected.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                        });
+                    }
+                }
+            });
+
+            const criticalSla = deliverySlaList.filter(item => item.daysLeft <= 1).length;
+            const approachingSla = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).length;
+
+            document.getElementById("sub-kpi-sla-critical").innerText = criticalSla;
+            document.getElementById("sub-kpi-sla-approaching").innerText = approachingSla;
+            document.getElementById("sub-kpi-sla-tracked").innerText = `${deliverySlaList.length} item${deliverySlaList.length !== 1 ? 's' : ''}`;
+
+            // Populate Expected Delivery Deadlines Table
+            const slaTableBody = document.getElementById("dash-sla-table-body");
+            slaTableBody.innerHTML = "";
+            if (deliverySlaList.length === 0) {
+                slaTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-4 text-center text-mutedText">All delivery schedules are on track.</td>
+                    </tr>
+                `;
+            } else {
+                // Sort by daysLeft ascending (most urgent first)
+                const sortedSla = deliverySlaList.sort((a, b) => a.daysLeft - b.daysLeft).slice(0, 5);
+                sortedSla.forEach(item => {
+                    const orderDateStr = parseRobustDate(item.order.orderDate)?.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) || "N/A";
+                    let countdownText = "";
+                    let countdownStyle = "";
+                    if (item.daysLeft < 0) {
+                        countdownText = `Overdue by ${Math.abs(item.daysLeft)}d`;
+                        countdownStyle = "bg-alertPink/15 text-alertPink border border-alertPink/20";
+                    } else if (item.daysLeft === 0) {
+                        countdownText = "Due Today";
+                        countdownStyle = "bg-alertPink/15 text-alertPink font-bold animate-pulse border border-alertPink/30";
+                    } else if (item.daysLeft === 1) {
+                        countdownText = "1d left";
+                        countdownStyle = "bg-warningOrange/15 text-warningOrange font-bold border border-warningOrange/20";
+                    } else if (item.daysLeft <= 5) {
+                        countdownText = `${item.daysLeft}d left`;
+                        countdownStyle = "bg-warningOrange/10 text-warningOrange border border-warningOrange/10";
+                    } else {
+                        countdownText = `${item.daysLeft}d left`;
+                        countdownStyle = "bg-activeGreen/10 text-activeGreen border border-activeGreen/10";
+                    }
+
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-softCardBg/20 transition-all text-[11px] text-softGreyText";
+                    tr.innerHTML = `
+                        <td class="py-2.5 font-bold text-govTeal">${item.order.contractNumber}</td>
+                        <td class="py-2.5">
+                            <p class="font-semibold text-softGreyText truncate max-w-xs">${item.order.productName}</p>
+                            <p class="text-[10px] text-mutedText truncate max-w-xs">${item.order.firmName}</p>
+                        </td>
+                        <td class="py-2.5 text-mutedText">${orderDateStr}</td>
+                        <td class="py-2.5 text-mutedText font-medium">${item.expectedDateStr}</td>
+                        <td class="py-2.5 text-right">
+                            <span class="px-2.5 py-0.5 rounded text-[9px] font-bold uppercase inline-block ${countdownStyle}">${countdownText}</span>
+                        </td>
+                    `;
+                    slaTableBody.appendChild(tr);
+                });
+            }
+
+            // 5. Mission Control: Operational Flow Pipeline Tally
+            let tallyReceivedCount = 0;
+            let tallyDispatchedCount = 0;
+            let tallyAwaitingCracCount = 0;
+            let tallyCracDoneCount = 0;
+            let tallyDisputedCount = 0;
+
+            state.gems.forEach(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                if (isCancelled) return;
+
+                const analysis = analyzeShipment(g);
+                if (analysis.statusType === 'PARTIAL_CRAC') {
+                    tallyDisputedCount++;
+                } else if (analysis.statusType === 'CRAC') {
+                    tallyCracDoneCount++;
+                } else if (analysis.statusType === 'AWAITING_CRAC') {
+                    tallyAwaitingCracCount++;
+                } else if (analysis.statusType === 'SHIPPED') {
+                    tallyDispatchedCount++;
+                } else if (analysis.statusType === 'NOT_DISPATCHED' || analysis.statusType === 'DUE_ALERT') {
+                    tallyReceivedCount++;
+                }
+            });
+
+            document.getElementById("tally-received").innerText = tallyReceivedCount;
+            document.getElementById("tally-dispatched").innerText = tallyDispatchedCount;
+            document.getElementById("tally-awaiting-crac").innerText = tallyAwaitingCracCount;
+            document.getElementById("tally-crac-done").innerText = tallyCracDoneCount;
+            document.getElementById("tally-disputed").innerText = tallyDisputedCount;
+
+            // 6. Revenue Share by Category Progress Bars
+            const categoryRevenueMap = {};
+            let totalActiveRevenue = 0;
+            state.gems.forEach(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                if (!isCancelled) {
+                    const cat = g.category || "Unassigned";
+                    categoryRevenueMap[cat] = (categoryRevenueMap[cat] || 0) + g.revenue;
+                    totalActiveRevenue += g.revenue;
+                }
+            });
+
+            const categoryShareList = document.getElementById("dash-category-share-list");
+            categoryShareList.innerHTML = "";
+            const sortedCategories = Object.keys(categoryRevenueMap).map(cat => ({
+                name: cat,
+                rev: categoryRevenueMap[cat],
+                pct: totalActiveRevenue > 0 ? (categoryRevenueMap[cat] / totalActiveRevenue) * 100 : 0
+            })).sort((a, b) => b.rev - a.rev);
+
+            if (sortedCategories.length === 0) {
+                categoryShareList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">No category data calculated.</p>`;
+            } else {
+                const accentColors = ["bg-govTeal", "bg-activeGreen", "bg-infoBlue", "bg-warningOrange", "bg-alertPink", "bg-purple-500", "bg-indigo-500"];
+                sortedCategories.forEach((item, index) => {
+                    const color = accentColors[index % accentColors.length];
+                    const div = document.createElement("div");
+                    div.className = "space-y-1";
+                    div.innerHTML = `
+                        <div class="flex items-center justify-between text-[11px]">
+                            <span class="font-bold text-softGreyText truncate max-w-[150px]">${item.name}</span>
+                            <div class="flex items-center space-x-1.5 shrink-0">
+                                <span class="font-black text-softGreyText">₹${item.rev.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                                <span class="text-mutedText text-[10px]">(${item.pct.toFixed(1)}%)</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-canvasBg h-1.5 rounded-full overflow-hidden border border-outlineColor/40">
+                            <div class="h-full rounded-full ${color}" style="width: ${item.pct}%"></div>
+                        </div>
+                    `;
+                    categoryShareList.appendChild(div);
+                });
+            }
 
             // Activity alerts listing (Recent 5)
             const alertsList = document.getElementById("dash-alerts-list");
