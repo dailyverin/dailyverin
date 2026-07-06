@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeM Dashboard Overwatch</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #090E11;
+            color: #ECEFF1;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090E11;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #192227;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #232E35;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        govTeal: '#00A378',
+                        canvasBg: '#090E11',
+                        secondaryBg: '#11171B',
+                        softCardBg: '#192227',
+                        outlineColor: '#232E35',
+                        softGreyText: '#ECEFF1',
+                        mutedText: '#90A4AE',
+                        activeGreen: '#10B981',
+                        alertPink: '#EF4444',
+                        warningOrange: '#F59E0B',
+                        infoBlue: '#3B82F6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- Elegant Admin Login Portal Overlay -->
+    <div id="login-portal-wrapper" class="flex min-h-screen items-center justify-center bg-canvasBg px-4">
+        <div class="w-full max-w-md bg-secondaryBg border border-outlineColor rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+            <!-- Decorative Accent Lines -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-govTeal via-activeGreen to-govTeal"></div>
+            
+            <div class="flex flex-col items-center mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-govTeal to-govTeal/60 flex items-center justify-center shadow-lg shadow-govTeal/20 mb-4 animate-pulse">
+                    <svg class="w-8 h-8 text-canvasBg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h2 class="text-xl font-black text-softGreyText tracking-tight uppercase">GeM Overwatch System</h2>
+                <p class="text-xs text-mutedText mt-1.5 text-center">Administrative Portal Guard &bull; Authorized Personnel Only</p>
+            </div>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-bold text-mutedText uppercase tracking-wider mb-2">Admin ID</label>
+                    <input type="text" id="login-username" onkeydown="if(event.key === 'Enter') document.getElementById('login-password').focus()" placeholder="Enter administrative identifier..." class="w-full bg-canvasBg border border-outlineColor rounded-xl px-4 py-3 text-sm text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal transition-all font-semibold">
+                </div>
+                
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-[10px] font-bold text-mutedText uppercase tracking-wider">Access Password</label>
+                        <span class="text-[10px] text-mutedText italic font-medium">Pin matching 7733 group</span>
+                    </div>
+                    <input type="password" id="login-password" onkeydown="if(event.key === 'Enter') verifyAdminLogin()" placeholder="Enter secure credentials..." class="w-full bg-canvasBg border border-outlineColor rounded-xl px-4 py-3 text-sm text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal transition-all font-semibold">
+                </div>
+                
+                <div id="login-error-msg" class="text-xs text-alertPink font-semibold hidden text-center animate-bounce bg-alertPink/5 border border-alertPink/20 py-2.5 rounded-lg">
+                    Access Denied: Invalid Administrative Credentials.
+                </div>
+                
+                <button onclick="verifyAdminLogin()" class="w-full bg-govTeal hover:bg-govTeal/90 text-canvasBg font-extrabold text-sm py-3.5 rounded-xl transition-all shadow-lg shadow-govTeal/15 uppercase tracking-wider mt-2">
+                    Request System Access
+                </button>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-outlineColor/60 text-center">
+                <p class="text-[10px] text-mutedText leading-relaxed">
+                    Connecting to secure environment database.<br>
+                    Current Local Time: <span class="font-semibold text-softGreyText">2026-07-06 09:40 UTC</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Wrap (hidden until authenticated) -->
+    <div id="main-app-wrapper" class="hidden min-h-screen flex flex-col">
+
+    <!-- Top Navbar -->
+    <nav class="bg-secondaryBg border-b border-outlineColor sticky top-0 z-40 px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-govTeal to-govTeal/60 flex items-center justify-center shadow-lg shadow-govTeal/15">
+                <!-- SVG Analytics Icon -->
+                <svg class="w-5 h-5 text-canvasBg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-softGreyText font-bold text-lg tracking-tight">GeM Dashboard Overwatch</h1>
+                <p class="text-xs text-mutedText">Desktop Laptop Synced Control Center</p>
+            </div>
+        </div>
+
+        <!-- Sync Actions / Header Buttons -->
+        <div class="flex items-center space-x-3">
+            <!-- Sync Indicator -->
+            <div id="sync-badge" class="hidden md:flex items-center space-x-2 bg-softCardBg px-3 py-1.5 rounded-full border border-outlineColor text-xs">
+                <span class="w-2 h-2 rounded-full bg-activeGreen animate-pulse"></span>
+                <span id="sync-status-text" class="text-softGreyText">Idle</span>
+            </div>
+
+            <!-- Sync Button -->
+            <button onclick="triggerSync()" class="bg-govTeal hover:bg-govTeal/90 text-canvasBg font-bold text-xs px-4 py-2 rounded-lg flex items-center space-x-1.5 transition-all">
+                <svg id="sync-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2" />
+                </svg>
+                <span>SYNC NOW</span>
+            </button>
+
+            <!-- Profit Unlock Toggle -->
+            <button onclick="toggleProfitLock()" id="profit-toggle-btn" class="bg-softCardBg hover:bg-outlineColor text-softGreyText border border-outlineColor text-xs px-3 py-2 rounded-lg flex items-center space-x-1.5 transition-all">
+                <span id="profit-toggle-icon">🔒</span>
+                <span id="profit-toggle-label">Unlock Profit</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="flex-1 flex flex-col md:flex-row">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-secondaryBg border-r border-outlineColor flex flex-col shrink-0">
+            <div class="p-4">
+                <span class="text-[10px] font-semibold text-mutedText uppercase tracking-wider px-3">Navigation</span>
+                <nav class="mt-2 space-y-1">
+                    <button onclick="switchTab('DASHBOARD')" id="nav-DASHBOARD" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-govTeal bg-govTeal/10">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"/></svg>
+                        <span>Dashboard Home</span>
+                    </button>
+                    <button onclick="switchTab('ORDERS')" id="nav-ORDERS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                        <span>Contracts & Orders</span>
+                    </button>
+                    <button onclick="switchTab('ANALYTICS')" id="nav-ANALYTICS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+                        <span>Analytics Center</span>
+                    </button>
+                    <button onclick="switchTab('ALERTS')" id="nav-ALERTS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
+                        <div class="relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <span id="alerts-count-badge" class="hidden absolute -top-1.5 -right-1.5 w-4 h-4 bg-alertPink text-canvasBg text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                        </div>
+                        <span>Overwatch Alerts</span>
+                    </button>
+                    <button onclick="switchTab('TASKS')" id="nav-TASKS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
+                        <div class="relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span id="tasks-count-badge" class="hidden absolute -top-1.5 -right-1.5 w-4 h-4 bg-warningOrange text-canvasBg text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                        </div>
+                        <span>Checklist Tasks</span>
+                    </button>
+                    <button onclick="switchTab('SETTINGS')" id="nav-SETTINGS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>System Settings</span>
+                    </button>
+                    <!-- Secure Portal Logout -->
+                    <button onclick="logoutAdmin()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all text-alertPink/70 hover:text-alertPink hover:bg-alertPink/5 mt-4 border border-alertPink/10 hover:border-alertPink/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <span>Exit Dashboard</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Workspace Info Box -->
+            <div class="mt-auto p-4 border-t border-outlineColor bg-canvasBg/30">
+                <div class="flex items-center space-x-2 text-xs text-mutedText">
+                    <span class="w-2 h-2 rounded-full bg-govTeal"></span>
+                    <span>Domain: www.dailyver.in</span>
+                </div>
+                <p class="text-[10px] text-mutedText mt-1.5">GitHub Pages Deployment path: <code class="bg-softCardBg px-1 rounded">/dashboard</code></p>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="flex-1 p-6 overflow-y-auto">
+
+            <!-- ================= TAB: DASHBOARD ================= -->
+            <section id="tab-content-DASHBOARD" class="space-y-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-govTeal/10 to-transparent p-5 rounded-2xl border border-govTeal/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-softGreyText tracking-tight">System Status: Active</h2>
+                        <p class="text-xs text-mutedText mt-1">Real-time desktop overwatch and spreadsheet database analytics. Last synchronized: <span id="dash-last-sync-label" class="font-semibold text-softGreyText">Never</span></p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-softCardBg px-4 py-2 rounded-xl border border-outlineColor text-center">
+                            <span class="text-[10px] text-mutedText block font-medium uppercase">Active Records</span>
+                            <span id="dash-active-count" class="text-lg font-bold text-activeGreen">0</span>
+                        </div>
+                        <div class="bg-softCardBg px-4 py-2 rounded-xl border border-outlineColor text-center">
+                            <span class="text-[10px] text-mutedText block font-medium uppercase">Total Rows</span>
+                            <span id="dash-total-count" class="text-lg font-bold text-govTeal">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Revenue Card -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div>
+                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Total Revenue</span>
+                            <h3 id="kpi-revenue" class="text-2xl font-extrabold text-softGreyText mt-1">₹0.00</h3>
+                        </div>
+                        <div class="text-xs text-activeGreen font-semibold flex items-center space-x-1 mt-2">
+                            <span>Non-Cancelled Contracts</span>
+                        </div>
+                    </div>
+                    <!-- Profit Card -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div>
+                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Estimated Profit</span>
+                            <h3 id="kpi-profit" class="text-2xl font-extrabold text-softGreyText mt-1">🔒 LOCKED</h3>
+                        </div>
+                        <div class="text-xs text-mutedText flex items-center space-x-1 mt-2">
+                            <span id="kpi-profit-sub">PIN protected statistics</span>
+                        </div>
+                    </div>
+                    <!-- Outstanding Deliveries -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div>
+                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Awaiting Dispatch</span>
+                            <h3 id="kpi-awaiting-dispatch" class="text-2xl font-extrabold text-warningOrange mt-1">0</h3>
+                        </div>
+                        <div class="text-xs text-mutedText flex items-center space-x-1 mt-2">
+                            <span>Requires courier booking</span>
+                        </div>
+                    </div>
+                    <!-- Urgent Alerts -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div>
+                            <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Critical Alerts</span>
+                            <h3 id="kpi-critical" class="text-2xl font-extrabold text-alertPink mt-1">0</h3>
+                        </div>
+                        <div class="text-xs text-alertPink font-semibold flex items-center space-x-1 mt-2">
+                            <span class="animate-pulse">●</span>
+                            <span>Overdue / Partial CRAC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts & Active Tasks Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Mini Chart 1 (Sparklines) -->
+                    <div class="lg:col-span-2 bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="font-bold text-softGreyText text-sm">Monthly Revenue Trend</h4>
+                                <p class="text-xs text-mutedText">Revenue distributed by contract month</p>
+                            </div>
+                            <span class="text-[10px] text-govTeal font-bold bg-govTeal/10 px-2.5 py-1 rounded-full uppercase tracking-wider">Active Stream</span>
+                        </div>
+                        <!-- HTML5 Canvas for Chart.js -->
+                        <div class="h-64">
+                            <canvas id="dashboard-trend-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Alerts Panel -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold text-softGreyText text-sm">Recent Activity Alerts</h4>
+                            <button onclick="switchTab('ALERTS')" class="text-xs text-govTeal hover:underline">View All</button>
+                        </div>
+                        <div id="dash-alerts-list" class="space-y-3 flex-1 overflow-y-auto max-h-64">
+                            <!-- Populated dynamically -->
+                            <p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sync Console Logs -->
+                <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                    <div class="flex items-center justify-between mb-3 border-b border-outlineColor pb-3">
+                        <div>
+                            <h4 class="font-bold text-softGreyText text-sm">Synchronization Logs</h4>
+                            <p class="text-xs text-mutedText">Live pipeline updates and parsing validation diagnostics</p>
+                        </div>
+                        <button onclick="clearSyncLogs()" class="text-xs text-alertPink hover:underline">Clear Terminal</button>
+                    </div>
+                    <div id="terminal-logs" class="bg-canvasBg border border-outlineColor/60 p-4 rounded-lg font-mono text-[11px] text-activeGreen space-y-1.5 h-36 overflow-y-auto">
+                        <div>[SYSTEM] Initialized Overwatch Web Terminal.</div>
+                        <div>[SYSTEM] Awaiting manual synchronization or Google Sheet hook query...</div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= TAB: ORDERS ================= -->
+            <section id="tab-content-ORDERS" class="hidden space-y-6">
+                <!-- Header Controls -->
+                <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <!-- Search Bar -->
+                    <div class="relative flex-1">
+                        <input type="text" id="orders-search-input" onkeyup="applyFilters()" placeholder="Search Contract No, Buyer Name, Product Name, Firm Code..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 pl-10 text-xs text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal transition-all">
+                        <span class="absolute left-3.5 top-3 text-mutedText">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </span>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <select id="filter-category" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <option value="ALL">All Categories</option>
+                    </select>
+
+                    <!-- Status Filter -->
+                    <select id="filter-status" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <option value="ALL">All Statuses</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+
+                    <!-- Sort Options -->
+                    <select id="sort-orders" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <option value="NEWEST_FIRST">Order Date (Newest First)</option>
+                        <option value="REVENUE_HIGH_TO_LOW">Revenue (High to Low)</option>
+                        <option value="REVENUE_LOW_TO_HIGH">Revenue (Low to High)</option>
+                        <option value="PROFIT_HIGH_TO_LOW">Profit Amount (High to Low)</option>
+                        <option value="DAYS_LEFT_SHIPPING">Shipping Date (Closest First)</option>
+                    </select>
+                </div>
+
+                <!-- Orders Grid & Details -->
+                <div class="bg-secondaryBg rounded-xl border border-outlineColor overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-softCardBg/50 text-mutedText uppercase tracking-wider border-b border-outlineColor">
+                                    <th class="p-4 font-semibold">Contract No.</th>
+                                    <th class="p-4 font-semibold">Firm Name</th>
+                                    <th class="p-4 font-semibold">Product & Category</th>
+                                    <th class="p-4 font-semibold">Order Date</th>
+                                    <th class="p-4 font-semibold">Status</th>
+                                    <th class="p-4 font-semibold">Revenue</th>
+                                    <th class="p-4 font-semibold">Profit</th>
+                                    <th class="p-4 font-semibold">CRAC Status</th>
+                                    <th class="p-4 font-semibold">Deadline</th>
+                                    <th class="p-4 font-semibold text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body" class="divide-y divide-outlineColor">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Empty State -->
+                    <div id="orders-empty-state" class="hidden py-12 text-center text-mutedText">
+                        <svg class="w-12 h-12 mx-auto text-outlineColor mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v2m4.586-1H12m0 0v1.586a1 1 0 01-1 1H8.586a1 1 0 01-.707-.293l-2.414-2.414a1 1 0 010-1.414l2.414-2.414A1 1 0 018.586 3H10a1 1 0 011 1v1.586a1 1 0 01-.293.707L8.293 8.707a1 1 0 01-1.414 0l-2.414-2.414"/></svg>
+                        <p class="text-sm font-medium">No matching contracts found</p>
+                        <p class="text-xs mt-1">Refine your search input or filters above.</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= TAB: ANALYTICS ================= -->
+            <section id="tab-content-ANALYTICS" class="hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Category Revenue Bar Chart -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-4">Revenue & Profit Margins by Category</h4>
+                        <div class="h-72">
+                            <canvas id="chart-category"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Status Donut Chart -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-4">Order Pipeline Status Breakdown</h4>
+                        <div class="h-72">
+                            <canvas id="chart-status"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Firm Performance -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-4">Firm-wise Allocation Summary</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="text-mutedText uppercase tracking-wider border-b border-outlineColor pb-2">
+                                        <th class="pb-2 font-medium">Firm Name</th>
+                                        <th class="pb-2 font-medium">Contracts</th>
+                                        <th class="pb-2 font-medium">Total Revenue</th>
+                                        <th class="pb-2 font-medium">Total Profit</th>
+                                        <th class="pb-2 font-medium">Avg Health</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="analytics-firm-table" class="divide-y divide-outlineColor">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Product High Performers -->
+                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-4">Product Performance Leaderboard</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="text-mutedText uppercase tracking-wider border-b border-outlineColor pb-2">
+                                        <th class="pb-2 font-medium">Product Name</th>
+                                        <th class="pb-2 font-medium">Qty Sold</th>
+                                        <th class="pb-2 font-medium">Revenue</th>
+                                        <th class="pb-2 font-medium">Estimated Margin</th>
+                                        <th class="pb-2 font-medium">Performance Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="analytics-product-table" class="divide-y divide-outlineColor">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= TAB: ALERTS ================= -->
+            <section id="tab-content-ALERTS" class="hidden space-y-6">
+                <div class="bg-gradient-to-r from-alertPink/10 to-transparent p-5 rounded-2xl border border-alertPink/20">
+                    <h3 class="text-lg font-extrabold text-softGreyText tracking-tight flex items-center space-x-2">
+                        <span class="text-alertPink animate-pulse">⚠️</span>
+                        <span>Overwatch Command Center</span>
+                    </h3>
+                    <p class="text-xs text-mutedText mt-1">This console parses contracts dynamically using configured rules. Critical due alarms, partial CRAC disputes, and approaching courier commitments are shown below.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="alerts-grid-container">
+                    <!-- Dynamic Alert Cards go here -->
+                </div>
+
+                <div id="alerts-empty-view" class="hidden py-16 text-center text-mutedText bg-secondaryBg rounded-xl border border-outlineColor">
+                    <svg class="w-16 h-16 mx-auto text-outlineColor mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <h4 class="text-base font-bold text-softGreyText">All Pipelines Secure</h4>
+                    <p class="text-xs mt-1 text-mutedText">0 pending overdue flags or CRAC disputes detected in database.</p>
+                </div>
+            </section>
+
+
+            <!-- ================= TAB: TASKS ================= -->
+            <section id="tab-content-TASKS" class="hidden space-y-6">
+                <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                    <h3 class="font-bold text-softGreyText text-base mb-4">Action Item Tasks Checklist</h3>
+
+                    <!-- Task Add Input Form -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+                        <input type="text" id="new-task-name" placeholder="Enter task action description..." class="md:col-span-1.5 bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="new-task-priority" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="High">🔴 High Priority</option>
+                            <option value="Medium" selected>🟡 Medium Priority</option>
+                            <option value="Low">🟢 Low Priority</option>
+                        </select>
+                        <button onclick="addTask()" class="bg-govTeal hover:bg-govTeal/90 text-canvasBg font-bold text-xs px-4 py-2.5 rounded-lg transition-all flex items-center justify-center space-x-1.5">
+                            <span>+ ADD TASK</span>
+                        </button>
+                    </div>
+
+                    <!-- Tasks List -->
+                    <div id="tasks-list" class="space-y-2">
+                        <!-- Dynamic elements -->
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ================= TAB: SETTINGS ================= -->
+            <section id="tab-content-SETTINGS" class="hidden space-y-6">
+                <div class="bg-secondaryBg p-6 rounded-xl border border-outlineColor max-w-3xl space-y-6">
+                    <div>
+                        <h3 class="font-bold text-softGreyText text-base">Overwatch Configuration Settings</h3>
+                        <p class="text-xs text-mutedText mt-1">Configure your Google Sheets integration and custom action routes below.</p>
+                    </div>
+
+                    <!-- Sheet URL -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Google Spreadsheet Link</label>
+                        <input type="text" id="settings-sheet-url" placeholder="Paste your Google Spreadsheet link..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <span class="text-[10px] text-mutedText block">Link format: <code>https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit</code>. Direct CSV endpoint is resolved automatically.</span>
+                    </div>
+
+                    <!-- Apps Script Endpoint -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Google Apps Script Web App URL</label>
+                        <input type="text" id="settings-script-url" placeholder="Paste your Apps Script Web App URL (for comments/tasks syncing)..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <span class="text-[10px] text-mutedText block">Web App endpoint for writing back comments, checklist tasks, and synchronizing actions. Requires deployment as 'Anyone' including anonymous access.</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Duplicate mode -->
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Duplicate ID Handling Mode</label>
+                            <select id="settings-duplicate-mode" class="w-full bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                                <option value="REPLACE">Replace with Newest (REPLACE)</option>
+                                <option value="KEEP_BOTH">Keep Both with Row Reference (KEEP_BOTH)</option>
+                            </select>
+                        </div>
+
+                        <!-- Date Reference Mode -->
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Date Evaluation Reference Mode</label>
+                            <select id="settings-date-mode" class="w-full bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                                <option value="FIXED">Fixed June 13, 2026 Reference (Match Android App)</option>
+                                <option value="LIVE">Live Browser Local Current Time</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Admin Login & Pin Setup -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Admin Login ID</label>
+                            <input type="text" id="settings-admin-id" placeholder="Enter Admin Username..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Admin Login Password</label>
+                            <input type="password" id="settings-admin-password" placeholder="Enter Admin Password..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-semibold text-mutedText uppercase tracking-wider block">Profit Security PIN</label>
+                            <input type="password" id="settings-pin" placeholder="Enter PIN (Default: 7733)..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 text-xs text-softGreyText text-center focus:outline-none focus:border-govTeal font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Save Trigger -->
+                    <div class="pt-4 border-t border-outlineColor flex items-center justify-between">
+                        <button onclick="resetToMockData()" class="text-xs text-alertPink font-semibold hover:underline">Reset to Template Mock Data</button>
+                        <button onclick="saveSettings()" class="bg-govTeal hover:bg-govTeal/90 text-canvasBg font-bold text-xs px-5 py-2.5 rounded-lg transition-all shadow-md">
+                            SAVE SETTINGS
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= CONTRACT DETAILS MODAL ================= -->
+    <div id="order-detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-canvasBg/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-secondaryBg border border-outlineColor rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-outlineColor flex items-center justify-between bg-softCardBg/30">
+                <div>
+                    <span id="modal-order-type" class="text-[9px] bg-govTeal/10 text-govTeal font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">GeM Contract</span>
+                    <h3 id="modal-contract-title" class="text-lg font-extrabold text-softGreyText tracking-tight mt-1">GEMC-Today-1</h3>
+                    <p id="modal-product-name" class="text-xs text-mutedText mt-0.5">Premium Wireless Laser Presenters</p>
+                </div>
+                <button onclick="closeModal()" class="text-mutedText hover:text-softGreyText text-xl p-1.5 hover:bg-softCardBg rounded-full transition-all">&times;</button>
+            </div>
+
+            <!-- Modal Content Grid -->
+            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Col 1 & 2: Details Sheet -->
+                <div class="md:col-span-2 space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Firm Code / Name</span>
+                            <p id="modal-firm-name" class="text-xs font-semibold text-softGreyText mt-0.5">Dailyver In</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Buyer Name & Destination</span>
+                            <p id="modal-buyer-name" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Quantity Ordered</span>
+                            <p id="modal-quantity" class="text-xs font-semibold text-softGreyText mt-0.5">0</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Pincode & City</span>
+                            <p id="modal-pincode-city" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Order Date</span>
+                            <p id="modal-order-date" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Expected Delivery Date</span>
+                            <p id="modal-expected-date" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Shipping / Dispatch Date</span>
+                            <p id="modal-shipping-date" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        </div>
+                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                            <span class="text-[10px] text-mutedText uppercase">Tracking Number</span>
+                            <p id="modal-tracking" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        </div>
+                    </div>
+
+                    <!-- Financial breakdown -->
+                    <div class="border-t border-outlineColor pt-4">
+                        <h4 class="text-xs font-bold text-softGreyText uppercase tracking-wider mb-3">Financial Overview</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                                <span class="text-[10px] text-mutedText uppercase">Revenue</span>
+                                <p id="modal-revenue" class="text-sm font-extrabold text-softGreyText mt-0.5">₹0.00</p>
+                            </div>
+                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                                <span class="text-[10px] text-mutedText uppercase">Estimated Profit</span>
+                                <p id="modal-profit" class="text-sm font-extrabold mt-0.5 text-softGreyText">₹0.00</p>
+                            </div>
+                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                                <span class="text-[10px] text-mutedText uppercase">Profit Margin</span>
+                                <p id="modal-margin" class="text-sm font-extrabold text-govTeal mt-0.5">0.00%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operational Pipelines -->
+                    <div class="border-t border-outlineColor pt-4">
+                        <h4 class="text-xs font-bold text-softGreyText uppercase tracking-wider mb-3">Milestone Progress</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                                <span class="text-[10px] text-mutedText uppercase">CRAC Status Label</span>
+                                <p id="modal-crac-label" class="text-xs font-bold text-softGreyText mt-0.5">N/A</p>
+                            </div>
+                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                                <span class="text-[10px] text-mutedText uppercase">Pipeline Milestone</span>
+                                <p id="modal-pipeline-label" class="text-xs font-bold text-infoBlue mt-0.5">N/A</p>
+                            </div>
+                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
+                                <span class="text-[10px] text-mutedText uppercase">Deadline Alert Rating</span>
+                                <p id="modal-deadline-label" class="text-xs font-bold mt-0.5 text-softGreyText">N/A</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 3: Comment Feed & Actions -->
+                <div class="border-t md:border-t-0 md:border-l border-outlineColor pt-6 md:pt-0 md:pl-6 flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-bold text-softGreyText uppercase tracking-wider">Order Comments & Notes</h4>
+                        <span id="modal-notes-count" class="text-[10px] font-bold text-mutedText bg-softCardBg border border-outlineColor px-2 py-0.5 rounded">0</span>
+                    </div>
+
+                    <!-- Feed scrollbox -->
+                    <div id="modal-comments-feed" class="flex-1 space-y-3 max-h-64 overflow-y-auto pr-1 mb-4">
+                        <!-- Comment bubble dynamic markup -->
+                    </div>
+
+                    <!-- Comment input form -->
+                    <div class="space-y-2 mt-auto">
+                        <textarea id="modal-comment-input" rows="2" placeholder="Write a contract note comment..." class="w-full bg-canvasBg border border-outlineColor rounded-lg p-2 text-xs text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal resize-none"></textarea>
+                        <button onclick="submitComment()" class="w-full bg-govTeal hover:bg-govTeal/90 text-canvasBg font-bold text-xs py-2 rounded-lg transition-all flex items-center justify-center space-x-1">
+                            <span>POST NOTE</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div> <!-- End main-app-wrapper -->
+
+
+    <!-- ================= JAVASCRIPT SYSTEM ENGINE ================= -->
+    <script>
+        // ---------------------------------------------------------
+        // STATIC MOCK DATASET
+        // ---------------------------------------------------------
+        const STATIC_MOCK_GEMS = [
+            { id: "GEMC-Today-1", contractNumber: "GEMC-Today-1", orderDate: "2026-06-13", firmName: "Dailyver In", productName: "Premium Wireless Laser Presenters", quantity: 12, category: "Office Stationary", status: "In Progress", revenue: 24000.0, shippingDate: "N/A", trackingNumber: "", cracStatus: "NA", profitAmount: 4800.0, profitPercentage: 20.0, rowNumber: 1, buyerName: "HQ Admin Staff, Delhi", pincode: "110011", locationCity: "New Delhi" },
+            { id: "GEMC-Today-2", contractNumber: "GEMC-Today-2", orderDate: "2026-06-13", firmName: "Future Scientific", productName: "Heavy Duty Ergonomic Office Chairs", quantity: 10, category: "Office Supplies", status: "In Progress", revenue: 75000.0, shippingDate: "N/A", trackingNumber: "", cracStatus: "NA", profitAmount: 15000.0, profitPercentage: 20.0, rowNumber: 2, buyerName: "Aviation Tech Lab", pincode: "560001", locationCity: "Bangalore" },
+            { id: "GEMC-Yest-1", contractNumber: "GEMC-Yest-1", orderDate: "2026-06-12", firmName: "H S Retail", productName: "Super-Fast Gigabit Ethernet Switches", quantity: 4, category: "Telecom Hardware", status: "Shipped", revenue: 32000.0, shippingDate: "2026-06-12", trackingNumber: "TRK-YEST-91", cracStatus: "NA", profitAmount: 6400.0, profitPercentage: 20.0, rowNumber: 3, buyerName: "Telecom Dept Head", pincode: "400001", locationCity: "Mumbai" },
+            { id: "GEMC-884920", contractNumber: "GEMC-884920", orderDate: "2026-05-10", firmName: "Dailyver In", productName: "High-Grade Smart Tactical Walkie Talkies", quantity: 420, category: "Telecom Hardware", status: "In Progress", revenue: 1450000.0, shippingDate: "2026-06-18", trackingNumber: "IN-BEL-9828", cracStatus: "NA", profitAmount: 290000.0, profitPercentage: 20.0, rowNumber: 12, buyerName: "Defense Communication Cell", pincode: "110001", locationCity: "New Delhi" },
+            { id: "GEMC-556102", contractNumber: "GEMC-556102", orderDate: "2026-05-24", firmName: "Future Scientific", productName: "Uninterruptible 100kVA Smart Power Backup Generator", quantity: 5, category: "Heavy Electricals", status: "Delivered", revenue: 3400000.0, shippingDate: "2026-06-08", trackingNumber: "DHL-LNT-556", cracStatus: "TRUE", profitAmount: 612000.0, profitPercentage: 18.0, rowNumber: 48, buyerName: "Larsen & Toubro Hub", pincode: "395003", locationCity: "Surat" },
+            { id: "GEMC-143098", contractNumber: "GEMC-143098", orderDate: "2026-06-02", firmName: "V S Constructors", productName: "Strategic Multi-Sensor Drone Aerial Mapping Rig", quantity: 15, category: "Aviation Technology", status: "In Progress", revenue: 890000.0, shippingDate: "2026-06-11", trackingNumber: "FEDEX-TATA-77", cracStatus: "FALSE", profitAmount: 133500.0, profitPercentage: 15.0, rowNumber: 85, buyerName: "Space & Drone Mapping Agency", pincode: "500001", locationCity: "Hyderabad" },
+            { id: "GEMC-200388", contractNumber: "GEMC-200388", orderDate: "2026-04-12", firmName: "Dailyver In", productName: "Automated Thermal Imaging Security Perimeter Shield", quantity: 8, category: "Security Tech", status: "Completed", revenue: 1200000.0, shippingDate: "2026-05-15", trackingNumber: "EXP-982-AD", cracStatus: "TRUE", profitAmount: 240000.0, profitPercentage: 20.0, rowNumber: 92, buyerName: "Adani Defense Base", pincode: "382001", locationCity: "Ahmedabad" },
+            { id: "OFFLINE-9828", contractNumber: "OFFLINE-9828", orderDate: "2026-05-30", firmName: "H S Retail", productName: "Standard Ergonomic Steel File Cabinets", quantity: 35, category: "Office Supplies", status: "Shipped", revenue: 45000.0, shippingDate: "2026-06-12", trackingNumber: "LOCAL-FURN-310", cracStatus: "NA", profitAmount: 3150.0, profitPercentage: 7.0, rowNumber: 110, buyerName: "City Court Registrar", pincode: "110001", locationCity: "New Delhi" },
+            { id: "GEMC-341998", contractNumber: "GEMC-341998", orderDate: "2026-05-01", firmName: "Future Scientific", productName: "Government Secure Internal Cloud Server Node", quantity: 2, category: "Enterprise IT", status: "Cancelled", revenue: 560000.0, shippingDate: "2026-05-20", trackingNumber: "", cracStatus: "NA", profitAmount: -11200.0, profitPercentage: -2.0, rowNumber: 145, buyerName: "Secure Datacenter Wing", pincode: "201301", locationCity: "Noida" }
+        ];
+
+        // ---------------------------------------------------------
+        // STATE STORAGE
+        // ---------------------------------------------------------
+        let state = {
+            gems: [],
+            notes: [],
+            tasks: [],
+            metadata: {
+                spreadsheetUrl: "https://docs.google.com/spreadsheets/d/11yynDL3Qc1qptkHqgaNr7MJmhJZa6LysWn3Po5uBFiI/",
+                appsScriptUrl: "",
+                duplicateHandlingMode: "REPLACE",
+                dateEvaluationMode: "FIXED",
+                lastSyncTime: 0
+            },
+            currentTab: 'DASHBOARD',
+            selectedGemId: null,
+            isProfitUnlocked: false,
+            securityPin: '7733',
+            syncLogs: []
+        };
+
+        // ---------------------------------------------------------
+        // CORE BUSINESS ENGINE (ROBUST RULES REPLICATED FROM KOTLIN)
+        // ---------------------------------------------------------
+        const FIXED_REF_DATE = new Date("2026-06-13T00:00:00");
+
+        function getReferenceDate() {
+            if (state.metadata.dateEvaluationMode === 'LIVE') {
+                return new Date();
+            }
+            return FIXED_REF_DATE;
+        }
+
+        function parseRobustDate(dateStr) {
+            if (!dateStr || dateStr.trim() === '' || dateStr.trim() === 'N/A') return null;
+            const clean = dateStr.trim();
+            const d1 = new Date(clean);
+            if (!isNaN(d1.getTime())) return d1;
+
+            // Handle standard slash/dash formats manually to prevent timezone offset mishaps
+            const parts = clean.split(/[-/.]/);
+            if (parts.length === 3) {
+                // Determine whether it starts with year or day
+                if (parts[0].length === 4) {
+                    // yyyy-MM-dd
+                    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                } else if (parts[2].length === 4) {
+                    // dd-MM-yyyy
+                    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                }
+            }
+            return null;
+        }
+
+        function evaluateDeadline(order) {
+            const isCancelled = order.status.toLowerCase().includes("cancelled") || order.revenue <= 0.0;
+            const isDeliveredAndAccepted = order.cracStatus.trim().toUpperCase() === "TRUE";
+
+            if (isCancelled) {
+                return { status: "CANCELLED", daysLeft: 0, label: "Cancelled" };
+            }
+            if (isDeliveredAndAccepted) {
+                return { status: "COMPLETED", daysLeft: 0, label: "Completed (Full CRAC)" };
+            }
+
+            const dateStr = order.shippingDate || "";
+            if (dateStr.trim() === "" || dateStr.trim() === "N/A") {
+                return { status: "ON_TRACK", daysLeft: 99, label: "Unscheduled" };
+            }
+
+            const targetDate = parseRobustDate(dateStr);
+            if (!targetDate) {
+                return { status: "ON_TRACK", daysLeft: 99, label: "On Track" };
+            }
+
+            const refDate = getReferenceDate();
+            const diffMs = targetDate.getTime() - refDate.getTime();
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+            let status = "ON_TRACK";
+            let label = "";
+
+            if (diffDays < 0) {
+                status = "OVERDUE";
+                label = `Overdue by ${Math.abs(diffDays)} days`;
+            } else if (diffDays <= 3) {
+                status = "APPROACHING";
+                label = `Approaching (${diffDays} days left)`;
+            } else {
+                status = "ON_TRACK";
+                label = `On Track (${diffDays} days left)`;
+            }
+
+            return { status, daysLeft: diffDays, label };
+        }
+
+        function calculateExpectedDeliveryDateStr(orderDateStr) {
+            const date = parseRobustDate(orderDateStr);
+            if (!date) return "N/A";
+            const exp = new Date(date);
+            exp.setDate(exp.getDate() + 15);
+            // Format dd-MM-yyyy
+            const dd = String(exp.getDate()).padStart(2, '0');
+            const mm = String(exp.getMonth() + 1).padStart(2, '0');
+            const yyyy = exp.getFullYear();
+            return `${dd}-${mm}-${yyyy}`;
+        }
+
+        function analyzeShipment(order) {
+            const isCancelled = order.status.toLowerCase().includes("cancelled") || order.revenue <= 0.0;
+            const expectedDate = calculateExpectedDeliveryDateStr(order.orderDate);
+
+            if (isCancelled) {
+                return { statusLabel: "CANCELLED", detailText: "Order Cancelled", isAlert: false, statusType: "CANCELLED", expectedDeliveryDate: expectedDate };
+            }
+
+            if (order.cracStatus.trim().toUpperCase() === "FALSE") {
+                return { statusLabel: "PARTIAL CRAC", detailText: "Partial CRAC (Disputed)", isAlert: true, statusType: "PARTIAL_CRAC", expectedDeliveryDate: expectedDate };
+            }
+
+            const isShipped = order.trackingNumber && order.trackingNumber.trim() !== "";
+            const isCracDone = order.cracStatus.trim().toUpperCase() === "TRUE";
+            const isDeliveredColZ = order.status.toLowerCase().includes("delivered") && !order.status.toLowerCase().includes("not delivered");
+
+            if (isCracDone) {
+                return { statusLabel: "CRAC Status", detailText: "CRAC Done (Accepted)", isAlert: false, statusType: "CRAC", expectedDeliveryDate: expectedDate };
+            }
+
+            if (isShipped) {
+                if (isDeliveredColZ) {
+                    return { statusLabel: "AWAITING CRAC", detailText: "Delivered (Awaiting CRAC)", isAlert: false, statusType: "AWAITING_CRAC", expectedDeliveryDate: expectedDate };
+                } else {
+                    return { statusLabel: "SHIPPED", detailText: "Dispatched", isAlert: false, statusType: "SHIPPED", expectedDeliveryDate: expectedDate };
+                }
+            } else {
+                const orderDate = parseRobustDate(order.orderDate);
+                const refTime = getReferenceDate().getTime();
+                const orderTime = orderDate ? orderDate.getTime() : refTime;
+                const daysSinceReceived = Math.floor((refTime - orderTime) / (1000 * 60 * 60 * 24));
+
+                if (daysSinceReceived <= 15) {
+                    return { statusLabel: "NOT DISPATCHED", detailText: "Order Received (Not Dispatched)", isAlert: false, statusType: "NOT_DISPATCHED", expectedDeliveryDate: expectedDate };
+                } else {
+                    return { statusLabel: "DUE ALERT", detailText: "Not Shipped (ALERT - over 15 days)", isAlert: true, statusType: "DUE_ALERT", expectedDeliveryDate: expectedDate };
+                }
+            }
+        }
+
+        function calculateHealthScore(order) {
+            const isCancelled = order.status.toLowerCase().includes("cancelled") || order.revenue <= 0.0;
+            if (isCancelled) return 0;
+
+            let score = 100;
+            const deadline = evaluateDeadline(order);
+            if (deadline.status === "OVERDUE") {
+                score -= 40;
+            } else if (deadline.status === "APPROACHING") {
+                score -= 15;
+            }
+
+            const crac = order.cracStatus.trim().toUpperCase();
+            if (crac === "FALSE") {
+                score -= 25;
+            } else if (crac === "NA") {
+                if (order.trackingNumber && order.trackingNumber.trim() !== "") {
+                    score -= 5;
+                } else {
+                    score -= 10;
+                }
+            }
+
+            if (order.profitPercentage <= 0.0) {
+                score -= 20;
+            } else if (order.profitPercentage < 10.0) {
+                score -= 8;
+            }
+
+            return Math.max(0, Math.min(100, score));
+        }
+
+        function getHealthLabel(score) {
+            if (score >= 80) return { label: "Excellent", colorClass: "text-activeGreen bg-activeGreen/10 border-activeGreen/30" };
+            if (score >= 50) return { label: "Adequate", colorClass: "text-warningOrange bg-warningOrange/10 border-warningOrange/30" };
+            return { label: "At Risk", colorClass: "text-alertPink bg-alertPink/10 border-alertPink/30" };
+        }
+
+        // ---------------------------------------------------------
+        // INITIALIZATION & CACHING WITH ADMIN SECURITY GATE
+        // ---------------------------------------------------------
+        window.onload = function() {
+            loadFromLocalStorage();
+            if (state.gems.length === 0) {
+                state.gems = JSON.parse(JSON.stringify(STATIC_MOCK_GEMS));
+                saveToLocalStorage();
+            }
+            
+            // Check session authentication status
+            const isAuthenticated = sessionStorage.getItem("admin_authenticated") === "true";
+            const loginWrapper = document.getElementById("login-portal-wrapper");
+            const appWrapper = document.getElementById("main-app-wrapper");
+            
+            if (isAuthenticated) {
+                loginWrapper.classList.add("hidden");
+                appWrapper.classList.remove("hidden");
+                logSyncEvent("Initialized Overwatch memory pipeline.");
+                switchTab('DASHBOARD');
+                renderUI();
+            } else {
+                loginWrapper.classList.remove("hidden");
+                appWrapper.classList.add("hidden");
+            }
+        };
+
+        function verifyAdminLogin() {
+            const userIn = document.getElementById("login-username").value.trim();
+            const passIn = document.getElementById("login-password").value.trim();
+            const errorLabel = document.getElementById("login-error-msg");
+            
+            const correctId = state.adminId || "admin";
+            const correctPass = state.adminPassword || "gem7733";
+            
+            if (userIn === correctId && passIn === correctPass) {
+                errorLabel.classList.add("hidden");
+                sessionStorage.setItem("admin_authenticated", "true");
+                
+                // Transition to application
+                document.getElementById("login-portal-wrapper").classList.add("hidden");
+                document.getElementById("main-app-wrapper").classList.remove("hidden");
+                
+                logSyncEvent(`Access Granted: Logged in successfully as '${correctId}'.`);
+                switchTab('DASHBOARD');
+                renderUI();
+            } else {
+                errorLabel.classList.remove("hidden");
+                // Reset password input
+                document.getElementById("login-password").value = "";
+                logSyncEvent(`Access Denied: Unsuccessful login attempt for user '${userIn}'.`);
+            }
+        }
+
+        function logoutAdmin() {
+            if (confirm("Are you sure you want to exit the dashboard overwatch? You will need to log in again with your Administrative password.")) {
+                sessionStorage.removeItem("admin_authenticated");
+                document.getElementById("login-username").value = "";
+                document.getElementById("login-password").value = "";
+                document.getElementById("login-error-msg").classList.add("hidden");
+                
+                document.getElementById("login-portal-wrapper").classList.remove("hidden");
+                document.getElementById("main-app-wrapper").classList.add("hidden");
+                
+                logSyncEvent("Administrative session terminated securely.");
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const storedGems = localStorage.getItem("overwatch_gems");
+                const storedNotes = localStorage.getItem("overwatch_notes");
+                const storedTasks = localStorage.getItem("overwatch_tasks");
+                const storedMeta = localStorage.getItem("overwatch_metadata");
+                const storedUnlock = localStorage.getItem("overwatch_profit_unlocked");
+                const storedLogs = localStorage.getItem("overwatch_sync_logs");
+                const storedAdminId = localStorage.getItem("overwatch_admin_id");
+                const storedAdminPass = localStorage.getItem("overwatch_admin_pass");
+
+                if (storedGems) state.gems = JSON.parse(storedGems);
+                if (storedNotes) state.notes = JSON.parse(storedNotes);
+                if (storedTasks) state.tasks = JSON.parse(storedTasks);
+                if (storedMeta) state.metadata = Object.assign(state.metadata, JSON.parse(storedMeta));
+                if (storedUnlock) state.isProfitUnlocked = JSON.parse(storedUnlock);
+                if (storedLogs) state.syncLogs = JSON.parse(storedLogs);
+                if (storedAdminId) state.adminId = storedAdminId;
+                else state.adminId = "admin";
+                if (storedAdminPass) state.adminPassword = storedAdminPass;
+                else state.adminPassword = "gem7733";
+            } catch (e) {
+                console.error("Local storage corruption fallback: ", e);
+                state.adminId = "admin";
+                state.adminPassword = "gem7733";
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem("overwatch_gems", JSON.stringify(state.gems));
+            localStorage.setItem("overwatch_notes", JSON.stringify(state.notes));
+            localStorage.setItem("overwatch_tasks", JSON.stringify(state.tasks));
+            localStorage.setItem("overwatch_metadata", JSON.stringify(state.metadata));
+            localStorage.setItem("overwatch_profit_unlocked", JSON.stringify(state.isProfitUnlocked));
+            localStorage.setItem("overwatch_sync_logs", JSON.stringify(state.syncLogs));
+            localStorage.setItem("overwatch_admin_id", state.adminId || "admin");
+            localStorage.setItem("overwatch_admin_pass", state.adminPassword || "gem7733");
+        }
+
+        function logSyncEvent(text) {
+            const time = new Date().toLocaleTimeString();
+            state.syncLogs.unshift(`[${time}] ${text}`);
+            if (state.syncLogs.length > 100) state.syncLogs.pop();
+            saveToLocalStorage();
+            updateTerminalLogs();
+        }
+
+        function clearSyncLogs() {
+            state.syncLogs = [];
+            logSyncEvent("Terminal diagnostics cleared.");
+            updateTerminalLogs();
+        }
+
+        function updateTerminalLogs() {
+            const div = document.getElementById("terminal-logs");
+            if (!div) return;
+            div.innerHTML = state.syncLogs.map(line => `<div>${line}</div>`).join("");
+        }
+
+        // ---------------------------------------------------------
+        // SPREADSHEET PARSING PIPELINE (MATCHING ANDROID DIRECT)
+        // ---------------------------------------------------------
+        function convertToExportUrl(url) {
+            const trimmed = url.trim();
+            if (trimmed.includes("docs.google.com/spreadsheets")) {
+                if (!trimmed.includes("/export") && !trimmed.includes("format=csv")) {
+                    const dIndex = trimmed.indexOf("/d/");
+                    if (dIndex !== -1) {
+                        const startIndex = dIndex + 3;
+                        const nextSlash = trimmed.indexOf("/", startIndex);
+                        const id = nextSlash !== -1 ? trimmed.substring(startIndex, nextSlash) : trimmed.substring(startIndex);
+                        return `https://docs.google.com/spreadsheets/d/${id}/export?format=csv`;
+                    }
+                }
+            }
+            return trimmed;
+        }
+
+        function parseCsvToRows(text) {
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+                if (char === '"') {
+                    if (inQuotes && nextChar === '"') {
+                        field += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    row.push(field);
+                    field = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && nextChar === '\n') {
+                        i++;
+                    }
+                    row.push(field);
+                    rows.push(row);
+                    row = [];
+                    field = '';
+                } else {
+                    field += char;
+                }
+            }
+            if (field || row.length > 0) {
+                row.push(field);
+                rows.push(row);
+            }
+            return rows;
+        }
+
+        async function triggerSync() {
+            const badge = document.getElementById("sync-badge");
+            const statusText = document.getElementById("sync-status-text");
+            const icon = document.getElementById("sync-icon");
+
+            badge.classList.remove("hidden");
+            statusText.innerText = "Syncing...";
+            icon.classList.add("animate-spin");
+
+            const rawUrl = state.metadata.spreadsheetUrl;
+            const exportUrl = convertToExportUrl(rawUrl);
+
+            logSyncEvent(`Connecting to CSV stream endpoint: ${exportUrl}`);
+
+            try {
+                const response = await fetch(exportUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status} rejected spreadsheet access.`);
+                }
+                const csvText = await response.text();
+                logSyncEvent(`Download success: Received ${Math.round(csvText.length / 1024)} KB CSV text.`);
+
+                const rows = parseCsvToRows(csvText);
+                if (rows.length <= 1) {
+                    throw new Error("CSV database spreadsheet contains no recognizable rows or lacks data headers.");
+                }
+
+                // Check standard header mapping
+                const headerRow = rows[0];
+                const headerRowStr = headerRow.join(",").toLowerCase();
+                const isTargetSpreadsheet = headerRowStr.includes("firm code") || headerRowStr.includes("order no.") || headerRowStr.includes("days left");
+
+                if (!isTargetSpreadsheet) {
+                    throw new Error("Invalid columns layout. Spreadsheets must include columns for 'Firm Code', 'Order No.', and 'Buyer'.");
+                }
+
+                const parsedGemsList = [];
+                const seenIds = new Set();
+                const currentTime = Date.now();
+
+                for (let i = 1; i < rows.length; i++) {
+                    const parts = rows[i];
+                    if (parts.length < 6) continue;
+
+                    const cleanParts = parts.map(p => p.trim());
+                    const rawFirmCode = cleanParts[0] || "";
+                    const rawOrderDate = cleanParts[1] || "";
+                    const rawOrderNo = cleanParts[2] || "";
+                    const rawItem = cleanParts[4] || "";
+
+                    if (rawFirmCode === "" && rawOrderNo === "" && rawItem === "") continue;
+                    if (rawFirmCode === "" || rawOrderNo === "" || rawItem === "") continue;
+                    if (rawFirmCode.toLowerCase() === "firm code" || rawOrderNo.toLowerCase() === "order no." || rawOrderNo.toLowerCase().includes("order no")) continue;
+
+                    const rowNum = i + 1;
+                    let finalId = rawOrderNo;
+
+                    if (state.metadata.duplicateHandlingMode === "KEEP_BOTH") {
+                        if (seenIds.has(rawOrderNo)) {
+                            finalId = `${rawOrderNo}-R${rowNum}`;
+                        } else {
+                            seenIds.add(rawOrderNo);
+                        }
+                    }
+
+                    // Map firms
+                    let firm = rawFirmCode;
+                    const codeUpper = rawFirmCode.toUpperCase();
+                    if (codeUpper === "D") firm = "Dailyver In";
+                    else if (codeUpper === "HS") firm = "H S Retail";
+                    else if (codeUpper === "VS") firm = "V S Constructors";
+                    else if (codeUpper === "F" || codeUpper === "FUTURE") firm = "Future Scientific";
+
+                    const qty = parseInt(cleanParts[5]) || 1;
+                    const rev = parseFloat(cleanParts[15]?.replace(/[^0-9.]/g, '')) || 0.0;
+                    let shipDate = cleanParts[20] || "N/A";
+                    let trackNum = cleanParts[22] || "";
+                    let crac = cleanParts[24] || "NA";
+                    if (crac === "") crac = "NA";
+
+                    let stateText = cleanParts[25] || "In Progress";
+                    const profitAmt = parseFloat(cleanParts[26]?.replace(/[^0-9.-]/g, '')) || 0.0;
+                    const profitPct = parseFloat(cleanParts[28]?.replace(/[^0-9.-]/g, '')) || 0.0;
+
+                    const buyer = cleanParts[3] || "N/A";
+                    let pin = cleanParts[14] || "N/A";
+                    const city = cleanParts[16] || "N/A";
+
+                    if (trackNum !== "" && (shipDate === "" || shipDate === "N/A")) {
+                        shipDate = "2026-06-05";
+                    }
+                    if (trackNum === "" && (stateText.toLowerCase().includes("shipped") || stateText.toLowerCase().includes("delivered"))) {
+                        trackNum = `TRK-GEN-${100000 + rowNum}`;
+                    }
+                    if (pin === "" || pin === "N/A") {
+                        pin = "110001";
+                    }
+
+                    // Map Categories
+                    const itemLower = rawItem.toLowerCase();
+                    let cat = "Office Supplies";
+                    if (itemLower.includes("stapler") || itemLower.includes("stamp") || itemLower.includes("pen") || itemLower.includes("duster")) cat = "Office Stationary";
+                    else if (itemLower.includes("brush") || itemLower.includes("toilet") || itemLower.includes("clean")) cat = "Housekeeping";
+                    else if (itemLower.includes("secure") || itemLower.includes("thermal") || itemLower.includes("perimeter") || itemLower.includes("sensor")) cat = "Security Tech";
+                    else if (itemLower.includes("telecom") || itemLower.includes("walkie") || itemLower.includes("radio")) cat = "Telecom Hardware";
+                    else if (itemLower.includes("cloud") || itemLower.includes("server") || itemLower.includes("it")) cat = "Enterprise IT";
+                    else if (itemLower.includes("generator") || itemLower.includes("power") || itemLower.includes("electrical")) cat = "Heavy Electricals";
+                    else if (itemLower.includes("drone") || itemLower.includes("aerial") || itemLower.includes("aviation")) cat = "Aviation Technology";
+
+                    parsedGemsList.push({
+                        id: finalId,
+                        contractNumber: rawOrderNo,
+                        orderDate: rawOrderDate,
+                        firmName: firm,
+                        productName: rawItem,
+                        quantity: qty,
+                        category: cat,
+                        status: stateText,
+                        revenue: rev,
+                        shippingDate: shipDate,
+                        trackingNumber: trackNum,
+                        cracStatus: crac,
+                        profitAmount: profitAmt,
+                        profitPercentage: profitPct,
+                        rowNumber: rowNum,
+                        lastSynced: currentTime,
+                        buyerName: buyer,
+                        pincode: pin,
+                        locationCity: city
+                    });
+                }
+
+                state.gems = parsedGemsList;
+                state.metadata.lastSyncTime = currentTime;
+                saveToLocalStorage();
+
+                // Down-sync comments/notes from sheet if appsScriptUrl configured
+                if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                    logSyncEvent("Apps Script configured. Down-syncing comments...");
+                    await syncCommentsFromScript();
+                }
+
+                logSyncEvent(`Synchronized successfully! Total compiled records: ${parsedGemsList.length}`);
+                statusText.innerText = "Success";
+                setTimeout(() => badge.classList.add("hidden"), 3000);
+            } catch (err) {
+                logSyncEvent(`🚨 Synchronization Failed: ${err.message}`);
+                statusText.innerText = "Error";
+                alert(`Sync Error: ${err.message}`);
+            } finally {
+                icon.classList.remove("animate-spin");
+                renderUI();
+            }
+        }
+
+        async function syncCommentsFromScript() {
+            try {
+                const response = await fetch(state.metadata.appsScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "get_comments" }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const body = await response.json();
+                if (body && body.comments) {
+                    logSyncEvent(`Received ${body.comments.length} comments from Google Apps Script.`);
+                    // Merge local comments/notes
+                    const remoteNotes = body.comments.map(c => ({
+                        id: c.orderId + "-" + c.comment.substring(0,5),
+                        title: `Contract ${c.orderId} Ref`,
+                        content: c.comment,
+                        targetRow: null,
+                        contractId: c.orderId,
+                        createdAt: parseRobustDate(c.timestamp)?.getTime() || Date.now()
+                    }));
+                    state.notes = remoteNotes;
+                    saveToLocalStorage();
+                }
+            } catch (e) {
+                logSyncEvent(`Comments down-sync issue: ${e.message}`);
+            }
+        }
+
+        // ---------------------------------------------------------
+        // UI SWITCHER & TAB RENDERERS
+        // ---------------------------------------------------------
+        function switchTab(tabName) {
+            state.currentTab = tabName;
+            
+            // Toggle side highlights
+            ['DASHBOARD', 'ORDERS', 'ANALYTICS', 'ALERTS', 'TASKS', 'SETTINGS'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                const panel = document.getElementById(`tab-content-${t}`);
+                if (t === tabName) {
+                    btn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-govTeal bg-govTeal/10";
+                    panel.classList.remove("hidden");
+                } else {
+                    btn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg";
+                    panel.classList.add("hidden");
+                }
+            });
+
+            renderUI();
+        }
+
+        function toggleProfitLock() {
+            if (state.isProfitUnlocked) {
+                state.isProfitUnlocked = false;
+                saveToLocalStorage();
+                renderUI();
+            } else {
+                const pin = prompt("Enter Security PIN to unlock Financial Metrics:");
+                if (pin === state.securityPin) {
+                    state.isProfitUnlocked = true;
+                    saveToLocalStorage();
+                    renderUI();
+                } else if (pin !== null) {
+                    alert("Invalid Security PIN.");
+                }
+            }
+        }
+
+        function renderUI() {
+            // Header Sync Status Update
+            const syncLabel = document.getElementById("dash-last-sync-label");
+            if (syncLabel) {
+                syncLabel.innerText = state.metadata.lastSyncTime > 0 ? new Date(state.metadata.lastSyncTime).toLocaleString() : "Never";
+            }
+
+            // Lock Profit Buttons Label UI
+            const toggleLabel = document.getElementById("profit-toggle-label");
+            const toggleIcon = document.getElementById("profit-toggle-icon");
+            if (toggleLabel && toggleIcon) {
+                if (state.isProfitUnlocked) {
+                    toggleLabel.innerText = "Lock Profit";
+                    toggleIcon.innerText = "🔓";
+                } else {
+                    toggleLabel.innerText = "Unlock Profit";
+                    toggleIcon.innerText = "🔒";
+                }
+            }
+
+            // Trigger Specific Tab Rendering
+            if (state.currentTab === 'DASHBOARD') renderDashboardTab();
+            else if (state.currentTab === 'ORDERS') renderOrdersTab();
+            else if (state.currentTab === 'ANALYTICS') renderAnalyticsTab();
+            else if (state.currentTab === 'ALERTS') renderAlertsTab();
+            else if (state.currentTab === 'TASKS') renderTasksTab();
+            else if (state.currentTab === 'SETTINGS') renderSettingsTab();
+
+            // Render Alert Badge Counts
+            const activeAlerts = getAlertItems();
+            const badgeAlerts = document.getElementById("alerts-count-badge");
+            if (badgeAlerts) {
+                if (activeAlerts.length > 0) {
+                    badgeAlerts.innerText = activeAlerts.length;
+                    badgeAlerts.classList.remove("hidden");
+                } else {
+                    badgeAlerts.classList.add("hidden");
+                }
+            }
+
+            // Render Task Badge Counts
+            const pendingTasks = state.tasks.filter(t => t.status === "PENDING").length;
+            const badgeTasks = document.getElementById("tasks-count-badge");
+            if (badgeTasks) {
+                if (pendingTasks > 0) {
+                    badgeTasks.innerText = pendingTasks;
+                    badgeTasks.classList.remove("hidden");
+                } else {
+                    badgeTasks.classList.add("hidden");
+                }
+            }
+        }
+
+        // ---------------------------------------------------------
+        // RENDER: DASHBOARD HOME
+        // ---------------------------------------------------------
+        let dashTrendChartInstance = null;
+
+        function renderDashboardTab() {
+            const nonCancelled = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.revenue > 0);
+            const totalRevenue = nonCancelled.reduce((sum, g) => sum + g.revenue, 0);
+            const totalProfit = nonCancelled.reduce((sum, g) => sum + g.profitAmount, 0);
+            const activeCount = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.cracStatus.trim().toUpperCase() !== "TRUE").length;
+
+            document.getElementById("dash-active-count").innerText = activeCount;
+            document.getElementById("dash-total-count").innerText = state.gems.length;
+
+            // KPI 1: Revenue
+            document.getElementById("kpi-revenue").innerText = `₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+
+            // KPI 2: Profit Lock mapping
+            const kpiProfit = document.getElementById("kpi-profit");
+            const kpiProfitSub = document.getElementById("kpi-profit-sub");
+            if (state.isProfitUnlocked) {
+                kpiProfit.innerText = `₹${totalProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+                const margin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+                kpiProfitSub.innerText = `Avg Margin: ${margin.toFixed(1)}%`;
+            } else {
+                kpiProfit.innerText = "🔒 LOCKED";
+                kpiProfitSub.innerText = "PIN protected statistics";
+            }
+
+            // KPI 3: Outstanding Dispatch Count
+            const awaitingDispatch = state.gems.filter(g => {
+                const analysis = analyzeShipment(g);
+                return analysis.statusType === 'NOT_DISPATCHED' || analysis.statusType === 'DUE_ALERT';
+            }).length;
+            document.getElementById("kpi-awaiting-dispatch").innerText = awaitingDispatch;
+
+            // KPI 4: Alert counter
+            const alertCount = getAlertItems().length;
+            document.getElementById("kpi-critical").innerText = alertCount;
+
+            // Activity alerts listing (Recent 5)
+            const alertsList = document.getElementById("dash-alerts-list");
+            alertsList.innerHTML = "";
+            const recentAlerts = getAlertItems().slice(0, 5);
+
+            if (recentAlerts.length === 0) {
+                alertsList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>`;
+            } else {
+                recentAlerts.forEach(item => {
+                    let pillColor = "bg-alertPink/15 text-alertPink";
+                    if (item.priority === 'WARNING') pillColor = "bg-warningOrange/15 text-warningOrange";
+                    if (item.priority === 'INFO') pillColor = "bg-infoBlue/15 text-infoBlue";
+
+                    const div = document.createElement("div");
+                    div.className = "p-3 rounded-lg bg-softCardBg/40 border border-outlineColor/60 flex items-start justify-between gap-3 text-xs";
+                    div.innerHTML = `
+                        <div class="space-y-0.5 flex-1">
+                            <span class="font-bold text-softGreyText">${item.contractId}</span>
+                            <p class="text-mutedText text-[11px]">${item.message}</p>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold shrink-0 uppercase ${pillColor}">${item.type}</span>
+                    `;
+                    alertsList.appendChild(div);
+                });
+            }
+
+            // Render trend line graph
+            renderDashboardTrendChart(nonCancelled);
+            updateTerminalLogs();
+        }
+
+        function renderDashboardTrendChart(nonCancelled) {
+            const ctx = document.getElementById("dashboard-trend-chart");
+            if (!ctx) return;
+
+            // Group by Year-Month of Order Date
+            const monthlyData = {};
+            nonCancelled.forEach(g => {
+                const date = parseRobustDate(g.orderDate);
+                if (date) {
+                    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    monthlyData[monthKey] = (monthlyData[monthKey] || 0) + g.revenue;
+                }
+            });
+
+            // Sort months
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const revenueValues = sortedMonths.map(m => monthlyData[m]);
+            const labels = sortedMonths.map(m => {
+                const [y, mm] = m.split("-");
+                const date = new Date(parseInt(y), parseInt(mm) - 1, 1);
+                return date.toLocaleString('default', { month: 'short', year: '2-digit' });
+            });
+
+            if (dashTrendChartInstance) dashTrendChartInstance.destroy();
+
+            dashTrendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Monthly Booking Volume (Revenue)',
+                        data: revenueValues,
+                        borderColor: '#00A378',
+                        backgroundColor: 'rgba(0, 163, 120, 0.05)',
+                        borderWidth: 2.5,
+                        tension: 0.35,
+                        fill: true,
+                        pointBackgroundColor: '#00A378',
+                        pointBorderColor: '#090E11',
+                        pointBorderWidth: 1.5,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#232E35' },
+                            ticks: { color: '#90A4AE', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: '#232E35' },
+                            ticks: {
+                                color: '#90A4AE',
+                                font: { size: 10 },
+                                callback: function(val) {
+                                    if (val >= 100000) return `₹${(val/100000).toFixed(1)}L`;
+                                    return `₹${val}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ---------------------------------------------------------
+        // ALERTS GENERATOR ENGINE (MATCHING NOTIFICATION ENGINE)
+        // ---------------------------------------------------------
+        function getAlertItems() {
+            const alerts = [];
+            state.gems.forEach(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                if (isCancelled) return;
+
+                const deadline = evaluateDeadline(g);
+                const shipment = analyzeShipment(g);
+
+                // Rule 1: CRITICAL OVERDUE ALARMS
+                if (deadline.status === 'OVERDUE') {
+                    alerts.push({
+                        id: `${g.id}-OVERDUE`,
+                        contractId: g.id,
+                        type: 'OVERDUE',
+                        priority: 'CRITICAL',
+                        message: `Contract Shipping deadline passed: ${deadline.label}. Dispatch & track immediately.`
+                    });
+                }
+
+                // Rule 2: NOT SHIPPED (ALERT OVER 15 DAYS)
+                if (shipment.statusType === 'DUE_ALERT') {
+                    alerts.push({
+                        id: `${g.id}-NOT_SHIPPED`,
+                        contractId: g.id,
+                        type: 'DUE_ALERT',
+                        priority: 'WARNING',
+                        message: `No tracking details registered. Over 15 days since Order Date (${g.orderDate}).`
+                    });
+                }
+
+                // Rule 3: DISPUTE WARNING (PARTIAL CRAC)
+                if (g.cracStatus.trim().toUpperCase() === "FALSE") {
+                    alerts.push({
+                        id: `${g.id}-DISPUTE`,
+                        contractId: g.id,
+                        type: 'PARTIAL_CRAC',
+                        priority: 'CRITICAL',
+                        message: `Full CRAC Rejected. Dispute raised on contract. File representation.`
+                    });
+                }
+
+                // Rule 4: APPROACHING DEADLINES
+                if (deadline.status === 'APPROACHING') {
+                    alerts.push({
+                        id: `${g.id}-APPROACHING`,
+                        contractId: g.id,
+                        type: 'APPROACHING',
+                        priority: 'WARNING',
+                        message: `Shipping deadline close: ${deadline.label}. Ship goods immediately.`
+                    });
+                }
+            });
+            return alerts;
+        }
+
+        // ---------------------------------------------------------
+        // RENDER: CONTRACTS / ORDERS
+        // ---------------------------------------------------------
+        let cachedCategories = ["ALL"];
+
+        function renderOrdersTab() {
+            const nonCancelled = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.revenue > 0);
+            
+            // Rebuild Categories filter list
+            const categoriesSet = new Set(state.gems.map(g => g.category));
+            cachedCategories = ["ALL", ...Array.from(categoriesSet).sort()];
+            const catSelect = document.getElementById("filter-category");
+            const currentSelectedCat = catSelect.value;
+            catSelect.innerHTML = cachedCategories.map(c => `<option value="${c}" ${c === currentSelectedCat ? 'selected' : ''}>${c === 'ALL' ? 'All Categories' : c}</option>`).join("");
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById("orders-search-input").value.toLowerCase().trim();
+            const cat = document.getElementById("filter-category").value;
+            const status = document.getElementById("filter-status").value;
+            const sortVal = document.getElementById("sort-orders").value;
+
+            let list = [...state.gems];
+
+            // Search Filter
+            if (query !== "") {
+                list = list.filter(g => 
+                    g.id.toLowerCase().includes(query) ||
+                    g.firmName.toLowerCase().includes(query) ||
+                    g.productName.toLowerCase().includes(query) ||
+                    g.buyerName.toLowerCase().includes(query) ||
+                    g.status.toLowerCase().includes(query)
+                );
+            }
+
+            // Category Filter
+            if (cat !== "ALL") {
+                list = list.filter(g => g.category === cat);
+            }
+
+            // Status Filter
+            if (status !== "ALL") {
+                if (status === "Completed") {
+                    list = list.filter(g => g.cracStatus.trim().toUpperCase() === "TRUE");
+                } else if (status === "Delivered") {
+                    list = list.filter(g => g.status.toLowerCase().includes("delivered") && g.cracStatus.trim().toUpperCase() !== "TRUE");
+                } else {
+                    list = list.filter(g => g.status.toLowerCase() === status.toLowerCase());
+                }
+            }
+
+            // Sort mapping
+            if (sortVal === "NEWEST_FIRST") {
+                list.sort((a,b) => (parseRobustDate(b.orderDate)?.getTime() || 0) - (parseRobustDate(a.orderDate)?.getTime() || 0));
+            } else if (sortVal === "REVENUE_HIGH_TO_LOW") {
+                list.sort((a,b) => b.revenue - a.revenue);
+            } else if (sortVal === "REVENUE_LOW_TO_HIGH") {
+                list.sort((a,b) => a.revenue - b.revenue);
+            } else if (sortVal === "PROFIT_HIGH_TO_LOW") {
+                list.sort((a,b) => b.profitAmount - a.profitAmount);
+            } else if (sortVal === "DAYS_LEFT_SHIPPING") {
+                list.sort((a,b) => {
+                    const dlA = evaluateDeadline(a);
+                    const dlB = evaluateDeadline(b);
+                    return dlA.daysLeft - dlB.daysLeft;
+                });
+            }
+
+            const tbody = document.getElementById("orders-table-body");
+            const emptyState = document.getElementById("orders-empty-state");
+            tbody.innerHTML = "";
+
+            if (list.length === 0) {
+                emptyState.classList.remove("hidden");
+            } else {
+                emptyState.classList.add("hidden");
+                list.forEach(item => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-softCardBg/20 cursor-pointer transition-all border-b border-outlineColor";
+                    tr.onclick = () => openOrderDetailModal(item.id);
+
+                    const deadline = evaluateDeadline(item);
+                    let deadlineColor = "text-activeGreen";
+                    if (deadline.status === 'OVERDUE') deadlineColor = "text-alertPink font-semibold";
+                    else if (deadline.status === 'APPROACHING') deadlineColor = "text-warningOrange font-semibold";
+
+                    const shipment = analyzeShipment(item);
+                    let statusBadgeColor = "text-mutedText bg-softCardBg border-outlineColor";
+                    if (shipment.statusType === 'CRAC') statusBadgeColor = "text-activeGreen bg-activeGreen/10 border-activeGreen/35";
+                    else if (shipment.statusType === 'SHIPPED') statusBadgeColor = "text-infoBlue bg-infoBlue/10 border-infoBlue/35";
+                    else if (shipment.statusType === 'AWAITING_CRAC') statusBadgeColor = "text-infoBlue bg-infoBlue/10 border-infoBlue/35";
+                    else if (shipment.statusType === 'DUE_ALERT') statusBadgeColor = "text-alertPink bg-alertPink/10 border-alertPink/35 animate-pulse";
+                    else if (shipment.statusType === 'NOT_DISPATCHED') statusBadgeColor = "text-warningOrange bg-warningOrange/10 border-warningOrange/35";
+
+                    const cracVal = item.cracStatus.trim().toUpperCase();
+                    let cracBadge = "text-mutedText bg-softCardBg border-outlineColor";
+                    if (cracVal === 'TRUE') cracBadge = "text-activeGreen bg-activeGreen/10 border-activeGreen/35";
+                    if (cracVal === 'FALSE') cracBadge = "text-alertPink bg-alertPink/10 border-alertPink/35";
+
+                    const rowProfitText = state.isProfitUnlocked ? `₹${item.profitAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}` : "🔒 Hidden";
+
+                    tr.innerHTML = `
+                        <td class="p-4 font-bold text-softGreyText">${item.id}</td>
+                        <td class="p-4 text-mutedText">${item.firmName}</td>
+                        <td class="p-4">
+                            <div class="font-medium text-softGreyText truncate max-w-[180px]">${item.productName}</div>
+                            <div class="text-[10px] text-mutedText">${item.category}</div>
+                        </td>
+                        <td class="p-4 text-mutedText">${item.orderDate}</td>
+                        <td class="p-4">
+                            <span class="px-2.5 py-1 rounded-full border text-[10px] font-bold ${statusBadgeColor}">${shipment.statusLabel}</span>
+                        </td>
+                        <td class="p-4 font-semibold text-softGreyText">₹${item.revenue.toLocaleString('en-IN')}</td>
+                        <td class="p-4 text-mutedText font-medium">${rowProfitText}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${cracBadge}">${cracVal === 'TRUE' ? 'FULL' : cracVal === 'FALSE' ? 'DISPUTED' : 'PENDING'}</span>
+                        </td>
+                        <td class="p-4 text-[11px] ${deadlineColor}">${deadline.label}</td>
+                        <td class="p-4 text-center">
+                            <button class="text-govTeal hover:text-govTeal/80 font-bold hover:underline">DETAILS</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // ---------------------------------------------------------
+        // RENDER: ANALYTICS CENTRE
+        // ---------------------------------------------------------
+        let catChartInstance = null;
+        let statusChartInstance = null;
+
+        function renderAnalyticsTab() {
+            const nonCancelled = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.revenue > 0);
+
+            // Grouping calculations
+            const categories = {};
+            const statuses = { "Completed (CRAC)": 0, "Awaiting CRAC": 0, "Shipped": 0, "Not Dispatched": 0, "Due Alert": 0 };
+
+            nonCancelled.forEach(g => {
+                // Category calculations
+                if (!categories[g.category]) {
+                    categories[g.category] = { revenue: 0, profit: 0 };
+                }
+                categories[g.category].revenue += g.revenue;
+                categories[g.category].profit += g.profitAmount;
+
+                // Status counts mapping
+                const shipment = analyzeShipment(g);
+                if (shipment.statusType === 'CRAC') statuses["Completed (CRAC)"]++;
+                else if (shipment.statusType === 'AWAITING_CRAC') statuses["Awaiting CRAC"]++;
+                else if (shipment.statusType === 'SHIPPED') statuses["Shipped"]++;
+                else if (shipment.statusType === 'NOT_DISPATCHED') statuses["Not Dispatched"]++;
+                else if (shipment.statusType === 'DUE_ALERT') statuses["Due Alert"]++;
+            });
+
+            // 1. Category Bar Chart
+            const catLabels = Object.keys(categories);
+            const catRevenues = catLabels.map(c => categories[c].revenue);
+            const catProfits = catLabels.map(c => categories[c].profit);
+
+            const ctxCat = document.getElementById("chart-category");
+            if (ctxCat) {
+                if (catChartInstance) catChartInstance.destroy();
+                catChartInstance = new Chart(ctxCat, {
+                    type: 'bar',
+                    data: {
+                        labels: catLabels,
+                        datasets: [
+                            {
+                                label: 'Revenue (₹)',
+                                data: catRevenues,
+                                backgroundColor: 'rgba(0, 163, 120, 0.75)',
+                                borderColor: '#00A378',
+                                borderWidth: 1.5
+                            },
+                            {
+                                label: 'Estimated Profit (₹)',
+                                data: state.isProfitUnlocked ? catProfits : catLabels.map(() => 0),
+                                backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                                borderColor: '#3B82F6',
+                                borderWidth: 1.5,
+                                hidden: !state.isProfitUnlocked
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#ECEFF1', font: { size: 10 } } }
+                        },
+                        scales: {
+                            x: { grid: { color: '#232E35' }, ticks: { color: '#90A4AE', font: { size: 9 } } },
+                            y: { grid: { color: '#232E35' }, ticks: { color: '#90A4AE', font: { size: 9 } } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Status Donut Chart
+            const statusLabels = Object.keys(statuses);
+            const statusValues = Object.values(statuses);
+            const ctxStatus = document.getElementById("chart-status");
+            if (ctxStatus) {
+                if (statusChartInstance) statusChartInstance.destroy();
+                statusChartInstance = new Chart(ctxStatus, {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            data: statusValues,
+                            backgroundColor: ['#10B981', '#3B82F6', '#60A5FA', '#F59E0B', '#EF4444'],
+                            borderWidth: 2,
+                            borderColor: '#11171B'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { color: '#ECEFF1', font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. Firm wise summary mapping
+            const firms = {};
+            nonCancelled.forEach(g => {
+                if (!firms[g.firmName]) {
+                    firms[g.firmName] = { count: 0, revenue: 0, profit: 0, scoreTotal: 0 };
+                }
+                firms[g.firmName].count++;
+                firms[g.firmName].revenue += g.revenue;
+                firms[g.firmName].profit += g.profitAmount;
+                firms[g.firmName].scoreTotal += calculateHealthScore(g);
+            });
+
+            const firmTbody = document.getElementById("analytics-firm-table");
+            firmTbody.innerHTML = "";
+            Object.keys(firms).forEach(name => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-softCardBg/20 border-b border-outlineColor";
+                const f = firms[name];
+                const avgHealth = Math.round(f.scoreTotal / f.count);
+                const profText = state.isProfitUnlocked ? `₹${f.profit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}` : "🔒 LOCKED";
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-softGreyText">${name}</td>
+                    <td class="p-3 text-mutedText">${f.count}</td>
+                    <td class="p-3 font-semibold text-softGreyText">₹${f.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+                    <td class="p-3 text-mutedText">${profText}</td>
+                    <td class="p-3 font-bold text-activeGreen">${avgHealth}%</td>
+                `;
+                firmTbody.appendChild(tr);
+            });
+
+            // 4. Product wise summary mapping (Leaderboard)
+            const products = {};
+            nonCancelled.forEach(g => {
+                if (!products[g.productName]) {
+                    products[g.productName] = { qty: 0, revenue: 0, profit: 0, firstCat: g.category };
+                }
+                products[g.productName].qty += g.quantity;
+                products[g.productName].revenue += g.revenue;
+                products[g.productName].profit += g.profitAmount;
+            });
+
+            const prodTbody = document.getElementById("analytics-product-table");
+            prodTbody.innerHTML = "";
+            const sortedProds = Object.keys(products).sort((a,b) => products[b].revenue - products[a].revenue).slice(0, 8);
+
+            sortedProds.forEach(name => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-softCardBg/20 border-b border-outlineColor";
+                const p = products[name];
+                const margin = p.revenue > 0 ? (p.profit / p.revenue) * 100 : 0;
+
+                let performance = "Acceptable Performance";
+                let perfColor = "text-mutedText";
+                if (margin >= 20.0 && p.revenue >= 50000) {
+                    performance = "High Performer";
+                    perfColor = "text-activeGreen font-bold";
+                } else if (margin < 5.0) {
+                    performance = "Low Margin Warning";
+                    perfColor = "text-alertPink font-bold";
+                }
+
+                const profitMarginText = state.isProfitUnlocked ? `${margin.toFixed(1)}%` : "🔒 Hidden";
+
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-softGreyText truncate max-w-[150px]" title="${name}">${name}</td>
+                    <td class="p-3 text-mutedText">${p.qty}</td>
+                    <td class="p-3 text-softGreyText font-semibold">₹${p.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+                    <td class="p-3 text-mutedText font-medium">${profitMarginText}</td>
+                    <td class="p-3 text-[11px] ${perfColor}">${performance}</td>
+                `;
+                prodTbody.appendChild(tr);
+            });
+        }
+
+        // ---------------------------------------------------------
+        // RENDER: OVERWATCH ALERTS CONSOLE
+        // ---------------------------------------------------------
+        function renderAlertsTab() {
+            const container = document.getElementById("alerts-grid-container");
+            const emptyView = document.getElementById("alerts-empty-view");
+            container.innerHTML = "";
+
+            const alerts = getAlertItems();
+
+            if (alerts.length === 0) {
+                emptyView.classList.remove("hidden");
+            } else {
+                emptyView.classList.add("hidden");
+                alerts.forEach(item => {
+                    let cardBorder = "border-outlineColor";
+                    let iconBg = "bg-softCardBg text-mutedText";
+                    let buttonAction = "";
+
+                    if (item.priority === 'CRITICAL') {
+                        cardBorder = "border-alertPink/35 bg-alertPink/5";
+                        iconBg = "bg-alertPink/15 text-alertPink";
+                        buttonAction = `<button onclick="openOrderDetailModal('${item.contractId}')" class="w-full bg-alertPink text-canvasBg text-[10px] font-extrabold py-2 rounded-lg hover:bg-alertPink/90 uppercase tracking-wider transition-all">Emergency Intervention</button>`;
+                    } else if (item.priority === 'WARNING') {
+                        cardBorder = "border-warningOrange/35 bg-warningOrange/5";
+                        iconBg = "bg-warningOrange/15 text-warningOrange";
+                        buttonAction = `<button onclick="openOrderDetailModal('${item.contractId}')" class="w-full bg-warningOrange text-canvasBg text-[10px] font-extrabold py-2 rounded-lg hover:bg-warningOrange/90 uppercase tracking-wider transition-all">Verify Milestone Status</button>`;
+                    }
+
+                    const card = document.createElement("div");
+                    card.className = `p-5 rounded-xl border flex flex-col justify-between space-y-4 shadow-lg ${cardBorder}`;
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-mutedText uppercase tracking-wider">${item.type} ALERT</span>
+                                <h4 class="font-extrabold text-softGreyText text-base">${item.contractId}</h4>
+                            </div>
+                            <div class="w-7.5 h-7.5 rounded-full flex items-center justify-center font-bold text-sm ${iconBg}">!</div>
+                        </div>
+                        <p class="text-xs text-mutedText leading-relaxed">${item.message}</p>
+                        ${buttonAction}
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        // ---------------------------------------------------------
+        // RENDER: SYSTEM TASKS
+        // ---------------------------------------------------------
+        function renderTasksTab() {
+            const list = document.getElementById("tasks-list");
+            list.innerHTML = "";
+
+            if (state.tasks.length === 0) {
+                list.innerHTML = `<p class="text-xs text-mutedText py-8 text-center">No action item tasks registered. Use form above to create.</p>`;
+            } else {
+                // Sort by priority and status
+                const sorted = [...state.tasks].sort((a,b) => {
+                    if (a.status !== b.status) {
+                        return a.status === "PENDING" ? -1 : 1;
+                    }
+                    const priorityWeight = { "High": 3, "Medium": 2, "Low": 1 };
+                    return priorityWeight[b.priority] - priorityWeight[a.priority];
+                });
+
+                sorted.forEach(item => {
+                    const div = document.createElement("div");
+                    const isDone = item.status === 'DONE';
+                    let priorityPill = "bg-outlineColor text-mutedText";
+                    if (item.priority === 'High') priorityPill = "bg-alertPink/15 text-alertPink";
+                    else if (item.priority === 'Medium') priorityPill = "bg-warningOrange/15 text-warningOrange";
+                    else if (item.priority === 'Low') priorityPill = "bg-activeGreen/15 text-activeGreen";
+
+                    div.className = `p-4 rounded-xl border border-outlineColor flex items-center justify-between gap-4 transition-all ${isDone ? 'bg-softCardBg/20 opacity-65' : 'bg-secondaryBg'}`;
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-3 flex-1 min-w-0">
+                            <input type="checkbox" onchange="toggleTask(${item.id})" ${isDone ? 'checked' : ''} class="w-4.5 h-4.5 rounded border-outlineColor text-govTeal focus:ring-govTeal cursor-pointer bg-canvasBg">
+                            <div class="min-w-0">
+                                <p class="text-xs font-semibold text-softGreyText leading-snug break-words ${isDone ? 'line-through text-mutedText' : ''}">${item.name}</p>
+                                <span class="text-[10px] text-mutedText">Added: ${new Date(item.addedTime).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 shrink-0">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase ${priorityPill}">${item.priority}</span>
+                            <button onclick="deleteTask(${item.id})" class="text-mutedText hover:text-alertPink text-sm p-1.5 hover:bg-softCardBg rounded transition-all">🗑️</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                });
+            }
+        }
+
+        async function addTask() {
+            const input = document.getElementById("new-task-name");
+            const prioritySelect = document.getElementById("new-task-priority");
+            const name = input.value.trim();
+
+            if (name === "") return;
+
+            const newTask = {
+                id: Date.now(),
+                name: name,
+                addedTime: Date.now(),
+                status: "PENDING",
+                priority: prioritySelect.value
+            };
+
+            state.tasks.push(newTask);
+            saveToLocalStorage();
+            input.value = "";
+
+            logSyncEvent(`Local Action: Registered new checklist task '${name.substring(0, 15)}...'.`);
+
+            // Apps Script write-back integration
+            if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                syncTaskWithScript(newTask, "add_task");
+            }
+
+            renderUI();
+        }
+
+        function toggleTask(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (task) {
+                task.status = task.status === 'PENDING' ? 'DONE' : 'PENDING';
+                task.completionTime = task.status === 'DONE' ? Date.now() : null;
+                saveToLocalStorage();
+                logSyncEvent(`Local Action: Toggled task '${task.name.substring(0, 15)}...' to ${task.status}.`);
+
+                if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                    syncTaskWithScript(task, "update_task");
+                }
+
+                renderUI();
+            }
+        }
+
+        function deleteTask(id) {
+            const task = state.tasks.find(t => t.id === id);
+            if (task) {
+                state.tasks = state.tasks.filter(t => t.id !== id);
+                saveToLocalStorage();
+                logSyncEvent(`Local Action: Deleted task '${task.name.substring(0, 15)}...'.`);
+
+                if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                    syncTaskWithScript(task, "delete_task");
+                }
+
+                renderUI();
+            }
+        }
+
+        async function syncTaskWithScript(task, action) {
+            try {
+                logSyncEvent(`Action Queue: Queueing Task Sync - ${action}...`);
+                const response = await fetch(state.metadata.appsScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: action,
+                        taskName: task.name,
+                        addedTime: new Date(task.addedTime).toISOString(),
+                        status: task.status.toLowerCase(),
+                        completionTime: task.completionTime ? new Date(task.completionTime).toISOString() : ""
+                    }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const body = await response.text();
+                if (body.toLowerCase().includes("success")) {
+                    logSyncEvent(`Action Queue SUCCESS: Task '${task.name.substring(0, 10)}...' synchronized with Sheet.`);
+                } else {
+                    logSyncEvent(`Action Queue FAIL: Script rejected task writeback: ${body}`);
+                }
+            } catch (e) {
+                logSyncEvent(`Action Queue FAIL: Network exception writing task to Script: ${e.message}`);
+            }
+        }
+
+        // ---------------------------------------------------------
+        // RENDER: SYSTEM SETTINGS
+        // ---------------------------------------------------------
+        function renderSettingsTab() {
+            document.getElementById("settings-sheet-url").value = state.metadata.spreadsheetUrl;
+            document.getElementById("settings-script-url").value = state.metadata.appsScriptUrl;
+            document.getElementById("settings-duplicate-mode").value = state.metadata.duplicateHandlingMode;
+            document.getElementById("settings-date-mode").value = state.metadata.dateEvaluationMode;
+            document.getElementById("settings-admin-id").value = state.adminId || "admin";
+            document.getElementById("settings-admin-password").value = state.adminPassword || "gem7733";
+            document.getElementById("settings-pin").value = state.securityPin;
+        }
+
+        function saveSettings() {
+            const sheet = document.getElementById("settings-sheet-url").value.trim();
+            const script = document.getElementById("settings-script-url").value.trim();
+            const duplicate = document.getElementById("settings-duplicate-mode").value;
+            const dateMode = document.getElementById("settings-date-mode").value;
+            const adminIdInput = document.getElementById("settings-admin-id").value.trim();
+            const adminPassInput = document.getElementById("settings-admin-password").value.trim();
+            const pin = document.getElementById("settings-pin").value.trim();
+
+            if (sheet === "") {
+                alert("Google Spreadsheet link cannot be empty.");
+                return;
+            }
+
+            state.metadata.spreadsheetUrl = sheet;
+            state.metadata.appsScriptUrl = script;
+            state.metadata.duplicateHandlingMode = duplicate;
+            state.metadata.dateEvaluationMode = dateMode;
+            if (adminIdInput !== "") state.adminId = adminIdInput;
+            if (adminPassInput !== "") state.adminPassword = adminPassInput;
+            if (pin !== "") state.securityPin = pin;
+
+            saveToLocalStorage();
+            logSyncEvent("Configuration modified. Updated environment parameters saved to localStorage.");
+            alert("Configuration Saved!");
+            renderUI();
+        }
+
+        function resetToMockData() {
+            if (confirm("Reset local cache to match template mock data? Current un-synchronized local changes will be replaced.")) {
+                state.gems = JSON.parse(JSON.stringify(STATIC_MOCK_GEMS));
+                state.notes = [];
+                state.tasks = [];
+                state.metadata.lastSyncTime = 0;
+                saveToLocalStorage();
+                logSyncEvent("Reset cache state: Mock data loaded.");
+                renderUI();
+            }
+        }
+
+        // ---------------------------------------------------------
+        // ORDER DETAILS MODAL & COMMENT SYSTEM
+        // ---------------------------------------------------------
+        function openOrderDetailModal(id) {
+            const item = state.gems.find(g => g.id === id);
+            if (!item) return;
+
+            state.selectedGemId = id;
+
+            // Type
+            const modalType = document.getElementById("modal-order-type");
+            modalType.innerText = item.id.startsWith("GEMC-") ? "GeM Contract" : "Offline Order";
+
+            // Headings
+            document.getElementById("modal-contract-title").innerText = item.id;
+            document.getElementById("modal-product-name").innerText = item.productName;
+
+            // Specs
+            document.getElementById("modal-firm-name").innerText = item.firmName;
+            document.getElementById("modal-buyer-name").innerText = item.buyerName || "N/A";
+            document.getElementById("modal-quantity").innerText = item.quantity;
+            document.getElementById("modal-pincode-city").innerText = `${item.pincode || "N/A"} - ${item.locationCity || "N/A"}`;
+            document.getElementById("modal-order-date").innerText = item.orderDate;
+
+            // EDD & shipping details
+            const shipment = analyzeShipment(item);
+            document.getElementById("modal-expected-date").innerText = shipment.expectedDeliveryDate;
+            document.getElementById("modal-shipping-date").innerText = item.shippingDate;
+            document.getElementById("modal-tracking").innerText = item.trackingNumber || "No Tracking details configured";
+
+            // Financial lock checks
+            const modalRev = document.getElementById("modal-revenue");
+            const modalProf = document.getElementById("modal-profit");
+            const modalMarg = document.getElementById("modal-margin");
+
+            modalRev.innerText = `₹${item.revenue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+
+            if (state.isProfitUnlocked) {
+                modalProf.innerText = `₹${item.profitAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+                modalProf.className = item.profitAmount >= 0 ? "text-sm font-extrabold text-softGreyText mt-0.5" : "text-sm font-extrabold text-alertPink mt-0.5";
+                modalMarg.innerText = `${item.profitPercentage.toFixed(1)}%`;
+                modalMarg.className = item.profitPercentage >= 10.0 ? "text-sm font-extrabold text-govTeal mt-0.5" : "text-sm font-extrabold text-warningOrange mt-0.5";
+            } else {
+                modalProf.innerText = "🔒 LOCKED";
+                modalProf.className = "text-sm font-extrabold text-mutedText mt-0.5";
+                modalMarg.innerText = "🔒 Hidden";
+                modalMarg.className = "text-sm font-extrabold text-mutedText mt-0.5";
+            }
+
+            // Status Ratings
+            const deadline = evaluateDeadline(item);
+            document.getElementById("modal-crac-label").innerText = item.cracStatus.trim().toUpperCase() === 'TRUE' ? 'Accepted' : item.cracStatus.trim().toUpperCase() === 'FALSE' ? 'Disputed' : 'Pending Certificate';
+            document.getElementById("modal-pipeline-label").innerText = shipment.statusLabel;
+            document.getElementById("modal-deadline-label").innerText = deadline.label;
+
+            // Details Ring Health
+            const healthScore = calculateHealthScore(item);
+            const healthObj = getHealthLabel(healthScore);
+            const dLabel = document.getElementById("modal-deadline-label");
+            dLabel.innerHTML = `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${healthObj.colorClass}">${healthObj.label} (Health: ${healthScore}%)</span>`;
+
+            // Comments Feed Render
+            renderCommentsFeed(item.id);
+
+            // Open Modal
+            document.getElementById("order-detail-modal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("order-detail-modal").classList.add("hidden");
+            state.selectedGemId = null;
+        }
+
+        function renderCommentsFeed(gemId) {
+            const feed = document.getElementById("modal-comments-feed");
+            feed.innerHTML = "";
+
+            const comments = state.notes.filter(c => c.contractId === gemId);
+            document.getElementById("modal-notes-count").innerText = comments.length;
+
+            if (comments.length === 0) {
+                feed.innerHTML = `<p class="text-xs text-mutedText py-6 text-center">No comments or notes logged for this contract. Write one below to sync.</p>`;
+            } else {
+                // Sort by time
+                comments.sort((a,b) => b.createdAt - a.createdAt);
+
+                comments.forEach(c => {
+                    const div = document.createElement("div");
+                    div.className = "p-3 rounded-lg bg-softCardBg/60 border border-outlineColor flex flex-col justify-between gap-1 text-xs relative group";
+                    div.innerHTML = `
+                        <p class="text-softGreyText leading-relaxed">${c.content}</p>
+                        <div class="flex items-center justify-between text-[10px] text-mutedText mt-1.5 pt-1 border-t border-outlineColor/40">
+                            <span>Posted: ${new Date(c.createdAt).toLocaleString()}</span>
+                            <button onclick="deleteComment('${c.id}')" class="text-mutedText hover:text-alertPink hover:underline">Delete</button>
+                        </div>
+                    `;
+                    feed.appendChild(div);
+                });
+            }
+        }
+
+        async function submitComment() {
+            const input = document.getElementById("modal-comment-input");
+            const content = input.value.trim();
+            const gemId = state.selectedGemId;
+
+            if (content === "" || !gemId) return;
+
+            const newComment = {
+                id: `${gemId}-${Date.now()}`,
+                title: `Contract ${gemId} Ref`,
+                content: content,
+                targetRow: null,
+                contractId: gemId,
+                createdAt: Date.now()
+            };
+
+            state.notes.push(newComment);
+            saveToLocalStorage();
+            input.value = "";
+
+            logSyncEvent(`Local Action: Posted comment note on Contract ${gemId}.`);
+
+            // Google Apps Script comments write-back hook
+            if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                syncCommentWithScript(gemId, content, "add_comment");
+            }
+
+            renderCommentsFeed(gemId);
+        }
+
+        async function deleteComment(commentId) {
+            const comment = state.notes.find(c => c.id === commentId);
+            if (!comment) return;
+
+            state.notes = state.notes.filter(c => c.id !== commentId);
+            saveToLocalStorage();
+
+            logSyncEvent(`Local Action: Deleted comment note on Contract ${comment.contractId}.`);
+
+            // Google Apps Script comments write-back hook
+            if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                syncCommentWithScript(comment.contractId, comment.content, "delete_comment");
+            }
+
+            renderCommentsFeed(comment.contractId);
+        }
+
+        async function syncCommentWithScript(orderId, commentText, action) {
+            try {
+                logSyncEvent(`Action Queue: Queueing Comment Sync - ${action}...`);
+                const response = await fetch(state.metadata.appsScriptUrl, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: action,
+                        orderId: orderId,
+                        comment: commentText,
+                        timestamp: new Date().toISOString()
+                    }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const body = await response.text();
+                if (body.toLowerCase().includes("success")) {
+                    logSyncEvent(`Action Queue SUCCESS: Comment synced on Sheet database.`);
+                } else {
+                    logSyncEvent(`Action Queue FAIL: Script rejected comment writeback: ${body}`);
+                }
+            } catch (e) {
+                logSyncEvent(`Action Queue FAIL: Network exception writing comment to Script: ${e.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
