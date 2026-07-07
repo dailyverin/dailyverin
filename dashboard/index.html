@@ -2507,6 +2507,10 @@
                 saveToLocalStorage();
                 logSyncEvent(`Local Action: Deleted task '${task.name.substring(0, 15)}...'.`);
 
+                if (state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
+                    syncTaskWithScript(task, "delete_task");
+                }
+
                 renderUI();
             }
         }
