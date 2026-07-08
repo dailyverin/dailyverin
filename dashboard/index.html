@@ -1980,22 +1980,28 @@
             const totalProfit = nonCancelled.reduce((sum, g) => sum + g.profitAmount, 0);
             const activeCount = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.cracStatus.trim().toUpperCase() !== "TRUE").length;
 
-            document.getElementById("dash-active-count").innerText = activeCount;
-            document.getElementById("dash-total-count").innerText = state.gems.length;
+            const elDashActiveCount = document.getElementById("dash-active-count");
+            if (elDashActiveCount) elDashActiveCount.innerText = activeCount;
+
+            const elDashTotalCount = document.getElementById("dash-total-count");
+            if (elDashTotalCount) elDashTotalCount.innerText = state.gems.length;
 
             // KPI 1: Revenue
-            document.getElementById("kpi-revenue").innerText = `₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
+            const elKpiRevenue = document.getElementById("kpi-revenue");
+            if (elKpiRevenue) elKpiRevenue.innerText = `₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
 
             // KPI 2: Profit Lock mapping
             const kpiProfit = document.getElementById("kpi-profit");
             const kpiProfitSub = document.getElementById("kpi-profit-sub");
-            if (state.isProfitUnlocked) {
-                kpiProfit.innerText = `₹${totalProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
-                const margin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
-                kpiProfitSub.innerText = `Avg Margin: ${margin.toFixed(1)}%`;
-            } else {
-                kpiProfit.innerText = "🔒 LOCKED";
-                kpiProfitSub.innerText = "PIN protected statistics";
+            if (kpiProfit && kpiProfitSub) {
+                if (state.isProfitUnlocked) {
+                    kpiProfit.innerText = `₹${totalProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+                    const margin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+                    kpiProfitSub.innerText = `Avg Margin: ${margin.toFixed(1)}%`;
+                } else {
+                    kpiProfit.innerText = "🔒 LOCKED";
+                    kpiProfitSub.innerText = "PIN protected statistics";
+                }
             }
 
             // KPI 3: Outstanding Dispatch Count
@@ -2003,11 +2009,13 @@
                 const analysis = analyzeShipment(g);
                 return analysis.statusType === 'NOT_DISPATCHED' || analysis.statusType === 'DUE_ALERT';
             }).length;
-            document.getElementById("kpi-awaiting-dispatch").innerText = awaitingDispatch;
+            const elKpiAwaitingDispatch = document.getElementById("kpi-awaiting-dispatch");
+            if (elKpiAwaitingDispatch) elKpiAwaitingDispatch.innerText = awaitingDispatch;
 
             // KPI 4: Alert counter
             const alertCount = getAlertItems().length;
-            document.getElementById("kpi-critical").innerText = alertCount;
+            const elKpiCritical = document.getElementById("kpi-critical");
+            if (elKpiCritical) elKpiCritical.innerText = alertCount;
 
             // 1. Monthly Progress Metrics
             const refDate = getReferenceDate();
@@ -2024,9 +2032,14 @@
             const monthlyRevenue = monthlyGems.reduce((sum, g) => sum + g.revenue, 0);
             const monthlyCount = monthlyGems.length;
 
-            document.getElementById("sub-kpi-monthly-rev").innerText = `₹${monthlyRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
-            document.getElementById("sub-kpi-monthly-count").innerText = `(${monthlyCount} order${monthlyCount !== 1 ? 's' : ''})`;
-            document.getElementById("sub-kpi-monthly-label").innerText = monthlyLabel;
+            const elSubKpiMonthlyRev = document.getElementById("sub-kpi-monthly-rev");
+            if (elSubKpiMonthlyRev) elSubKpiMonthlyRev.innerText = `₹${monthlyRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+
+            const elSubKpiMonthlyCount = document.getElementById("sub-kpi-monthly-count");
+            if (elSubKpiMonthlyCount) elSubKpiMonthlyCount.innerText = `(${monthlyCount} order${monthlyCount !== 1 ? 's' : ''})`;
+
+            const elSubKpiMonthlyLabel = document.getElementById("sub-kpi-monthly-label");
+            if (elSubKpiMonthlyLabel) elSubKpiMonthlyLabel.innerText = monthlyLabel;
 
             // 2. CRAC Performance Metrics
             const cracApproved = state.gems.filter(g => g.cracStatus.trim().toUpperCase() === "TRUE").length;
@@ -2038,9 +2051,14 @@
                 return !isCancelled && !isCracDone && isShipped;
             }).length;
 
-            document.getElementById("sub-kpi-crac-approved").innerText = cracApproved;
-            document.getElementById("sub-kpi-crac-disputed").innerText = cracDisputed;
-            document.getElementById("sub-kpi-crac-pending").innerText = `${cracPending} order${cracPending !== 1 ? 's' : ''}`;
+            const elSubKpiCracApproved = document.getElementById("sub-kpi-crac-approved");
+            if (elSubKpiCracApproved) elSubKpiCracApproved.innerText = cracApproved;
+
+            const elSubKpiCracDisputed = document.getElementById("sub-kpi-crac-disputed");
+            if (elSubKpiCracDisputed) elSubKpiCracDisputed.innerText = cracDisputed;
+
+            const elSubKpiCracPending = document.getElementById("sub-kpi-crac-pending");
+            if (elSubKpiCracPending) elSubKpiCracPending.innerText = `${cracPending} order${cracPending !== 1 ? 's' : ''}`;
 
             // 3. Booking Comparison (Today vs Yesterday)
             const todayStr = refDate.toISOString().split('T')[0];
@@ -2063,19 +2081,24 @@
                 growthPct = 100;
             }
 
-            document.getElementById("sub-kpi-booking-today").innerText = `₹${todayRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${todayCount})`;
-            document.getElementById("sub-kpi-booking-yest").innerText = `₹${yestRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${yestCount})`;
+            const elSubKpiBookingToday = document.getElementById("sub-kpi-booking-today");
+            if (elSubKpiBookingToday) elSubKpiBookingToday.innerText = `₹${todayRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${todayCount})`;
+
+            const elSubKpiBookingYest = document.getElementById("sub-kpi-booking-yest");
+            if (elSubKpiBookingYest) elSubKpiBookingYest.innerText = `₹${yestRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${yestCount})`;
             
             const growthEl = document.getElementById("sub-kpi-booking-growth");
-            if (growthPct > 0) {
-                growthEl.innerText = `+${growthPct.toFixed(0)}%`;
-                growthEl.className = "font-bold text-activeGreen text-[11px]";
-            } else if (growthPct < 0) {
-                growthEl.innerText = `${growthPct.toFixed(0)}%`;
-                growthEl.className = "font-bold text-alertPink text-[11px]";
-            } else {
-                growthEl.innerText = "0%";
-                growthEl.className = "font-bold text-mutedText text-[11px]";
+            if (growthEl) {
+                if (growthPct > 0) {
+                    growthEl.innerText = `+${growthPct.toFixed(0)}%`;
+                    growthEl.className = "font-bold text-activeGreen text-[11px]";
+                } else if (growthPct < 0) {
+                    growthEl.innerText = `${growthPct.toFixed(0)}%`;
+                    growthEl.className = "font-bold text-alertPink text-[11px]";
+                } else {
+                    growthEl.innerText = "0%";
+                    growthEl.className = "font-bold text-mutedText text-[11px]";
+                }
             }
 
             // 4. Delivery SLA Urgency Counter & Expected SLA Table
@@ -2106,59 +2129,66 @@
             const criticalSla = deliverySlaList.filter(item => item.daysLeft <= 1).length;
             const approachingSla = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).length;
 
-            document.getElementById("sub-kpi-sla-critical").innerText = criticalSla;
-            document.getElementById("sub-kpi-sla-approaching").innerText = approachingSla;
-            document.getElementById("sub-kpi-sla-tracked").innerText = `${deliverySlaList.length} item${deliverySlaList.length !== 1 ? 's' : ''}`;
+            const elSubKpiSlaCritical = document.getElementById("sub-kpi-sla-critical");
+            if (elSubKpiSlaCritical) elSubKpiSlaCritical.innerText = criticalSla;
+
+            const elSubKpiSlaApproaching = document.getElementById("sub-kpi-sla-approaching");
+            if (elSubKpiSlaApproaching) elSubKpiSlaApproaching.innerText = approachingSla;
+
+            const elSubKpiSlaTracked = document.getElementById("sub-kpi-sla-tracked");
+            if (elSubKpiSlaTracked) elSubKpiSlaTracked.innerText = `${deliverySlaList.length} item${deliverySlaList.length !== 1 ? 's' : ''}`;
 
             // Populate Expected Delivery Deadlines Table
             const slaTableBody = document.getElementById("dash-sla-table-body");
-            slaTableBody.innerHTML = "";
-            if (deliverySlaList.length === 0) {
-                slaTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="py-4 text-center text-mutedText">All delivery schedules are on track.</td>
-                    </tr>
-                `;
-            } else {
-                // Sort by daysLeft ascending (most urgent first)
-                const sortedSla = deliverySlaList.sort((a, b) => a.daysLeft - b.daysLeft).slice(0, 5);
-                sortedSla.forEach(item => {
-                    const orderDateStr = parseRobustDate(item.order.orderDate)?.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) || "N/A";
-                    let countdownText = "";
-                    let countdownStyle = "";
-                    if (item.daysLeft < 0) {
-                        countdownText = `Overdue by ${Math.abs(item.daysLeft)}d`;
-                        countdownStyle = "bg-alertPink/15 text-alertPink border border-alertPink/20";
-                    } else if (item.daysLeft === 0) {
-                        countdownText = "Due Today";
-                        countdownStyle = "bg-alertPink/15 text-alertPink font-bold animate-pulse border border-alertPink/30";
-                    } else if (item.daysLeft === 1) {
-                        countdownText = "1d left";
-                        countdownStyle = "bg-warningOrange/15 text-warningOrange font-bold border border-warningOrange/20";
-                    } else if (item.daysLeft <= 5) {
-                        countdownText = `${item.daysLeft}d left`;
-                        countdownStyle = "bg-warningOrange/10 text-warningOrange border border-warningOrange/10";
-                    } else {
-                        countdownText = `${item.daysLeft}d left`;
-                        countdownStyle = "bg-activeGreen/10 text-activeGreen border border-activeGreen/10";
-                    }
-
-                    const tr = document.createElement("tr");
-                    tr.className = "hover:bg-softCardBg/20 transition-all text-[11px] text-softGreyText";
-                    tr.innerHTML = `
-                        <td class="py-2.5 font-bold text-govTeal">${item.order.contractNumber}</td>
-                        <td class="py-2.5">
-                            <p class="font-semibold text-softGreyText truncate max-w-xs">${item.order.productName}</p>
-                            <p class="text-[10px] text-mutedText truncate max-w-xs">${item.order.firmName}</p>
-                        </td>
-                        <td class="py-2.5 text-mutedText">${orderDateStr}</td>
-                        <td class="py-2.5 text-mutedText font-medium">${item.expectedDateStr}</td>
-                        <td class="py-2.5 text-right">
-                            <span class="px-2.5 py-0.5 rounded text-[9px] font-bold uppercase inline-block ${countdownStyle}">${countdownText}</span>
-                        </td>
+            if (slaTableBody) {
+                slaTableBody.innerHTML = "";
+                if (deliverySlaList.length === 0) {
+                    slaTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="py-4 text-center text-mutedText">All delivery schedules are on track.</td>
+                        </tr>
                     `;
-                    slaTableBody.appendChild(tr);
-                });
+                } else {
+                    // Sort by daysLeft ascending (most urgent first)
+                    const sortedSla = deliverySlaList.sort((a, b) => a.daysLeft - b.daysLeft).slice(0, 5);
+                    sortedSla.forEach(item => {
+                        const orderDateStr = parseRobustDate(item.order.orderDate)?.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) || "N/A";
+                        let countdownText = "";
+                        let countdownStyle = "";
+                        if (item.daysLeft < 0) {
+                            countdownText = `Overdue by ${Math.abs(item.daysLeft)}d`;
+                            countdownStyle = "bg-alertPink/15 text-alertPink border border-alertPink/20";
+                        } else if (item.daysLeft === 0) {
+                            countdownText = "Due Today";
+                            countdownStyle = "bg-alertPink/15 text-alertPink font-bold animate-pulse border border-alertPink/30";
+                        } else if (item.daysLeft === 1) {
+                            countdownText = "1d left";
+                            countdownStyle = "bg-warningOrange/15 text-warningOrange font-bold border border-warningOrange/20";
+                        } else if (item.daysLeft <= 5) {
+                            countdownText = `${item.daysLeft}d left`;
+                            countdownStyle = "bg-warningOrange/10 text-warningOrange border border-warningOrange/10";
+                        } else {
+                            countdownText = `${item.daysLeft}d left`;
+                            countdownStyle = "bg-activeGreen/10 text-activeGreen border border-activeGreen/10";
+                        }
+
+                        const tr = document.createElement("tr");
+                        tr.className = "hover:bg-softCardBg/20 transition-all text-[11px] text-softGreyText";
+                        tr.innerHTML = `
+                            <td class="py-2.5 font-bold text-govTeal">${item.order.contractNumber}</td>
+                            <td class="py-2.5">
+                                <p class="font-semibold text-softGreyText truncate max-w-xs">${item.order.productName}</p>
+                                <p class="text-[10px] text-mutedText truncate max-w-xs">${item.order.firmName}</p>
+                            </td>
+                            <td class="py-2.5 text-mutedText">${orderDateStr}</td>
+                            <td class="py-2.5 text-mutedText font-medium">${item.expectedDateStr}</td>
+                            <td class="py-2.5 text-right">
+                                <span class="px-2.5 py-0.5 rounded text-[9px] font-bold uppercase inline-block ${countdownStyle}">${countdownText}</span>
+                            </td>
+                        `;
+                        slaTableBody.appendChild(tr);
+                    });
+                }
             }
 
             // 5. Mission Control: Operational Flow Pipeline Tally
@@ -2167,10 +2197,14 @@
             let tallyAwaitingCracCount = 0;
             let tallyCracDoneCount = 0;
             let tallyDisputedCount = 0;
+            let tallyCancelledCount = 0;
 
             state.gems.forEach(g => {
                 const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                if (isCancelled) return;
+                if (isCancelled) {
+                    tallyCancelledCount++;
+                    return;
+                }
 
                 const analysis = analyzeShipment(g);
                 if (analysis.statusType === 'PARTIAL_CRAC') {
@@ -2186,11 +2220,82 @@
                 }
             });
 
-            document.getElementById("tally-received").innerText = tallyReceivedCount;
-            document.getElementById("tally-dispatched").innerText = tallyDispatchedCount;
-            document.getElementById("tally-awaiting-crac").innerText = tallyAwaitingCracCount;
-            document.getElementById("tally-crac-done").innerText = tallyCracDoneCount;
-            document.getElementById("tally-disputed").innerText = tallyDisputedCount;
+            // Populate the new pipeline elements if they exist
+            const elPendingShip = document.getElementById("mission-tally-pending-ship");
+            const elInTransit = document.getElementById("mission-tally-in-transit");
+            const elCompleted = document.getElementById("mission-tally-completed");
+            const elCracPending = document.getElementById("mission-tally-crac-pending");
+            const elCancelled = document.getElementById("mission-tally-cancelled");
+
+            if (elPendingShip) elPendingShip.innerText = tallyReceivedCount;
+            if (elInTransit) elInTransit.innerText = tallyDispatchedCount;
+            if (elCompleted) elCompleted.innerText = tallyCracDoneCount;
+            if (elCracPending) elCracPending.innerText = tallyAwaitingCracCount;
+            if (elCancelled) elCancelled.innerText = tallyCancelledCount;
+
+            // Maintain fallback for old layout IDs if they exist
+            const elTallyRec = document.getElementById("tally-received");
+            const elTallyDisp = document.getElementById("tally-dispatched");
+            const elTallyAw = document.getElementById("tally-awaiting-crac");
+            const elTallyDone = document.getElementById("tally-crac-done");
+            const elTallyDispLtd = document.getElementById("tally-disputed");
+
+            if (elTallyRec) elTallyRec.innerText = tallyReceivedCount;
+            if (elTallyDisp) elTallyDisp.innerText = tallyDispatchedCount;
+            if (elTallyAw) elTallyAw.innerText = tallyAwaitingCracCount;
+            if (elTallyDone) elTallyDone.innerText = tallyCracDoneCount;
+            if (elTallyDispLtd) elTallyDispLtd.innerText = tallyDisputedCount;
+
+            // 5b. Populate New Platform Top KPI Cards & Quick Metric Cards
+            const elAllFirmsRev = document.getElementById("top-kpi-all-firms-revenue");
+            const elAllFirmsOrd = document.getElementById("top-kpi-all-firms-orders");
+            const elCurrMonthLabel = document.getElementById("top-kpi-current-month-label");
+            const elCurrMonthRev = document.getElementById("top-kpi-current-month-revenue");
+            const elCurrMonthOrd = document.getElementById("top-kpi-current-month-orders");
+
+            if (elAllFirmsRev) {
+                elAllFirmsRev.innerText = `₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            }
+            if (elAllFirmsOrd) {
+                elAllFirmsOrd.innerText = `${nonCancelled.length} active order${nonCancelled.length !== 1 ? 's' : ''} tracked`;
+            }
+            if (elCurrMonthLabel) {
+                elCurrMonthLabel.innerText = `Current Month (${refDate.toLocaleString('default', { month: 'long' })})`;
+            }
+            if (elCurrMonthRev) {
+                elCurrMonthRev.innerText = `₹${monthlyRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            }
+            if (elCurrMonthOrd) {
+                elCurrMonthOrd.innerText = `${monthlyCount} order${monthlyCount !== 1 ? 's' : ''}`;
+            }
+
+            // Quick Metric Cards (Today, Yesterday, Approaching, Critical)
+            const elQuickTodayCount = document.getElementById("quick-kpi-today-count");
+            const elQuickTodayBadge = document.getElementById("quick-kpi-today-badge");
+            const elQuickYestCount = document.getElementById("quick-kpi-yesterday-count");
+            const elQuickYestBadge = document.getElementById("quick-kpi-yesterday-badge");
+            const elQuickApprCount = document.getElementById("quick-kpi-approaching-count");
+            const elQuickApprBadge = document.getElementById("quick-kpi-approaching-badge");
+            const elQuickCritCount = document.getElementById("quick-kpi-critical-count");
+            const elQuickCritBadge = document.getElementById("quick-kpi-critical-badge");
+
+            if (elQuickTodayCount) elQuickTodayCount.innerText = `${todayCount} Order${todayCount !== 1 ? 's' : ''}`;
+            if (elQuickTodayBadge) elQuickTodayBadge.innerText = `₹${todayRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            
+            if (elQuickYestCount) elQuickYestCount.innerText = `${yestCount} Order${yestCount !== 1 ? 's' : ''}`;
+            if (elQuickYestBadge) elQuickYestBadge.innerText = `₹${yestRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+
+            const criticalSlaList = deliverySlaList.filter(item => item.daysLeft <= 1);
+            const criticalSlaRev = criticalSlaList.reduce((sum, item) => sum + item.order.revenue, 0);
+            
+            const approachingSlaList = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5);
+            const approachingSlaRev = approachingSlaList.reduce((sum, item) => sum + item.order.revenue, 0);
+
+            if (elQuickApprCount) elQuickApprCount.innerText = `${approachingSlaList.length} Order${approachingSlaList.length !== 1 ? 's' : ''}`;
+            if (elQuickApprBadge) elQuickApprBadge.innerText = `₹${approachingSlaRev.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+
+            if (elQuickCritCount) elQuickCritCount.innerText = `${criticalSlaList.length} Order${criticalSlaList.length !== 1 ? 's' : ''}`;
+            if (elQuickCritBadge) elQuickCritBadge.innerText = `₹${criticalSlaRev.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
 
             // 6. Revenue Share by Category Progress Bars
             const categoryRevenueMap = {};
@@ -2205,64 +2310,155 @@
             });
 
             const categoryShareList = document.getElementById("dash-category-share-list");
-            categoryShareList.innerHTML = "";
-            const sortedCategories = Object.keys(categoryRevenueMap).map(cat => ({
-                name: cat,
-                rev: categoryRevenueMap[cat],
-                pct: totalActiveRevenue > 0 ? (categoryRevenueMap[cat] / totalActiveRevenue) * 100 : 0
-            })).sort((a, b) => b.rev - a.rev);
+            if (categoryShareList) {
+                categoryShareList.innerHTML = "";
+                const sortedCategories = Object.keys(categoryRevenueMap).map(cat => ({
+                    name: cat,
+                    rev: categoryRevenueMap[cat],
+                    pct: totalActiveRevenue > 0 ? (categoryRevenueMap[cat] / totalActiveRevenue) * 100 : 0
+                })).sort((a, b) => b.rev - a.rev);
 
-            if (sortedCategories.length === 0) {
-                categoryShareList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">No category data calculated.</p>`;
-            } else {
-                const accentColors = ["bg-govTeal", "bg-activeGreen", "bg-infoBlue", "bg-warningOrange", "bg-alertPink", "bg-purple-500", "bg-indigo-500"];
-                sortedCategories.forEach((item, index) => {
-                    const color = accentColors[index % accentColors.length];
-                    const div = document.createElement("div");
-                    div.className = "space-y-1";
-                    div.innerHTML = `
-                        <div class="flex items-center justify-between text-[11px]">
-                            <span class="font-bold text-softGreyText truncate max-w-[150px]">${item.name}</span>
-                            <div class="flex items-center space-x-1.5 shrink-0">
-                                <span class="font-black text-softGreyText">₹${item.rev.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                                <span class="text-mutedText text-[10px]">(${item.pct.toFixed(1)}%)</span>
+                if (sortedCategories.length === 0) {
+                    categoryShareList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">No category data calculated.</p>`;
+                } else {
+                    const accentColors = ["bg-govTeal", "bg-activeGreen", "bg-infoBlue", "bg-warningOrange", "bg-alertPink", "bg-purple-500", "bg-indigo-500"];
+                    sortedCategories.forEach((item, index) => {
+                        const color = accentColors[index % accentColors.length];
+                        const div = document.createElement("div");
+                        div.className = "space-y-1";
+                        div.innerHTML = `
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="font-bold text-softGreyText truncate max-w-[150px]">${item.name}</span>
+                                <div class="flex items-center space-x-1.5 shrink-0">
+                                    <span class="font-black text-softGreyText">₹${item.rev.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                                    <span class="text-mutedText text-[10px]">(${item.pct.toFixed(1)}%)</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="w-full bg-canvasBg h-1.5 rounded-full overflow-hidden border border-outlineColor/40">
-                            <div class="h-full rounded-full ${color}" style="width: ${item.pct}%"></div>
-                        </div>
-                    `;
-                    categoryShareList.appendChild(div);
-                });
+                            <div class="w-full bg-canvasBg h-1.5 rounded-full overflow-hidden border border-outlineColor/40">
+                                <div class="h-full rounded-full ${color}" style="width: ${item.pct}%"></div>
+                            </div>
+                        `;
+                        categoryShareList.appendChild(div);
+                    });
+                }
             }
 
             // Activity alerts listing (Recent 5)
             const alertsList = document.getElementById("dash-alerts-list");
-            alertsList.innerHTML = "";
-            const recentAlerts = getAlertItems().slice(0, 5);
+            if (alertsList) {
+                alertsList.innerHTML = "";
+                const recentAlerts = getAlertItems().slice(0, 5);
 
-            if (recentAlerts.length === 0) {
-                alertsList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>`;
-            } else {
-                recentAlerts.forEach(item => {
-                    let pillColor = "bg-alertPink/15 text-alertPink";
-                    if (item.priority === 'WARNING') pillColor = "bg-warningOrange/15 text-warningOrange";
-                    if (item.priority === 'INFO') pillColor = "bg-infoBlue/15 text-infoBlue";
+                if (recentAlerts.length === 0) {
+                    alertsList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>`;
+                } else {
+                    recentAlerts.forEach(item => {
+                        let pillColor = "bg-alertPink/15 text-alertPink";
+                        if (item.priority === 'WARNING') pillColor = "bg-warningOrange/15 text-warningOrange";
+                        if (item.priority === 'INFO') pillColor = "bg-infoBlue/15 text-infoBlue";
 
-                    const div = document.createElement("div");
-                    div.className = "p-3 rounded-lg bg-softCardBg/40 border border-outlineColor/60 flex items-start justify-between gap-3 text-xs";
-                    div.innerHTML = `
-                        <div class="space-y-0.5 flex-1">
-                            <span class="font-bold text-softGreyText">${item.contractId}</span>
-                            <p class="text-mutedText text-[11px]">${item.message}</p>
+                        const div = document.createElement("div");
+                        div.className = "p-3 rounded-lg bg-softCardBg/40 border border-outlineColor/60 flex items-start justify-between gap-3 text-xs";
+                        div.innerHTML = `
+                            <div class="space-y-0.5 flex-1">
+                                <span class="font-bold text-softGreyText">${item.contractId}</span>
+                                <p class="text-mutedText text-[11px]">${item.message}</p>
+                            </div>
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold shrink-0 uppercase ${pillColor}">${item.type}</span>
+                        `;
+                        alertsList.appendChild(div);
+                    });
+                }
+            }
+
+            // 6b. Populate HTML-based Weekly Trend Chart
+            const weeklyTrendChart = document.getElementById("weekly-trend-chart");
+            if (weeklyTrendChart) {
+                weeklyTrendChart.innerHTML = "";
+                const last7Days = [];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(refDate);
+                    d.setDate(refDate.getDate() - i);
+                    last7Days.push(d);
+                }
+
+                const dailyRevenues = last7Days.map(day => {
+                    const dateStr = day.toISOString().split('T')[0];
+                    const dailyGems = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === dateStr);
+                    const revenue = dailyGems.reduce((sum, g) => sum + g.revenue, 0);
+                    return {
+                        date: day,
+                        label: day.toLocaleDateString('default', { weekday: 'short' }),
+                        revenue: revenue
+                    };
+                });
+
+                const maxRevenue = Math.max(...dailyRevenues.map(r => r.revenue), 1);
+
+                dailyRevenues.forEach(item => {
+                    const pct = (item.revenue / maxRevenue) * 100;
+                    const barDiv = document.createElement("div");
+                    barDiv.className = "flex-1 flex flex-col items-center h-full justify-end group relative cursor-pointer";
+                    barDiv.innerHTML = `
+                        <div class="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none border border-outlineColor/30 shadow-lg">
+                            ₹${item.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
                         </div>
-                        <span class="px-2 py-0.5 rounded text-[9px] font-bold shrink-0 uppercase ${pillColor}">${item.type}</span>
+                        <div class="w-full bg-govTeal/10 group-hover:bg-govTeal/20 rounded-t-md transition-all duration-300 relative overflow-hidden" style="height: ${Math.max(8, pct)}%;">
+                            <div class="absolute bottom-0 left-0 right-0 bg-govTeal rounded-t-md" style="height: 100%"></div>
+                        </div>
+                        <span class="text-[9px] text-mutedText font-semibold mt-1.5 truncate max-w-full">${item.label}</span>
                     `;
-                    alertsList.appendChild(div);
+                    weeklyTrendChart.appendChild(barDiv);
                 });
             }
 
-            // Render trend line graph
+            // 6c. Populate HTML-based Monthly Trend Chart
+            const monthlyTrendChart = document.getElementById("monthly-trend-chart");
+            if (monthlyTrendChart) {
+                monthlyTrendChart.innerHTML = "";
+                const monthlyData = {};
+                
+                state.gems.forEach(g => {
+                    const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                    if (!isCancelled) {
+                        const d = parseRobustDate(g.orderDate);
+                        if (d) {
+                            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                            monthlyData[key] = (monthlyData[key] || 0) + g.revenue;
+                        }
+                    }
+                });
+
+                const sortedMonthKeys = Object.keys(monthlyData).sort().slice(-6);
+                if (sortedMonthKeys.length === 0) {
+                    monthlyTrendChart.innerHTML = `<p class="text-xs text-mutedText py-4 text-center w-full">No historical monthly data.</p>`;
+                } else {
+                    const maxMonthRevenue = Math.max(...sortedMonthKeys.map(k => monthlyData[k]), 1);
+
+                    sortedMonthKeys.forEach(key => {
+                        const [y, mm] = key.split("-");
+                        const d = new Date(parseInt(y), parseInt(mm) - 1, 1);
+                        const label = d.toLocaleString('default', { month: 'short' });
+                        const revenue = monthlyData[key];
+                        const pct = (revenue / maxMonthRevenue) * 100;
+
+                        const barDiv = document.createElement("div");
+                        barDiv.className = "flex-1 flex flex-col items-center h-full justify-end group relative cursor-pointer";
+                        barDiv.innerHTML = `
+                            <div class="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none border border-outlineColor/30 shadow-lg">
+                                ₹${revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </div>
+                            <div class="w-full bg-activeGreen/10 group-hover:bg-activeGreen/20 rounded-t-md transition-all duration-300 relative overflow-hidden" style="height: ${Math.max(8, pct)}%;">
+                                <div class="absolute bottom-0 left-0 right-0 bg-activeGreen rounded-t-md" style="height: 100%"></div>
+                            </div>
+                            <span class="text-[9px] text-mutedText font-semibold mt-1.5 truncate max-w-full">${label}</span>
+                        `;
+                        monthlyTrendChart.appendChild(barDiv);
+                    });
+                }
+            }
+
+            // Render trend line graph if element exists (retained for compatibility)
             renderDashboardTrendChart(nonCancelled);
             updateTerminalLogs();
         }
