@@ -498,29 +498,54 @@
                         </span>
                     </div>
 
-                    <!-- Category Filter -->
-                    <select id="filter-category" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
-                        <option value="ALL">All Categories</option>
-                    </select>
+                    <!-- Filter Options Row (Compact layout) -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Category Filter -->
+                        <select id="filter-category" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="ALL">All Categories</option>
+                        </select>
 
-                    <!-- Status Filter -->
-                    <select id="filter-status" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
-                        <option value="ALL">All Statuses</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Cancelled">Cancelled</option>
-                    </select>
+                        <!-- Status Filter -->
+                        <select id="filter-status" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="ALL">All Statuses</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
 
-                    <!-- Sort Options -->
-                    <select id="sort-orders" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
-                        <option value="NEWEST_FIRST">Order Date (Newest First)</option>
-                        <option value="REVENUE_HIGH_TO_LOW">Revenue (High to Low)</option>
-                        <option value="REVENUE_LOW_TO_HIGH">Revenue (Low to High)</option>
-                        <option value="PROFIT_HIGH_TO_LOW">Profit Amount (High to Low)</option>
-                        <option value="DAYS_LEFT_SHIPPING">Shipping Date (Closest First)</option>
-                    </select>
+                        <!-- Order Type Filter (GeM/Offline) -->
+                        <select id="filter-order-type" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="ALL">All Order Types</option>
+                            <option value="GEM">GeM Orders Only</option>
+                            <option value="OFFLINE">Offline Orders Only</option>
+                        </select>
+
+                        <!-- CRAC Filter -->
+                        <select id="filter-crac" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="ALL">All CRAC Statuses</option>
+                            <option value="TRUE">Full CRAC (Accepted)</option>
+                            <option value="FALSE">Partial CRAC (Disputed)</option>
+                            <option value="NA">Pending CRAC (Awaiting)</option>
+                        </select>
+
+                        <!-- Cancelled Filter -->
+                        <select id="filter-cancelled" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="ALL">Active & Cancelled</option>
+                            <option value="ACTIVE" selected>Active Contracts Only</option>
+                            <option value="CANCELLED">Cancelled Contracts Only</option>
+                        </select>
+
+                        <!-- Sort Options -->
+                        <select id="sort-orders" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                            <option value="NEWEST_FIRST">Order Date (Newest First)</option>
+                            <option value="REVENUE_HIGH_TO_LOW">Revenue (High to Low)</option>
+                            <option value="REVENUE_LOW_TO_HIGH">Revenue (Low to High)</option>
+                            <option value="PROFIT_HIGH_TO_LOW">Profit Amount (High to Low)</option>
+                            <option value="DAYS_LEFT_SHIPPING">Shipping Date (Closest First)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Orders Grid & Details -->
@@ -557,27 +582,212 @@
 
 
             <!-- ================= TAB: ANALYTICS ================= -->
-            <section id="tab-content-ANALYTICS" class="hidden space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <section id="tab-content-ANALYTICS" class="hidden space-y-4">
+                <!-- Row 1: Executive Metrics Cards & Delivery SLA Compliance Score -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Metric 1: Gross Revenue -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex items-center justify-between">
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-mutedText text-[11px] uppercase tracking-wider flex items-center space-x-1">
+                                <span class="w-2 h-2 rounded-full bg-govTeal inline-block"></span>
+                                <span>Gross Revenue</span>
+                            </h4>
+                            <p id="analytics-gross-revenue" class="text-xl font-black text-softGreyText">₹0</p>
+                            <p id="analytics-active-orders-count" class="text-[10px] text-mutedText">From 0 active orders</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-govTeal/10 text-govTeal shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Metric 2: Net Profit & Margin Yield -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex items-center justify-between">
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-mutedText text-[11px] uppercase tracking-wider flex items-center space-x-1">
+                                <span class="w-2 h-2 rounded-full bg-activeGreen inline-block"></span>
+                                <span>Trading Yield (Profit)</span>
+                            </h4>
+                            <p id="analytics-trading-yield" class="text-xl font-black text-softGreyText">₹ ••••••</p>
+                            <p id="analytics-trading-margin" class="text-[10px] text-mutedText">Margin: ••••%</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-activeGreen/10 text-activeGreen shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Metric 3: Delivery SLA Compliance Score -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex items-center justify-between md:col-span-2 lg:col-span-1">
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-mutedText text-[11px] uppercase tracking-wider flex items-center space-x-1">
+                                <span class="w-2 h-2 rounded-full bg-warningOrange inline-block"></span>
+                                <span>SLA Compliance Score</span>
+                            </h4>
+                            <p id="analytics-sla-score" class="text-xl font-black text-softGreyText">100%</p>
+                            <p id="analytics-sla-breakdown" class="text-[10px] text-mutedText">0 overdue, 0 approaching</p>
+                        </div>
+                        <div class="p-3 rounded-full bg-warningOrange/10 text-warningOrange shrink-0">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Charts (Category & Status) side-by-side -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <!-- Category Revenue Bar Chart -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
-                        <h4 class="font-bold text-softGreyText text-sm mb-4">Revenue & Profit Margins by Category</h4>
-                        <div class="h-72">
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-2">Revenue & Profit Margins by Category</h4>
+                        <div class="h-60">
                             <canvas id="chart-category"></canvas>
                         </div>
                     </div>
 
                     <!-- Status Donut Chart -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
-                        <h4 class="font-bold text-softGreyText text-sm mb-4">Order Pipeline Status Breakdown</h4>
-                        <div class="h-72">
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-2">Order Pipeline Status Breakdown</h4>
+                        <div class="h-60">
                             <canvas id="chart-status"></canvas>
                         </div>
                     </div>
+                </div>
 
+                <!-- Row 3: CRAC Compliance & Acquisition Channel Distribution -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- GeM Portal Compliance Audit -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-softGreyText text-sm uppercase tracking-wider">GeM Portal Compliance Audit</h4>
+                                <p class="text-[11px] text-mutedText">Consignee Receipt & Acceptance Certificate status</p>
+                            </div>
+                            <span id="analytics-crac-ok-percentage" class="text-[10px] font-bold text-govTeal bg-govTeal/10 px-2 py-0.5 rounded-full">0% CRAC OK</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <!-- Progress 1: Fully Accepted -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-mutedText text-[11px]">
+                                    <span>Fully Accepted CRAC (No disputes found)</span>
+                                    <span id="analytics-crac-fully-text" class="font-semibold text-softGreyText">0 (0%)</span>
+                                </div>
+                                <div class="w-full bg-outlineColor h-1.5 rounded-full overflow-hidden">
+                                    <div id="analytics-crac-fully-bar" class="bg-activeGreen h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- Progress 2: Partial CRAC -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-mutedText text-[11px]">
+                                    <span>Partial CRAC (Discrepancy registered)</span>
+                                    <span id="analytics-crac-partial-text" class="font-semibold text-softGreyText">0 (0%)</span>
+                                </div>
+                                <div class="w-full bg-outlineColor h-1.5 rounded-full overflow-hidden">
+                                    <div id="analytics-crac-partial-bar" class="bg-alertPink h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <!-- Progress 3: Pending CRAC -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-mutedText text-[11px]">
+                                    <span>Pending CRAC (Awaiting consignee audit)</span>
+                                    <span id="analytics-crac-pending-text" class="font-semibold text-softGreyText">0 (0%)</span>
+                                </div>
+                                <div class="w-full bg-outlineColor h-1.5 rounded-full overflow-hidden">
+                                    <div id="analytics-crac-pending-bar" class="bg-warningOrange h-full rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acquisition Channel Distribution & Workflow/Pipeline -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between space-y-3">
+                        <div class="space-y-2">
+                            <div>
+                                <h4 class="font-bold text-softGreyText text-sm uppercase tracking-wider">Acquisition Channel Distribution</h4>
+                                <p class="text-[11px] text-mutedText">GeM Government Marketplace vs Direct offline supplies</p>
+                            </div>
+                            <div class="w-full bg-outlineColor h-3 rounded-full overflow-hidden flex">
+                                <div id="analytics-channel-gem-bar" class="bg-govTeal h-full" style="width: 50%"></div>
+                                <div id="analytics-channel-offline-bar" class="bg-mutedText/40 h-full" style="width: 50%"></div>
+                            </div>
+                            <div class="flex justify-between text-[11px] text-softGreyText font-bold">
+                                <span id="analytics-channel-gem-text" class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-govTeal block"></span><span>GeM: 0 (0%)</span></span>
+                                <span id="analytics-channel-offline-text" class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-mutedText/40 block"></span><span>Offline: 0 (0%)</span></span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-outlineColor pt-3">
+                            <h4 class="font-bold text-softGreyText text-[11px] uppercase tracking-wider mb-2">Workflow & Pipeline Lifecycle</h4>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-canvasBg p-1.5 rounded-lg border border-outlineColor">
+                                    <p class="text-[9px] text-mutedText">In Progress</p>
+                                    <p id="analytics-pipeline-active" class="text-sm font-black text-warningOrange">0</p>
+                                </div>
+                                <div class="bg-canvasBg p-1.5 rounded-lg border border-outlineColor">
+                                    <p class="text-[9px] text-mutedText">Delivered OK</p>
+                                    <p id="analytics-pipeline-completed" class="text-sm font-black text-activeGreen">0</p>
+                                </div>
+                                <div class="bg-canvasBg p-1.5 rounded-lg border border-outlineColor">
+                                    <p class="text-[9px] text-mutedText">Cancelled</p>
+                                    <p id="analytics-pipeline-cancelled" class="text-sm font-black text-alertPink">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: GeM Liquidated Damages (LD) & High-Value Contract Risk -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <!-- GeM Liquidated Damages (LD) Penalty Risk Exposure -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between space-y-3">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <h4 class="font-bold text-alertPink text-xs uppercase tracking-wider">GeM Liquidated Damages (LD) Risk</h4>
+                                <p class="text-[11px] text-mutedText">Estimated penalties for delayed dispatches</p>
+                            </div>
+                            <span id="analytics-ld-status-pill" class="text-[10px] font-bold bg-govTeal/10 text-govTeal px-2 py-0.5 rounded-full uppercase">SECURE</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p id="analytics-ld-exposure-amount" class="text-xl font-black text-softGreyText">₹0</p>
+                                <p id="analytics-ld-count" class="text-[10px] text-mutedText">Across 0 overdue contract(s)</p>
+                            </div>
+                            <div id="analytics-ld-icon-bg" class="p-3 rounded-full bg-outlineColor text-mutedText">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-mutedText italic leading-snug">GeM standard penalty clause: 0.5% of delayed shipment value per week or part thereof, capped at a maximum of 10% of total contract value. Log valid tracking data to lock current SLA values and halt penalty accumulation.</p>
+                    </div>
+
+                    <!-- High-Value Contract Risk Card (Expandable) -->
+                    <div class="bg-secondaryBg rounded-xl border border-outlineColor overflow-hidden flex flex-col justify-between">
+                        <!-- Header Trigger -->
+                        <div onclick="toggleHighValueRisk()" class="p-4 bg-softCardBg/20 cursor-pointer hover:bg-softCardBg/30 flex items-start justify-between border-b border-outlineColor transition-all select-none">
+                            <div class="space-y-1">
+                                <h4 id="high-value-risk-title" class="font-bold text-govTeal text-xs uppercase tracking-wider">HIGH-VALUE CONTRACT RISK EXPOSURE</h4>
+                                <p class="text-[11px] text-mutedText">Contracts ≥ ₹1L with active deadline or CRAC disputes</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span id="high-value-risk-status-badge" class="text-[9px] font-bold text-govTeal bg-govTeal/10 px-2 py-0.5 rounded-full uppercase">SECURED OPERATIONS</span>
+                                <div id="high-value-risk-arrow" class="text-mutedText">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
+                            <div>
+                                <p id="high-value-risk-amount" class="text-xl font-black text-softGreyText">₹0</p>
+                                <p id="high-value-risk-subtitle" class="text-[11px] text-mutedText">0 high-value contract(s) under threat (Click header to expand/collapse)</p>
+                            </div>
+                            <!-- Expandable Section -->
+                            <div id="high-value-risk-list" class="hidden border-t border-outlineColor mt-3 pt-3 space-y-2 max-h-48 overflow-y-auto">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 5: Firm-wise Allocation Summary & CRAC Approval Rate by Firm -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <!-- Firm Performance -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
-                        <h4 class="font-bold text-softGreyText text-sm mb-4">Firm-wise Allocation Summary</h4>
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor">
+                        <h4 class="font-bold text-softGreyText text-sm mb-3">Firm-wise Allocation Summary</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs border-collapse">
                                 <thead>
@@ -596,25 +806,41 @@
                         </div>
                     </div>
 
-                    <!-- Product High Performers -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
-                        <h4 class="font-bold text-softGreyText text-sm mb-4">Product Performance Leaderboard</h4>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse">
-                                <thead>
-                                    <tr class="text-mutedText uppercase tracking-wider border-b border-outlineColor pb-2">
-                                        <th class="pb-2 font-medium">Product Name</th>
-                                        <th class="pb-2 font-medium">Qty Sold</th>
-                                        <th class="pb-2 font-medium">Revenue</th>
-                                        <th class="pb-2 font-medium">Estimated Margin</th>
-                                        <th class="pb-2 font-medium">Performance Level</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="analytics-product-table" class="divide-y divide-outlineColor">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
+                    <!-- CRAC Approval Rate by Firm -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h4 class="font-bold text-softGreyText text-sm uppercase tracking-wider">CRAC Approval Rate by Firm</h4>
+                                <p class="text-[11px] text-mutedText">Approval tracking by seller organization (Riskiest first)</p>
+                            </div>
+                            <div class="p-1.5 rounded-lg bg-softCardBg border border-outlineColor text-mutedText">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            </div>
                         </div>
+                        <div id="analytics-firm-crac-container" class="space-y-3">
+                            <!-- Dynamic rows -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 6: Product wise Leaderboard -->
+                <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor">
+                    <h4 class="font-bold text-softGreyText text-sm mb-3">Product Performance Leaderboard</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="text-mutedText uppercase tracking-wider border-b border-outlineColor pb-2">
+                                    <th class="pb-2 font-medium">Product Name</th>
+                                    <th class="pb-2 font-medium">Qty Sold</th>
+                                    <th class="pb-2 font-medium">Revenue</th>
+                                    <th class="pb-2 font-medium">Estimated Margin</th>
+                                    <th class="pb-2 font-medium">Performance Level</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-product-table" class="divide-y divide-outlineColor">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -885,15 +1111,30 @@
                 spreadsheetUrl: "https://docs.google.com/spreadsheets/d/11yynDL3Qc1qptkHqgaNr7MJmhJZa6LysWn3Po5uBFiI/",
                 appsScriptUrl: "",
                 duplicateHandlingMode: "REPLACE",
-                dateEvaluationMode: "FIXED",
+                dateEvaluationMode: "LIVE",
                 lastSyncTime: 0
             },
             currentTab: 'DASHBOARD',
             selectedGemId: null,
             isProfitUnlocked: false,
             securityPin: '7733',
-            syncLogs: []
+            syncLogs: [],
+            isHighValueRiskExpanded: false
         };
+
+        function toggleHighValueRisk() {
+            state.isHighValueRiskExpanded = !state.isHighValueRiskExpanded;
+            const listEl = document.getElementById("high-value-risk-list");
+            const arrowEl = document.getElementById("high-value-risk-arrow");
+            
+            if (state.isHighValueRiskExpanded) {
+                listEl.classList.remove("hidden");
+                arrowEl.innerHTML = `<svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
+            } else {
+                listEl.classList.add("hidden");
+                arrowEl.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
+            }
+        }
 
         // ---------------------------------------------------------
         // CORE BUSINESS ENGINE (ROBUST RULES REPLICATED FROM KOTLIN)
@@ -1135,16 +1376,14 @@
         };
 
         function startAutomaticBackgroundPolling() {
-            // Background polling every 12 seconds to match the Android App's live updates
+            // Background polling every 10 seconds as requested
             setInterval(async () => {
                 const isAuthenticated = sessionStorage.getItem("admin_authenticated") === "true";
-                if (isAuthenticated && state.metadata.appsScriptUrl && state.metadata.appsScriptUrl.startsWith("http")) {
-                    console.log("Background Polling: Pulling live comments and tasks...");
-                    await syncCommentsFromScript();
-                    await syncTasksFromScript();
-                    renderUI();
+                if (isAuthenticated) {
+                    console.log("Background Polling: Triggering silent database synchronization...");
+                    await triggerSync(true);
                 }
-            }, 12000);
+            }, 10000);
         }
 
         function verifyAdminLogin() {
@@ -1304,7 +1543,7 @@
             return rows;
         }
 
-        async function triggerSync() {
+        async function triggerSync(isSilent = false) {
             const badge = document.getElementById("sync-badge");
             const statusText = document.getElementById("sync-status-text");
             const icon = document.getElementById("sync-icon");
@@ -1454,7 +1693,9 @@
             } catch (err) {
                 logSyncEvent(`🚨 Synchronization Failed: ${err.message}`);
                 statusText.innerText = "Error";
-                alert(`Sync Error: ${err.message}`);
+                if (!isSilent) {
+                    alert(`Sync Error: ${err.message}`);
+                }
             } finally {
                 icon.classList.remove("animate-spin");
                 renderUI();
@@ -2106,6 +2347,32 @@
                 }
             }
 
+            // Order Type Filter (GeM / Offline)
+            const orderType = document.getElementById("filter-order-type")?.value || "ALL";
+            if (orderType !== "ALL") {
+                if (orderType === "GEM") {
+                    list = list.filter(g => g.id.startsWith("GEMC-"));
+                } else if (orderType === "OFFLINE") {
+                    list = list.filter(g => !g.id.startsWith("GEMC-"));
+                }
+            }
+
+            // CRAC Filter
+            const cracFilter = document.getElementById("filter-crac")?.value || "ALL";
+            if (cracFilter !== "ALL") {
+                list = list.filter(g => g.cracStatus.trim().toUpperCase() === cracFilter);
+            }
+
+            // Cancelled Filter
+            const cancelledFilter = document.getElementById("filter-cancelled")?.value || "ALL";
+            if (cancelledFilter !== "ALL") {
+                if (cancelledFilter === "ACTIVE") {
+                    list = list.filter(g => !g.status.toLowerCase().includes("cancelled") && g.revenue > 0);
+                } else if (cancelledFilter === "CANCELLED") {
+                    list = list.filter(g => g.status.toLowerCase().includes("cancelled") || g.revenue <= 0);
+                }
+            }
+
             // Sort mapping
             if (sortVal === "NEWEST_FIRST") {
                 list.sort((a,b) => (parseRobustDate(b.orderDate)?.getTime() || 0) - (parseRobustDate(a.orderDate)?.getTime() || 0));
@@ -2190,8 +2457,237 @@
 
         function renderAnalyticsTab() {
             const nonCancelled = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.revenue > 0);
+            const allGems = state.gems;
 
-            // Grouping calculations
+            // 1. Executive Metrics calculations
+            const totalRevenue = nonCancelled.reduce((sum, g) => sum + g.revenue, 0);
+            const totalProfit = nonCancelled.reduce((sum, g) => sum + g.profitAmount, 0);
+            const activeOrdersCount = nonCancelled.length;
+            const avgProfitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+            document.getElementById("analytics-gross-revenue").innerText = `₹${totalRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            document.getElementById("analytics-active-orders-count").innerText = `From ${activeOrdersCount} active orders`;
+            if (state.isProfitUnlocked) {
+                document.getElementById("analytics-trading-yield").innerText = `₹${totalProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+                document.getElementById("analytics-trading-margin").innerText = `Margin: ${avgProfitMargin.toFixed(2)}%`;
+                document.getElementById("analytics-trading-yield").className = "text-xl font-black text-activeGreen";
+                document.getElementById("analytics-trading-margin").className = "text-[10px] text-activeGreen font-semibold";
+            } else {
+                document.getElementById("analytics-trading-yield").innerText = `₹ ••••••`;
+                document.getElementById("analytics-trading-margin").innerText = `Margin: ••••%`;
+                document.getElementById("analytics-trading-yield").className = "text-xl font-black text-mutedText";
+                document.getElementById("analytics-trading-margin").className = "text-[10px] text-mutedText";
+            }
+
+            // 2. Delivery SLA Compliance Score
+            const compliantCount = nonCancelled.filter(g => {
+                const deadline = evaluateDeadline(g);
+                return deadline.status !== "OVERDUE";
+            }).length;
+            const slaScore = activeOrdersCount > 0 ? (compliantCount / activeOrdersCount) * 100 : 100;
+            const overdueCount = nonCancelled.filter(g => evaluateDeadline(g).status === "OVERDUE").length;
+            const approachingCount = nonCancelled.filter(g => evaluateDeadline(g).status === "APPROACHING").length;
+
+            document.getElementById("analytics-sla-score").innerText = `${Math.round(slaScore)}%`;
+            document.getElementById("analytics-sla-score").className = `text-xl font-black ${slaScore < 90 ? 'text-warningOrange' : 'text-govTeal'}`;
+            document.getElementById("analytics-sla-breakdown").innerText = `${overdueCount} overdue, ${approachingCount} approaching`;
+
+            // 3. GeM Portal Compliance Audit
+            const totalCracCount = nonCancelled.length;
+            const fullCracCount = nonCancelled.filter(g => g.cracStatus.trim().toUpperCase() === "TRUE").length;
+            const partialCracCount = nonCancelled.filter(g => g.cracStatus.trim().toUpperCase() === "FALSE").length;
+            const pendingCracCount = nonCancelled.filter(g => g.cracStatus.trim().toUpperCase() === "NA" || g.cracStatus.trim() === "").length;
+
+            const cracOkPct = totalCracCount > 0 ? (fullCracCount / totalCracCount) * 100 : 0;
+            document.getElementById("analytics-crac-ok-percentage").innerText = `${Math.round(cracOkPct)}% CRAC OK`;
+
+            const fullPct = totalCracCount > 0 ? (fullCracCount / totalCracCount) * 100 : 0;
+            const partialPct = totalCracCount > 0 ? (partialCracCount / totalCracCount) * 100 : 0;
+            const pendingPct = totalCracCount > 0 ? (pendingCracCount / totalCracCount) * 100 : 0;
+
+            document.getElementById("analytics-crac-fully-text").innerText = `${fullCracCount} (${Math.round(fullPct)}%)`;
+            document.getElementById("analytics-crac-fully-bar").style.width = `${fullPct}%`;
+
+            document.getElementById("analytics-crac-partial-text").innerText = `${partialCracCount} (${Math.round(partialPct)}%)`;
+            document.getElementById("analytics-crac-partial-bar").style.width = `${partialPct}%`;
+
+            document.getElementById("analytics-crac-pending-text").innerText = `${pendingCracCount} (${Math.round(pendingPct)}%)`;
+            document.getElementById("analytics-crac-pending-bar").style.width = `${pendingPct}%`;
+
+            // 4. Acquisition Channel Distribution
+            const gemCount = nonCancelled.filter(g => g.id.startsWith("GEMC-")).length;
+            const offlineCount = nonCancelled.filter(g => !g.id.startsWith("GEMC-")).length;
+            const totalContracts = gemCount + offlineCount || 1;
+            const gemRatio = gemCount / totalContracts;
+            const offlineRatio = offlineCount / totalContracts;
+
+            document.getElementById("analytics-channel-gem-bar").style.width = `${gemRatio * 100}%`;
+            document.getElementById("analytics-channel-offline-bar").style.width = `${offlineRatio * 100}%`;
+
+            document.getElementById("analytics-channel-gem-text").innerText = `GeM: ${gemCount} (${Math.round(gemRatio * 100)}%)`;
+            document.getElementById("analytics-channel-offline-text").innerText = `Offline: ${offlineCount} (${Math.round(offlineRatio * 100)}%)`;
+
+            // 5. Workflow & Pipeline Lifecycle
+            const pipelineActive = nonCancelled.filter(g => {
+                const shipment = analyzeShipment(g);
+                return shipment.statusType !== "CRAC";
+            }).length;
+            const pipelineCompleted = nonCancelled.filter(g => {
+                const shipment = analyzeShipment(g);
+                return shipment.statusType === "CRAC";
+            }).length;
+            const pipelineCancelled = allGems.filter(g => g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0).length;
+
+            document.getElementById("analytics-pipeline-active").innerText = pipelineActive;
+            document.getElementById("analytics-pipeline-completed").innerText = pipelineCompleted;
+            document.getElementById("analytics-pipeline-cancelled").innerText = pipelineCancelled;
+
+            // 6. GeM Liquidated Damages (LD) Penalty Risk Exposure
+            const overdueOrders = nonCancelled.filter(g => {
+                const deadline = evaluateDeadline(g);
+                return deadline.status === "OVERDUE";
+            });
+
+            let totalLDExposure = 0;
+            overdueOrders.forEach(g => {
+                const deadline = evaluateDeadline(g);
+                const overdueDays = -deadline.daysLeft;
+                const overdueWeeks = overdueDays / 7.0;
+                const ldRate = Math.min(0.10, overdueWeeks * 0.005); // 0.5% per week, max 10%
+                totalLDExposure += g.revenue * ldRate;
+            });
+
+            document.getElementById("analytics-ld-exposure-amount").innerText = `₹${totalLDExposure.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            document.getElementById("analytics-ld-count").innerText = `Across ${overdueOrders.length} overdue contract(s)`;
+            
+            const ldStatusPill = document.getElementById("analytics-ld-status-pill");
+            const ldIconBg = document.getElementById("analytics-ld-icon-bg");
+            const ldExposureAmountText = document.getElementById("analytics-ld-exposure-amount");
+            if (totalLDExposure > 0) {
+                ldStatusPill.innerText = "RISK ESCALATING";
+                ldStatusPill.className = "text-[10px] font-bold bg-alertPink/10 text-alertPink px-2 py-0.5 rounded-full uppercase";
+                ldIconBg.className = "p-3 rounded-full bg-alertPink/10 text-alertPink";
+                ldExposureAmountText.className = "text-xl font-black text-alertPink";
+            } else {
+                ldStatusPill.innerText = "SECURE";
+                ldStatusPill.className = "text-[10px] font-bold bg-govTeal/10 text-govTeal px-2 py-0.5 rounded-full uppercase";
+                ldIconBg.className = "p-3 rounded-full bg-outlineColor text-mutedText";
+                ldExposureAmountText.className = "text-xl font-black text-softGreyText";
+            }
+
+            // 7. High-Value Contract Risk Exposure (Expandable)
+            const highValueThreshold = 100000; // ₹1 Lakh
+            const highValueAtRiskContracts = allGems.filter(order => {
+                const isCancelled = order.status.toLowerCase().includes("cancelled") || order.revenue <= 0.0;
+                if (isCancelled) return false;
+                const isDeliveredAndAccepted = order.cracStatus.trim().toUpperCase() === "TRUE";
+                if (isDeliveredAndAccepted) return false;
+
+                const isHighValue = order.revenue >= highValueThreshold;
+                const deadline = evaluateDeadline(order);
+                const isAtRisk = deadline.status === "OVERDUE" || 
+                                 deadline.status === "APPROACHING" || 
+                                 order.cracStatus.trim().toUpperCase() === "FALSE";
+                return isHighValue && isAtRisk;
+            }).sort((a,b) => b.revenue - a.revenue);
+
+            const totalHighValueRiskAmount = highValueAtRiskContracts.reduce((sum, g) => sum + g.revenue, 0);
+
+            document.getElementById("high-value-risk-amount").innerText = `₹${totalHighValueRiskAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+            document.getElementById("high-value-risk-subtitle").innerText = `${highValueAtRiskContracts.length} high-value contract(s) under threat (Click header to expand/collapse)`;
+
+            const riskTitle = document.getElementById("high-value-risk-title");
+            const riskBadge = document.getElementById("high-value-risk-status-badge");
+            if (highValueAtRiskContracts.length > 0) {
+                riskTitle.className = "font-bold text-alertPink text-xs uppercase tracking-wider";
+                riskBadge.innerText = "CRITICAL VENTURE";
+                riskBadge.className = "text-[9px] font-bold text-alertPink bg-alertPink/10 px-2 py-0.5 rounded-full uppercase";
+            } else {
+                riskTitle.className = "font-bold text-govTeal text-xs uppercase tracking-wider";
+                riskBadge.innerText = "SECURED OPERATIONS";
+                riskBadge.className = "text-[9px] font-bold text-govTeal bg-govTeal/10 px-2 py-0.5 rounded-full uppercase";
+            }
+
+            const riskList = document.getElementById("high-value-risk-list");
+            riskList.innerHTML = "";
+            if (highValueAtRiskContracts.length === 0) {
+                riskList.innerHTML = `<p class="text-xs text-mutedText py-4 text-center">0 active high-value risks detected in current cache database.</p>`;
+            } else {
+                highValueAtRiskContracts.forEach(order => {
+                    const deadline = evaluateDeadline(order);
+                    const div = document.createElement("div");
+                    div.className = "flex items-center justify-between p-2.5 rounded-lg border border-outlineColor bg-canvasBg hover:bg-softCardBg/20 cursor-pointer transition-all";
+                    div.onclick = (e) => {
+                        e.stopPropagation();
+                        openOrderDetailModal(order.id);
+                    };
+
+                    const descColor = (order.cracStatus.trim().toUpperCase() === "FALSE" || deadline.status === "OVERDUE") ? "text-alertPink font-semibold" : "text-warningOrange font-semibold";
+                    const descText = (order.cracStatus.trim().toUpperCase() === "FALSE") ? "CRAC Dispute" : deadline.label;
+
+                    div.innerHTML = `
+                        <div class="min-w-0 flex-1 pr-3">
+                            <p class="text-xs font-bold text-softGreyText">${order.id}</p>
+                            <p class="text-[10px] text-mutedText truncate">${order.firmName} • ${order.productName}</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-xs font-bold text-softGreyText">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+                            <p class="text-[9px] ${descColor}">${descText}</p>
+                        </div>
+                    `;
+                    riskList.appendChild(div);
+                });
+            }
+
+            // 8. CRAC Approval Rate by Firm (Riskiest first)
+            const firmCracContainer = document.getElementById("analytics-firm-crac-container");
+            firmCracContainer.innerHTML = "";
+
+            const firmGroups = {};
+            nonCancelled.forEach(g => {
+                if (!firmGroups[g.firmName]) {
+                    firmGroups[g.firmName] = { total: 0, approved: 0 };
+                }
+                firmGroups[g.firmName].total++;
+                if (g.cracStatus.trim().toUpperCase() === "TRUE") {
+                    firmGroups[g.firmName].approved++;
+                }
+            });
+
+            const firmCracMetrics = Object.keys(firmGroups).map(firmName => {
+                const total = firmGroups[firmName].total;
+                const approved = firmGroups[firmName].approved;
+                const rate = total > 0 ? (approved / total) * 100 : 100;
+                return { name: firmName, rate };
+            }).sort((a, b) => a.rate - b.rate); // Riskiest (lowest rate) first
+
+            firmCracMetrics.slice(0, 4).forEach(item => {
+                const div = document.createElement("div");
+                div.className = "space-y-1";
+
+                let rateColor = "text-activeGreen";
+                let barColor = "bg-activeGreen";
+                if (item.rate < 70) {
+                    rateColor = "text-alertPink";
+                    barColor = "bg-alertPink";
+                } else if (item.rate < 90) {
+                    rateColor = "text-warningOrange";
+                    barColor = "bg-warningOrange";
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-softGreyText truncate max-w-[180px]">${item.name}</span>
+                        <span class="${rateColor} font-bold">${item.rate.toFixed(1)}% Approved</span>
+                    </div>
+                    <div class="w-full bg-outlineColor h-1.5 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full ${barColor}" style="width: ${item.rate}%"></div>
+                    </div>
+                `;
+                firmCracContainer.appendChild(div);
+            });
+
+            // Grouping calculations for original charts
             const categories = {};
             const statuses = { "Completed (CRAC)": 0, "Awaiting CRAC": 0, "Shipped": 0, "Not Dispatched": 0, "Due Alert": 0 };
 
