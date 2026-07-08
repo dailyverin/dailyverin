@@ -149,55 +149,85 @@
     <!-- Main Container -->
     <div class="flex-1 flex flex-col md:flex-row">
         <!-- Sidebar Navigation -->
-        <aside class="w-full md:w-64 bg-secondaryBg border-r border-outlineColor flex flex-col shrink-0">
-            <div class="p-4">
-                <span class="text-[10px] font-semibold text-mutedText uppercase tracking-wider px-3">Navigation</span>
-                <nav class="mt-2 space-y-1">
-                    <button onclick="switchTab('DASHBOARD')" id="nav-DASHBOARD" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-govTeal bg-govTeal/10">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"/></svg>
-                        <span>Dashboard Home</span>
-                    </button>
-                    <button onclick="switchTab('ORDERS')" id="nav-ORDERS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-                        <span>Contracts & Orders</span>
-                    </button>
-                    <button onclick="switchTab('ANALYTICS')" id="nav-ANALYTICS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
-                        <span>Analytics Center</span>
-                    </button>
-                    <button onclick="switchTab('ALERTS')" id="nav-ALERTS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
-                        <div class="relative">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            <span id="alerts-count-badge" class="hidden absolute -top-1.5 -right-1.5 w-4 h-4 bg-alertPink text-canvasBg text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+        <aside class="w-full md:w-64 bg-secondaryBg border-r border-outlineColor flex flex-col shrink-0 md:sticky md:top-16 md:h-[calc(100vh-4rem)] z-30">
+            <div class="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-bold text-mutedText uppercase tracking-wider px-3">Main Menu</span>
+                    <nav class="mt-3 space-y-1.5">
+                        <!-- Dashboard Link -->
+                        <button onclick="switchTab('DASHBOARD')" id="nav-DASHBOARD" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-bold transition-all text-white bg-govTeal/10 border border-govTeal/25">
+                            <div id="nav-DASHBOARD-pill" class="p-2 rounded-full bg-govTeal text-canvasBg shadow-md shadow-govTeal/25 transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z"/></svg>
+                            </div>
+                            <span>Dashboard</span>
+                        </button>
+
+                        <!-- Orders Link -->
+                        <button onclick="switchTab('ORDERS')" id="nav-ORDERS" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent">
+                            <div id="nav-ORDERS-pill" class="p-2 rounded-full bg-softCardBg text-mutedText transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                            </div>
+                            <span>Orders</span>
+                        </button>
+
+                        <!-- Analytics Link -->
+                        <button onclick="switchTab('ANALYTICS')" id="nav-ANALYTICS" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent">
+                            <div id="nav-ANALYTICS-pill" class="p-2 rounded-full bg-softCardBg text-mutedText transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
+                            </div>
+                            <span>Analytics</span>
+                        </button>
+
+                        <!-- Alerts Link -->
+                        <button onclick="switchTab('ALERTS')" id="nav-ALERTS" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent">
+                            <div class="relative">
+                                <div id="nav-ALERTS-pill" class="p-2 rounded-full bg-softCardBg text-mutedText transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                </div>
+                                <span id="alerts-count-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-alertPink text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                            </div>
+                            <span>Alerts</span>
+                        </button>
+
+                        <!-- Tasks Link -->
+                        <button onclick="switchTab('TASKS')" id="nav-TASKS" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent">
+                            <div class="relative">
+                                <div id="nav-TASKS-pill" class="p-2 rounded-full bg-softCardBg text-mutedText transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </div>
+                                <span id="tasks-count-badge" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-warningOrange text-canvasBg text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                            </div>
+                            <span>Tasks</span>
+                        </button>
+
+                        <!-- Settings Link -->
+                        <button onclick="switchTab('SETTINGS')" id="nav-SETTINGS" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent">
+                            <div id="nav-SETTINGS-pill" class="p-2 rounded-full bg-softCardBg text-mutedText transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                            <span>Settings</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Secure Portal Logout -->
+                <div class="mt-auto space-y-4">
+                    <button onclick="logoutAdmin()" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-bold transition-all text-red-400 hover:text-red-300 bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 hover:border-red-500/25">
+                        <div class="p-2 rounded-full bg-red-500/5 text-red-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                         </div>
-                        <span>Overwatch Alerts</span>
-                    </button>
-                    <button onclick="switchTab('TASKS')" id="nav-TASKS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
-                        <div class="relative">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span id="tasks-count-badge" class="hidden absolute -top-1.5 -right-1.5 w-4 h-4 bg-warningOrange text-canvasBg text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
-                        </div>
-                        <span>Checklist Tasks</span>
-                    </button>
-                    <button onclick="switchTab('SETTINGS')" id="nav-SETTINGS" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <span>System Settings</span>
-                    </button>
-                    <!-- Secure Portal Logout -->
-                    <button onclick="logoutAdmin()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all text-alertPink/70 hover:text-alertPink hover:bg-alertPink/5 mt-4 border border-alertPink/10 hover:border-alertPink/30">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                         <span>Exit Dashboard</span>
                     </button>
-                </nav>
-            </div>
 
-            <!-- Workspace Info Box -->
-            <div class="mt-auto p-4 border-t border-outlineColor bg-canvasBg/30">
-                <div class="flex items-center space-x-2 text-xs text-mutedText">
-                    <span class="w-2 h-2 rounded-full bg-govTeal"></span>
-                    <span>Domain: www.dailyver.in</span>
+                    <!-- Workspace Info Box -->
+                    <div class="p-3 bg-canvasBg/30 rounded-xl border border-outlineColor/60 text-left">
+                        <div class="flex items-center space-x-2 text-[10px] text-mutedText font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-govTeal animate-pulse"></span>
+                            <span>Domain: www.dailyver.in</span>
+                        </div>
+                        <p class="text-[9px] text-mutedText mt-1">Live background polling active.</p>
+                    </div>
                 </div>
-                <p class="text-[10px] text-mutedText mt-1.5">GitHub Pages Deployment path: <code class="bg-softCardBg px-1 rounded">/dashboard</code></p>
             </div>
         </aside>
 
@@ -224,216 +254,230 @@
                     </div>
                 </div>
 
-                <!-- KPI Cards Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Revenue Card -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                <!-- Top Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Card 1: All Firms (Prominent Green Background) -->
+                    <div class="bg-gradient-to-br from-govTeal to-emerald-600 p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group min-h-[140px] text-white">
+                        <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 w-32 h-32 rounded-full bg-white/5 pointer-events-none transition-all duration-500 group-hover:scale-110"></div>
                         <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Total Revenue</span>
-                                <svg class="w-4 h-4 text-govTeal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <h3 id="kpi-revenue" class="text-2xl font-extrabold text-softGreyText mt-1">₹0.00</h3>
+                            <span class="text-xs font-bold text-emerald-100 uppercase tracking-widest block">All Firms Overview</span>
+                            <h3 id="top-kpi-all-firms-revenue" class="text-3xl font-black text-white mt-1.5">₹0</h3>
                         </div>
-                        <div class="text-xs text-activeGreen font-semibold flex items-center space-x-1 mt-2">
-                            <span>Non-Cancelled Contracts</span>
+                        <div class="flex items-center justify-between border-t border-white/10 pt-3 mt-4 text-xs">
+                            <span id="top-kpi-all-firms-orders" class="font-bold text-emerald-100">0 orders tracked</span>
+                            <span class="px-2 py-0.5 rounded-full bg-white/20 text-white font-extrabold text-[9px] uppercase tracking-wide">Live Consolidated</span>
                         </div>
                     </div>
-                    <!-- Profit Card -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+
+                    <!-- Card 2: Current Month (Dark bg with Green accents) -->
+                    <div class="bg-secondaryBg border border-outlineColor p-6 rounded-2xl shadow-lg flex flex-col justify-between relative overflow-hidden group min-h-[140px] text-white">
+                        <div class="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-govTeal/5 pointer-events-none transition-all duration-500 group-hover:scale-110"></div>
                         <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Estimated Profit</span>
-                                <svg class="w-4 h-4 text-activeGreen animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-activeGreen animate-pulse"></span>
+                                <span id="top-kpi-current-month-label" class="text-xs font-bold text-mutedText uppercase tracking-widest block">Current Month</span>
                             </div>
-                            <h3 id="kpi-profit" class="text-2xl font-extrabold text-softGreyText mt-1">🔒 LOCKED</h3>
+                            <h3 id="top-kpi-current-month-revenue" class="text-2xl font-black text-white mt-2">₹0</h3>
                         </div>
-                        <div class="text-xs text-mutedText flex items-center space-x-1 mt-2">
-                            <span id="kpi-profit-sub">PIN protected statistics</span>
-                        </div>
-                    </div>
-                    <!-- Outstanding Deliveries -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Awaiting Dispatch</span>
-                                <svg class="w-4 h-4 text-warningOrange" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <h3 id="kpi-awaiting-dispatch" class="text-2xl font-extrabold text-warningOrange mt-1">0</h3>
-                        </div>
-                        <div class="text-xs text-mutedText flex items-center space-x-1 mt-2">
-                            <span>Requires courier booking</span>
-                        </div>
-                    </div>
-                    <!-- Urgent Alerts -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
-                        <div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-mutedText uppercase tracking-wider">Critical Alerts</span>
-                                <svg class="w-4 h-4 text-alertPink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                            </div>
-                            <h3 id="kpi-critical" class="text-2xl font-extrabold text-alertPink mt-1">0</h3>
-                        </div>
-                        <div class="text-xs text-alertPink font-semibold flex items-center space-x-1 mt-2">
-                            <span class="animate-pulse">●</span>
-                            <span>Overdue / Partial CRAC</span>
+                        <div class="flex items-center justify-between border-t border-outlineColor/60 pt-3 mt-4 text-xs">
+                            <span id="top-kpi-current-month-orders" class="font-bold text-activeGreen">0 orders</span>
+                            <span class="text-mutedText font-medium text-[10px]">Realtime date evaluated</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Secondary Operational KPIs (New - matching Android App richness) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Monthly Booking Progress -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
-                        <div>
-                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">Monthly Progress</span>
-                            <div class="flex items-baseline space-x-1.5 mt-1">
-                                <h4 id="sub-kpi-monthly-rev" class="text-lg font-extrabold text-softGreyText">₹0.00</h4>
-                                <span id="sub-kpi-monthly-count" class="text-xs text-mutedText font-medium">(0 orders)</span>
-                            </div>
+                <!-- Quick Metric Cards (2x2 Grid of Small Cards with Revenue Badges) -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Today Metric Card -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Today</span>
+                            <h3 id="quick-kpi-today-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
-                        <div class="text-[10px] text-mutedText mt-2 border-t border-outlineColor/40 pt-2 flex items-center justify-between">
-                            <span>Active Month:</span>
-                            <span id="sub-kpi-monthly-label" class="font-bold text-govTeal text-[11px]">N/A</span>
+                        <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
+                            <span id="quick-kpi-today-badge" class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 text-[10px] font-bold">₹0</span>
+                            <span class="text-[9px] text-mutedText font-semibold">Live Feed</span>
                         </div>
                     </div>
 
-                    <!-- CRAC Acceptance Performance -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
-                        <div>
-                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">CRAC Performance</span>
-                            <div class="grid grid-cols-2 gap-1 mt-1.5">
-                                <div>
-                                    <span class="text-[10px] text-mutedText block">Approved</span>
-                                    <span id="sub-kpi-crac-approved" class="text-sm font-bold text-activeGreen">0</span>
-                                </div>
-                                <div>
-                                    <span class="text-[10px] text-mutedText block">Disputed</span>
-                                    <span id="sub-kpi-crac-disputed" class="text-sm font-bold text-alertPink">0</span>
-                                </div>
-                            </div>
+                    <!-- Yesterday Metric Card -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Yesterday</span>
+                            <h3 id="quick-kpi-yesterday-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
-                        <div class="text-[10px] text-mutedText mt-1.5 border-t border-outlineColor/40 pt-1.5 flex items-center justify-between">
-                            <span>Pending:</span>
-                            <span id="sub-kpi-crac-pending" class="font-bold text-infoBlue">0 orders</span>
+                        <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
+                            <span id="quick-kpi-yesterday-badge" class="px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700/50 text-[10px] font-bold">₹0</span>
+                            <span class="text-[9px] text-mutedText font-semibold">24h History</span>
                         </div>
                     </div>
 
-                    <!-- Booking Comparison (Today vs Yesterday) -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
-                        <div>
-                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">Booking Comparison</span>
-                            <div class="grid grid-cols-2 gap-1 mt-1.5 border-r border-outlineColor/30">
-                                <div>
-                                    <span class="text-[9px] text-mutedText block">Today</span>
-                                    <span id="sub-kpi-booking-today" class="text-[11px] font-extrabold text-softGreyText">₹0 (0)</span>
-                                </div>
-                                <div>
-                                    <span class="text-[9px] text-mutedText block">Yesterday</span>
-                                    <span id="sub-kpi-booking-yest" class="text-[11px] font-medium text-mutedText">₹0 (0)</span>
-                                </div>
-                            </div>
+                    <!-- Approaching Metric Card -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Approaching</span>
+                            <h3 id="quick-kpi-approaching-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
-                        <div class="text-[10px] text-mutedText mt-1.5 border-t border-outlineColor/40 pt-1.5 flex items-center justify-between">
-                            <span>Relative Growth:</span>
-                            <span id="sub-kpi-booking-growth" class="font-bold text-activeGreen">0%</span>
+                        <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
+                            <span id="quick-kpi-approaching-badge" class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/15 text-[10px] font-bold">₹0</span>
+                            <span class="text-[9px] text-mutedText font-semibold">SLA ≤ 5d</span>
                         </div>
                     </div>
 
-                    <!-- Delivery SLA Urgency Counter -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between h-32">
-                        <div>
-                            <span class="text-xs font-bold text-mutedText uppercase tracking-wider block">SLA Delivery Urgency</span>
-                            <div class="grid grid-cols-2 gap-1 mt-1.5">
-                                <div>
-                                    <span class="text-[10px] text-mutedText block">Critical (≤1d)</span>
-                                    <span id="sub-kpi-sla-critical" class="text-sm font-bold text-alertPink">0</span>
-                                </div>
-                                <div>
-                                    <span class="text-[10px] text-mutedText block">Approaching</span>
-                                    <span id="sub-kpi-sla-approaching" class="text-sm font-bold text-warningOrange">0</span>
-                                </div>
-                            </div>
+                    <!-- Critical Metric Card -->
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="space-y-0.5">
+                            <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Critical</span>
+                            <h3 id="quick-kpi-critical-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
-                        <div class="text-[10px] text-mutedText mt-1.5 border-t border-outlineColor/40 pt-1.5 flex items-center justify-between">
-                            <span>Total SLA Tracked:</span>
-                            <span id="sub-kpi-sla-tracked" class="font-bold text-softGreyText">0 items</span>
+                        <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
+                            <span id="quick-kpi-critical-badge" class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15 text-[10px] font-bold">₹0</span>
+                            <span class="text-[9px] text-mutedText font-semibold">Overdue / Dispute</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Mission Control: Operational Flow Pipeline (Brand New Tally Grid!) -->
-                <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor">
-                    <h4 class="font-black text-softGreyText text-xs uppercase tracking-wider mb-4 text-govTeal">GeM Mission Control &bull; Pipeline Tally</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
-                            <span class="w-2.5 h-2.5 rounded-full bg-softGreyText inline-block mb-1"></span>
-                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Received (New)</span>
-                            <span id="tally-received" class="text-lg font-black text-softGreyText block mt-1">0</span>
+                <!-- Hidden / Locked Estimated Profit Widget (Integrated gracefully under Quick Cards to preserve lock engine) -->
+                <div class="bg-secondaryBg px-5 py-3.5 rounded-2xl border border-outlineColor flex items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-activeGreen/10 text-activeGreen flex items-center justify-center font-bold">
+                            🔒
                         </div>
-                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
-                            <span class="w-2.5 h-2.5 rounded-full bg-warningOrange inline-block mb-1 animate-pulse"></span>
-                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Dispatched</span>
-                            <span id="tally-dispatched" class="text-lg font-black text-warningOrange block mt-1">0</span>
+                        <div>
+                            <span class="text-[10px] font-bold text-mutedText uppercase tracking-wider block">Estimated Trading Profit</span>
+                            <h4 id="kpi-profit" class="text-base font-black text-white mt-0.5">🔒 LOCKED</h4>
                         </div>
-                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
-                            <span class="w-2.5 h-2.5 rounded-full bg-infoBlue inline-block mb-1"></span>
-                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Awaiting CRAC</span>
-                            <span id="tally-awaiting-crac" class="text-lg font-black text-infoBlue block mt-1">0</span>
-                        </div>
-                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center">
-                            <span class="w-2.5 h-2.5 rounded-full bg-activeGreen inline-block mb-1"></span>
-                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">CRAC Approved</span>
-                            <span id="tally-crac-done" class="text-lg font-black text-activeGreen block mt-1">0</span>
-                        </div>
-                        <div class="bg-canvasBg border border-outlineColor/50 p-3.5 rounded-xl text-center col-span-2 md:col-span-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-alertPink inline-block mb-1"></span>
-                            <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Disputed / Alert</span>
-                            <span id="tally-disputed" class="text-lg font-black text-alertPink block mt-1">0</span>
-                        </div>
+                    </div>
+                    <div>
+                        <span id="kpi-profit-sub" class="text-[10px] font-semibold text-mutedText bg-softCardBg px-3 py-1.5 rounded-lg border border-outlineColor/60">PIN protected statistics</span>
                     </div>
                 </div>
 
-                <!-- Charts & Active Tasks Row -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Mini Chart 1 (Sparklines) -->
-                    <div class="lg:col-span-2 bg-secondaryBg p-5 rounded-xl border border-outlineColor">
-                        <div class="flex items-center justify-between mb-4">
+                <!-- Data Visualizations Row (Weekly and Monthly Bar Charts Side by Side) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Weekly Revenue Trend Bar Chart -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor">
+                        <div class="flex items-center justify-between mb-5 border-b border-outlineColor/40 pb-3">
                             <div>
-                                <h4 class="font-bold text-softGreyText text-sm">Monthly Revenue Trend</h4>
-                                <p class="text-xs text-mutedText">Revenue distributed by contract month</p>
+                                <h4 class="font-bold text-white text-sm">Weekly Revenue Trend</h4>
+                                <p class="text-xs text-mutedText">Daily transaction flows for the last 7 days</p>
                             </div>
-                            <span class="text-[10px] text-govTeal font-bold bg-govTeal/10 px-2.5 py-1 rounded-full uppercase tracking-wider">Active Stream</span>
+                            <span class="text-[9px] text-activeGreen font-bold bg-activeGreen/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-activeGreen/20">Daily Feed</span>
                         </div>
-                        <!-- HTML5 Canvas for Chart.js -->
-                        <div class="h-64">
-                            <canvas id="dashboard-trend-chart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Recent Alerts Panel -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-bold text-softGreyText text-sm">Recent Activity Alerts</h4>
-                            <button onclick="switchTab('ALERTS')" class="text-xs text-govTeal hover:underline">View All</button>
-                        </div>
-                        <div id="dash-alerts-list" class="space-y-3 flex-1 overflow-y-auto max-h-64">
+                        <div class="h-44 flex items-end justify-between gap-2 px-1 pt-6" id="weekly-trend-chart">
                             <!-- Populated dynamically -->
-                            <p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Revenue Trend Bar Chart -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor">
+                        <div class="flex items-center justify-between mb-5 border-b border-outlineColor/40 pb-3">
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Monthly Revenue Trend</h4>
+                                <p class="text-xs text-mutedText">Historical business volume distributed by month</p>
+                            </div>
+                            <span class="text-[9px] text-govTeal font-bold bg-govTeal/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-govTeal/20">Historical</span>
+                        </div>
+                        <div class="h-44 flex items-end justify-between gap-2 px-1 pt-6" id="monthly-trend-chart">
+                            <!-- Populated dynamically -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Detailed Expected Delivery Deadlines SLA & Category Share Row (New - matching Android App richness) -->
+                <!-- Mission Control Section (Status Grid) -->
+                <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor space-y-4">
+                    <div class="flex items-center justify-between border-b border-outlineColor/60 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-govTeal animate-pulse"></span>
+                            <h4 class="font-black text-white text-xs uppercase tracking-wider">GeM Mission Control &bull; Status Pipeline Grid</h4>
+                        </div>
+                        <button onclick="switchTab('ORDERS')" class="text-xs font-bold text-activeGreen hover:underline flex items-center space-x-1">
+                            <span>View All</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- 2-Column or 5-Column Grid depending on size -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <!-- Pending to Ship Card -->
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-amber-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS'); setOrdersStatusFilter('PENDING_SHIP');">
+                            <div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-500 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Pending Ship</span>
+                                <span id="mission-tally-pending-ship" class="text-lg font-black text-white block mt-0.5">0</span>
+                            </div>
+                        </div>
+
+                        <!-- In Transit Card -->
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-blue-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS');">
+                            <div class="p-2.5 rounded-lg bg-blue-500/10 text-blue-500 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">In Transit</span>
+                                <span id="mission-tally-in-transit" class="text-lg font-black text-white block mt-0.5">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Completed Card -->
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-emerald-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS'); setOrdersStatusFilter('COMPLETED');">
+                            <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-500 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Completed</span>
+                                <span id="mission-tally-completed" class="text-lg font-black text-white block mt-0.5">0</span>
+                            </div>
+                        </div>
+
+                        <!-- CRAC Pending Card -->
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-purple-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS');">
+                            <div class="p-2.5 rounded-lg bg-purple-500/10 text-purple-500 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">CRAC Pending</span>
+                                <span id="mission-tally-crac-pending" class="text-lg font-black text-white block mt-0.5">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Cancelled Card -->
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-red-500/30 transition-all cursor-pointer col-span-2 md:col-span-1" onclick="switchTab('ORDERS'); setOrdersStatusFilter('CANCELLED');">
+                            <div class="p-2.5 rounded-lg bg-red-500/10 text-red-500 shrink-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-mutedText block font-bold uppercase tracking-wider">Cancelled</span>
+                                <span id="mission-tally-cancelled" class="text-lg font-black text-white block mt-0.5">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Deadlines SLA and Category Share Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Expected Delivery Deadlines Tracker (Left - 2 columns) -->
-                    <div class="lg:col-span-2 bg-secondaryBg p-5 rounded-xl border border-outlineColor">
+                    <!-- Expected Delivery Deadlines SLA Tracker (2 columns on lg) -->
+                    <div class="lg:col-span-2 bg-secondaryBg p-5 rounded-2xl border border-outlineColor">
                         <div class="flex items-center justify-between mb-4">
                             <div>
-                                <h4 class="font-bold text-softGreyText text-sm">Expected Delivery Deadline SLA Tracker</h4>
+                                <h4 class="font-bold text-white text-sm">Expected Delivery Deadline SLA Tracker</h4>
                                 <p class="text-xs text-mutedText">Tracks upcoming and overdue delivery milestones against the 15-day limit</p>
                             </div>
-                            <span class="text-[10px] text-alertPink font-bold bg-alertPink/10 px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse">SLA Gate</span>
+                            <span class="text-[9px] text-alertPink font-bold bg-alertPink/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider animate-pulse border border-alertPink/25">SLA Gate</span>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
@@ -456,15 +500,72 @@
                         </div>
                     </div>
 
-                    <!-- Category Market Share and Revenue Distribution (Right - 1 column) -->
-                    <div class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col">
-                        <div class="mb-4">
-                            <h4 class="font-bold text-softGreyText text-sm">Revenue Share by Category</h4>
+                    <!-- Category Share List (1 column) -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Revenue Share by Category</h4>
                             <p class="text-xs text-mutedText">Total booking value distribution</p>
                         </div>
-                        <div id="dash-category-share-list" class="space-y-4 flex-1 overflow-y-auto max-h-64">
+                        <div id="dash-category-share-list" class="space-y-4 flex-1 overflow-y-auto max-h-[190px] mt-4">
                             <!-- Dynamic category progress bars -->
                             <p class="text-xs text-mutedText py-4 text-center">No category data calculated.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secondary Operational KPIs (Clean and Compact for alerts & booking comparisons) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Recent Activity Alerts List -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-4 border-b border-outlineColor/40 pb-2">
+                            <h4 class="font-bold text-white text-xs uppercase tracking-wider">Recent Alerts</h4>
+                            <button onclick="switchTab('ALERTS')" class="text-xs text-activeGreen hover:underline">View All</button>
+                        </div>
+                        <div id="dash-alerts-list" class="space-y-3 flex-1 overflow-y-auto max-h-48">
+                            <!-- Populated dynamically -->
+                            <p class="text-xs text-mutedText py-4 text-center">No alerts triggered.</p>
+                        </div>
+                    </div>
+
+                    <!-- Booking Comparisons (Today vs Yesterday) -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor flex flex-col justify-between">
+                        <div class="border-b border-outlineColor/40 pb-2 mb-3">
+                            <h4 class="font-bold text-white text-xs uppercase tracking-wider">Booking Comparisons</h4>
+                        </div>
+                        <div class="space-y-3 flex-1 flex flex-col justify-around">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-mutedText">Today:</span>
+                                <span id="sub-kpi-booking-today" class="font-bold text-white">₹0 (0)</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-mutedText">Yesterday:</span>
+                                <span id="sub-kpi-booking-yest" class="font-bold text-mutedText">₹0 (0)</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs border-t border-outlineColor/40 pt-2">
+                                <span class="text-mutedText">Daily Variance:</span>
+                                <span id="sub-kpi-booking-growth" class="font-bold text-activeGreen">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLA Urgency Counters -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor flex flex-col justify-between">
+                        <div class="border-b border-outlineColor/40 pb-2 mb-3">
+                            <h4 class="font-bold text-white text-xs uppercase tracking-wider">SLA Urgency Tracking</h4>
+                        </div>
+                        <div class="space-y-3 flex-1 flex flex-col justify-around">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-mutedText">Critical (≤ 1d):</span>
+                                <span id="sub-kpi-sla-critical" class="font-bold text-alertPink">0</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-mutedText">Approaching (2-5d):</span>
+                                <span id="sub-kpi-sla-approaching" class="font-bold text-warningOrange">0</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs border-t border-outlineColor/40 pt-2">
+                                <span class="text-mutedText">Total SLA Checked:</span>
+                                <span id="sub-kpi-sla-tracked" class="font-bold text-white">0 items</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -476,7 +577,7 @@
                             <h4 class="font-bold text-softGreyText text-sm">Synchronization Logs</h4>
                             <p class="text-xs text-mutedText">Live pipeline updates and parsing validation diagnostics</p>
                         </div>
-                        <button onclick="clearSyncLogs()" class="text-xs text-alertPink hover:underline">Clear Terminal</button>
+                        <button onclick="clearSyncLogs()" class="text-xs text-alertPink hover:underline font-bold">Clear Terminal</button>
                     </div>
                     <div id="terminal-logs" class="bg-canvasBg border border-outlineColor/60 p-4 rounded-lg font-mono text-[11px] text-activeGreen space-y-1.5 h-36 overflow-y-auto">
                         <div>[SYSTEM] Initialized Overwatch Web Terminal.</div>
@@ -1119,7 +1220,9 @@
             isProfitUnlocked: false,
             securityPin: '7733',
             syncLogs: [],
-            isHighValueRiskExpanded: false
+            isHighValueRiskExpanded: false,
+            selectedStatusFilter: 'ALL',
+            selectedVendorFilter: 'ALL'
         };
 
         function toggleHighValueRisk() {
