@@ -2493,9 +2493,10 @@
             if (weeklyTrendChart) {
                 weeklyTrendChart.innerHTML = "";
                 const last7Days = [];
+                const actualToday = new Date();
                 for (let i = 6; i >= 0; i--) {
-                    const d = new Date(refDate);
-                    d.setDate(refDate.getDate() - i);
+                    const d = new Date(actualToday);
+                    d.setDate(actualToday.getDate() - i);
                     last7Days.push(d);
                 }
 
