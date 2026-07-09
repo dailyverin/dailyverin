@@ -289,7 +289,7 @@
                 <!-- Quick Metric Cards (2x2 Grid of Small Cards with Revenue Badges) -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Today Metric Card -->
-                    <div onclick="setQuickFilter('TODAY');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-emerald-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('TODAY');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-emerald-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Today</span>
                             <h3 id="quick-kpi-today-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
@@ -301,7 +301,7 @@
                     </div>
 
                     <!-- Yesterday Metric Card -->
-                    <div onclick="setQuickFilter('YESTERDAY');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-emerald-500/20 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('YESTERDAY');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-emerald-500/20 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Yesterday</span>
                             <h3 id="quick-kpi-yesterday-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
@@ -313,7 +313,7 @@
                     </div>
 
                     <!-- Approaching Metric Card -->
-                    <div onclick="setQuickFilter('APPROACHING');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-amber-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('APPROACHING');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-amber-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Approaching</span>
                             <h3 id="quick-kpi-approaching-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
@@ -325,7 +325,7 @@
                     </div>
 
                     <!-- Critical Metric Card -->
-                    <div onclick="setQuickFilter('CRITICAL');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-red-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('CRITICAL');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-red-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Critical</span>
                             <h3 id="quick-kpi-critical-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
@@ -334,6 +334,20 @@
                             <span id="quick-kpi-critical-badge" class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15 text-[10px] font-bold">₹0</span>
                             <span class="text-[9px] text-mutedText font-semibold font-mono tracking-wider">Overdue / Dispute</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- QUICK GLANCE COLLAPSIBLE CONTAINER -->
+                <div id="quick-glance-section" class="hidden bg-secondaryBg p-4 rounded-xl border border-outlineColor/60 space-y-4 transition-all">
+                    <div class="flex items-center justify-between border-b border-outlineColor/40 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span id="quick-glance-dot" class="w-3 h-3 rounded-full bg-govTeal animate-pulse"></span>
+                            <span id="quick-glance-title" class="text-xs font-black text-white uppercase tracking-wider">Quick Glance</span>
+                        </div>
+                        <button onclick="closeQuickGlance()" class="text-alertPink hover:underline text-xs font-bold transition-all">✕ Close Quick Glance</button>
+                    </div>
+                    <div id="quick-glance-list" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+                        <!-- Filled dynamically -->
                     </div>
                 </div>
 
@@ -2209,10 +2223,9 @@
             const deliverySlaList = [];
             state.gems.forEach(g => {
                 const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                const isShipped = g.trackingNumber && g.trackingNumber.trim() !== "";
                 const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
                 const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
-                const isClosedOrShipped = isShipped || isCracDone || isDelivered;
+                const isClosedOrShipped = isCracDone || isDelivered;
 
                 if (!isCancelled && !isClosedOrShipped) {
                     const orderDate = parseRobustDate(g.orderDate);
@@ -2493,7 +2506,8 @@
                     return {
                         date: day,
                         label: day.toLocaleDateString('default', { weekday: 'short' }),
-                        revenue: revenue
+                        revenue: revenue,
+                        count: dailyGems.length
                     };
                 });
 
@@ -2503,11 +2517,23 @@
                     const pct = (item.revenue / maxRevenue) * 100;
                     const barDiv = document.createElement("div");
                     barDiv.className = "flex-1 flex flex-col items-center h-full justify-end group relative cursor-pointer";
+                    
+                    const valFormatted = item.revenue >= 1000 ? `₹${(item.revenue / 1000).toFixed(1)}k` : `₹${item.revenue}`;
+                    const countFormatted = `${item.count} ord`;
+
                     barDiv.innerHTML = `
-                        <div class="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none border border-outlineColor/30 shadow-lg">
-                            ₹${item.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                        <!-- Hover Tooltip -->
+                        <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none border border-outlineColor/30 shadow-lg">
+                            ₹${item.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${item.count} orders)
                         </div>
-                        <div class="w-full bg-govTeal/10 group-hover:bg-govTeal/20 rounded-t-md transition-all duration-300 relative overflow-hidden" style="height: ${Math.max(8, pct)}%;">
+                        
+                        <!-- Value and Order count on top of bar -->
+                        <div class="text-[8px] font-mono text-mutedText text-center select-none truncate w-full mb-1">
+                            ${item.revenue > 0 ? `<div class="font-bold text-emerald-400">${valFormatted}</div><div class="text-[7px] text-softGreyText">${countFormatted}</div>` : `<div class="text-[7px] text-mutedText/40">-</div>`}
+                        </div>
+
+                        <!-- Bar element -->
+                        <div class="w-full bg-govTeal/10 group-hover:bg-govTeal/20 rounded-t-md transition-all duration-300 relative overflow-hidden" style="height: ${Math.max(8, pct * 0.75)}%;">
                             <div class="absolute bottom-0 left-0 right-0 bg-govTeal rounded-t-md" style="height: 100%"></div>
                         </div>
                         <span class="text-[9px] text-mutedText font-semibold mt-1.5 truncate max-w-full">${item.label}</span>
@@ -2528,7 +2554,11 @@
                         const d = parseRobustDate(g.orderDate);
                         if (d) {
                             const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-                            monthlyData[key] = (monthlyData[key] || 0) + g.revenue;
+                            if (!monthlyData[key]) {
+                                monthlyData[key] = { revenue: 0, count: 0 };
+                            }
+                            monthlyData[key].revenue += g.revenue;
+                            monthlyData[key].count += 1;
                         }
                     }
                 });
@@ -2537,22 +2567,35 @@
                 if (sortedMonthKeys.length === 0) {
                     monthlyTrendChart.innerHTML = `<p class="text-xs text-mutedText py-4 text-center w-full">No historical monthly data.</p>`;
                 } else {
-                    const maxMonthRevenue = Math.max(...sortedMonthKeys.map(k => monthlyData[k]), 1);
+                    const maxMonthRevenue = Math.max(...sortedMonthKeys.map(k => monthlyData[k].revenue), 1);
 
                     sortedMonthKeys.forEach(key => {
                         const [y, mm] = key.split("-");
                         const d = new Date(parseInt(y), parseInt(mm) - 1, 1);
                         const label = d.toLocaleString('default', { month: 'short' });
-                        const revenue = monthlyData[key];
+                        const revenue = monthlyData[key].revenue;
+                        const count = monthlyData[key].count;
                         const pct = (revenue / maxMonthRevenue) * 100;
 
                         const barDiv = document.createElement("div");
                         barDiv.className = "flex-1 flex flex-col items-center h-full justify-end group relative cursor-pointer";
+
+                        const valFormatted = revenue >= 100000 ? `₹${(revenue/100000).toFixed(1)}L` : (revenue >= 1000 ? `₹${(revenue/1000).toFixed(1)}k` : `₹${revenue}`);
+                        const countFormatted = `${count} ord`;
+
                         barDiv.innerHTML = `
-                            <div class="absolute -top-7 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none border border-outlineColor/30 shadow-lg">
-                                ₹${revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            <!-- Hover Tooltip -->
+                            <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-20 pointer-events-none border border-outlineColor/30 shadow-lg">
+                                ₹${revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })} (${count} orders)
                             </div>
-                            <div class="w-full bg-activeGreen/10 group-hover:bg-activeGreen/20 rounded-t-md transition-all duration-300 relative overflow-hidden" style="height: ${Math.max(8, pct)}%;">
+                            
+                            <!-- Value and count label above the bar -->
+                            <div class="text-[8px] font-mono text-mutedText text-center select-none truncate w-full mb-1">
+                                ${revenue > 0 ? `<div class="font-bold text-activeGreen">${valFormatted}</div><div class="text-[7px] text-softGreyText">${countFormatted}</div>` : `<div class="text-[7px] text-mutedText/40">-</div>`}
+                            </div>
+
+                            <!-- Bar element -->
+                            <div class="w-full bg-activeGreen/10 group-hover:bg-activeGreen/20 rounded-t-md transition-all duration-300 relative overflow-hidden" style="height: ${Math.max(8, pct * 0.75)}%;">
                                 <div class="absolute bottom-0 left-0 right-0 bg-activeGreen rounded-t-md" style="height: 100%"></div>
                             </div>
                             <span class="text-[9px] text-mutedText font-semibold mt-1.5 truncate max-w-full">${label}</span>
@@ -2739,10 +2782,9 @@
                     const deliverySlaList = [];
                     state.gems.forEach(g => {
                         const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                        const isShipped = g.trackingNumber && g.trackingNumber.trim() !== "";
                         const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
                         const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
-                        const isClosedOrShipped = isShipped || isCracDone || isDelivered;
+                        const isClosedOrShipped = isCracDone || isDelivered;
 
                         if (!isCancelled && !isClosedOrShipped) {
                             const orderDate = parseRobustDate(g.orderDate);
@@ -3529,6 +3571,173 @@
                 logSyncEvent("Reset cache state: Mock data loaded.");
                 renderUI();
             }
+        }
+
+        // ---------------------------------------------------------
+        // QUICK GLANCE COLLAPSIBLE DASHBOARD LOGIC
+        // ---------------------------------------------------------
+        let activeQuickGlanceType = null;
+
+        function toggleDashboardQuickGlance(filterType) {
+            const section = document.getElementById("quick-glance-section");
+            const listContainer = document.getElementById("quick-glance-list");
+            const titleEl = document.getElementById("quick-glance-title");
+            const dotEl = document.getElementById("quick-glance-dot");
+
+            if (!section || !listContainer || !titleEl) return;
+
+            // If clicking the same open glance card, close it
+            if (activeQuickGlanceType === filterType && !section.classList.contains("hidden")) {
+                closeQuickGlance();
+                return;
+            }
+
+            activeQuickGlanceType = filterType;
+            section.classList.remove("hidden");
+
+            // Define display configurations
+            let displayName = "";
+            let dotColorClass = "bg-govTeal";
+            let list = [];
+
+            const refDate = getReferenceDate();
+            const todayStr = refDate.toISOString().split('T')[0];
+            const yestDate = new Date(refDate);
+            yestDate.setDate(yestDate.getDate() - 1);
+            const yestStr = yestDate.toISOString().split('T')[0];
+
+            if (filterType === "TODAY") {
+                displayName = "Today's Orders Quick Glance";
+                dotColorClass = "bg-emerald-500";
+                list = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === todayStr);
+            } else if (filterType === "YESTERDAY") {
+                displayName = "Yesterday's Orders Quick Glance";
+                dotColorClass = "bg-gray-400";
+                list = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === yestStr);
+            } else if (filterType === "APPROACHING" || filterType === "CRITICAL") {
+                // Compute deliverySlaList using the correct closed criteria
+                const deliverySlaList = [];
+                state.gems.forEach(g => {
+                    const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                    const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
+                    const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
+                    const isClosedOrShipped = isCracDone || isDelivered;
+
+                    if (!isCancelled && !isClosedOrShipped) {
+                        const orderDate = parseRobustDate(g.orderDate);
+                        if (orderDate) {
+                            const expected = new Date(orderDate);
+                            expected.setDate(expected.getDate() + 15);
+                            const diffMs = expected.getTime() - refDate.getTime();
+                            const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                            deliverySlaList.push({
+                                order: g,
+                                daysLeft: daysLeft,
+                                expectedDateStr: expected.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                            });
+                        }
+                    }
+                });
+
+                if (filterType === "APPROACHING") {
+                    displayName = "Approaching SLA (≤ 5 Days) Quick Glance";
+                    dotColorClass = "bg-amber-500";
+                    list = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).map(item => {
+                        item.order.slaDaysLeft = item.daysLeft;
+                        return item.order;
+                    });
+                } else if (filterType === "CRITICAL") {
+                    displayName = "Critical Status (SLA ≤ 1 Day) Quick Glance";
+                    dotColorClass = "bg-red-500";
+                    list = deliverySlaList.filter(item => item.daysLeft <= 1).map(item => {
+                        item.order.slaDaysLeft = item.daysLeft;
+                        return item.order;
+                    });
+                }
+            }
+
+            // Update header UI
+            titleEl.innerText = displayName;
+            dotEl.className = `w-3 h-3 rounded-full ${dotColorClass} animate-pulse`;
+
+            // Populate list
+            listContainer.innerHTML = "";
+            if (list.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="col-span-full py-8 text-center text-mutedText text-xs bg-canvasBg/20 rounded-xl border border-outlineColor/20 font-medium">
+                        No active orders match this category at this time.
+                    </div>
+                `;
+            } else {
+                list.forEach(order => {
+                    let statusBadgeStyle = "bg-outlineColor/30 text-softGreyText border border-outlineColor/40";
+                    let statusLabel = order.status;
+
+                    if (order.status.toLowerCase().includes("delivered")) {
+                        statusBadgeStyle = "bg-activeGreen/15 text-activeGreen border border-activeGreen/20";
+                    } else if (order.status.toLowerCase().includes("shipped") || order.trackingNumber) {
+                        statusBadgeStyle = "bg-infoBlue/15 text-infoBlue border border-infoBlue/20";
+                        if (!statusLabel.toLowerCase().includes("shipped")) statusLabel = "Shipped";
+                    } else if (order.status.toLowerCase().includes("progress")) {
+                        statusBadgeStyle = "bg-govTeal/15 text-govTeal border border-govTeal/20";
+                    } else if (order.status.toLowerCase().includes("cancelled")) {
+                        statusBadgeStyle = "bg-alertPink/15 text-alertPink border border-alertPink/20";
+                    }
+
+                    let slaIndicatorHtml = "";
+                    if (order.slaDaysLeft !== undefined) {
+                        let slaColorClass = "text-activeGreen";
+                        if (order.slaDaysLeft <= 0) {
+                            slaColorClass = "text-alertPink font-extrabold";
+                            slaIndicatorHtml = `<span class="px-1.5 py-0.5 rounded text-[8px] bg-alertPink/15 ${slaColorClass} border border-alertPink/20">Overdue ${Math.abs(order.slaDaysLeft)}d</span>`;
+                        } else if (order.slaDaysLeft === 1) {
+                            slaColorClass = "text-warningOrange font-extrabold";
+                            slaIndicatorHtml = `<span class="px-1.5 py-0.5 rounded text-[8px] bg-warningOrange/15 ${slaColorClass} border border-warningOrange/20">Due Tomorrow</span>`;
+                        } else {
+                            slaColorClass = "text-warningOrange";
+                            slaIndicatorHtml = `<span class="px-1.5 py-0.5 rounded text-[8px] bg-warningOrange/10 ${slaColorClass} border border-warningOrange/10">${order.slaDaysLeft}d left</span>`;
+                        }
+                    }
+
+                    const card = document.createElement("div");
+                    card.className = "bg-canvasBg/40 p-3.5 rounded-xl border border-outlineColor/50 hover:border-govTeal/40 hover:bg-canvasBg/80 transition-all cursor-pointer flex flex-col justify-between space-y-2 group";
+                    card.onclick = () => openOrderDetailModal(order.id);
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="space-y-0.5 min-w-0">
+                                <span class="text-[10px] font-mono font-bold text-govTeal group-hover:text-activeGreen transition-colors">${order.contractNumber}</span>
+                                <p class="text-xs font-bold text-white truncate max-w-[200px] sm:max-w-xs mt-0.5">${order.productName}</p>
+                                <p class="text-[10px] text-mutedText truncate max-w-[180px]">${order.firmName}</p>
+                            </div>
+                            <div class="text-right flex-shrink-0 space-y-1">
+                                <span class="text-xs font-black text-white block">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase inline-block ${statusBadgeStyle}">${statusLabel}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-outlineColor/20 pt-2 text-[9px] text-mutedText">
+                            <div class="flex items-center space-x-1.5 truncate">
+                                <span>Qty: <strong class="text-softGreyText font-bold">${order.quantity}</strong></span>
+                                <span>•</span>
+                                <span class="truncate">Buyer: <strong class="text-softGreyText font-bold">${order.buyerName || 'N/A'}</strong></span>
+                            </div>
+                            <div class="flex items-center space-x-1.5 flex-shrink-0 ml-2">
+                                ${slaIndicatorHtml}
+                                <span class="text-[9px] text-govTeal/80 hover:text-govTeal font-bold">Details →</span>
+                            </div>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }
+
+            // Scroll the quick-glance section into view smoothly
+            section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function closeQuickGlance() {
+            const section = document.getElementById("quick-glance-section");
+            if (section) section.classList.add("hidden");
+            activeQuickGlanceType = null;
         }
 
         // ---------------------------------------------------------
