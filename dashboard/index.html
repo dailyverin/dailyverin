@@ -289,50 +289,50 @@
                 <!-- Quick Metric Cards (2x2 Grid of Small Cards with Revenue Badges) -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Today Metric Card -->
-                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div onclick="setQuickFilter('TODAY');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-emerald-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Today</span>
                             <h3 id="quick-kpi-today-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
                             <span id="quick-kpi-today-badge" class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 text-[10px] font-bold">₹0</span>
-                            <span class="text-[9px] text-mutedText font-semibold">Live Feed</span>
+                            <span class="text-[9px] text-mutedText font-semibold font-mono tracking-wider">Live Feed</span>
                         </div>
                     </div>
 
                     <!-- Yesterday Metric Card -->
-                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div onclick="setQuickFilter('YESTERDAY');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-emerald-500/20 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Yesterday</span>
                             <h3 id="quick-kpi-yesterday-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
                             <span id="quick-kpi-yesterday-badge" class="px-2 py-0.5 rounded bg-gray-800 text-gray-300 border border-gray-700/50 text-[10px] font-bold">₹0</span>
-                            <span class="text-[9px] text-mutedText font-semibold">24h History</span>
+                            <span class="text-[9px] text-mutedText font-semibold font-mono tracking-wider">24h History</span>
                         </div>
                     </div>
 
                     <!-- Approaching Metric Card -->
-                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div onclick="setQuickFilter('APPROACHING');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-amber-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Approaching</span>
                             <h3 id="quick-kpi-approaching-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
                             <span id="quick-kpi-approaching-badge" class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/15 text-[10px] font-bold">₹0</span>
-                            <span class="text-[9px] text-mutedText font-semibold">SLA ≤ 5d</span>
+                            <span class="text-[9px] text-mutedText font-semibold font-mono tracking-wider">SLA ≤ 5d</span>
                         </div>
                     </div>
 
                     <!-- Critical Metric Card -->
-                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group">
+                    <div onclick="setQuickFilter('CRITICAL');" class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col justify-between h-32 relative overflow-hidden group hover:border-red-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-0.5">
                             <span class="text-[10px] font-black text-mutedText uppercase tracking-widest block">Critical</span>
                             <h3 id="quick-kpi-critical-count" class="text-xl font-black text-white mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-2">
                             <span id="quick-kpi-critical-badge" class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/15 text-[10px] font-bold">₹0</span>
-                            <span class="text-[9px] text-mutedText font-semibold">Overdue / Dispute</span>
+                            <span class="text-[9px] text-mutedText font-semibold font-mono tracking-wider">Overdue / Dispute</span>
                         </div>
                     </div>
                 </div>
@@ -589,6 +589,15 @@
 
             <!-- ================= TAB: ORDERS ================= -->
             <section id="tab-content-ORDERS" class="hidden space-y-6">
+                <!-- Active Quick Filter Banner -->
+                <div id="quick-filter-banner" class="hidden bg-govTeal/10 border border-govTeal/30 p-3.5 rounded-xl flex items-center justify-between text-xs text-softGreyText font-medium">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-govTeal animate-pulse"></span>
+                        <span id="quick-filter-banner-text">Active Dashboard Filter: Today</span>
+                    </div>
+                    <button onclick="clearQuickFilter()" class="text-alertPink hover:underline font-bold transition-all">Clear Filter</button>
+                </div>
+
                 <!-- Header Controls -->
                 <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <!-- Search Bar -->
@@ -1216,6 +1225,7 @@
                 lastSyncTime: 0
             },
             currentTab: 'DASHBOARD',
+            quickFilter: null,
             selectedGemId: null,
             isProfitUnlocked: false,
             securityPin: '7733',
@@ -1237,6 +1247,86 @@
                 listEl.classList.add("hidden");
                 arrowEl.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
             }
+        }
+
+        function setQuickFilter(filterType) {
+            state.quickFilter = filterType;
+            
+            // Show banner and update text
+            const banner = document.getElementById("quick-filter-banner");
+            const bannerText = document.getElementById("quick-filter-banner-text");
+            if (banner && bannerText) {
+                let displayName = filterType;
+                if (filterType === "TODAY") displayName = "Today's Orders";
+                else if (filterType === "YESTERDAY") displayName = "Yesterday's Orders";
+                else if (filterType === "APPROACHING") displayName = "Approaching SLA (≤ 5 Days)";
+                else if (filterType === "CRITICAL") displayName = "Critical Status (SLA ≤ 1 Day / Overdue)";
+                
+                bannerText.innerText = `Active Dashboard Filter: ${displayName}`;
+                banner.classList.remove("hidden");
+            }
+            
+            // Reset standard filters to ALL to avoid conflicting filters
+            const statusSelect = document.getElementById("filter-status");
+            if (statusSelect) statusSelect.value = "ALL";
+            const catSelect = document.getElementById("filter-category");
+            if (catSelect) catSelect.value = "ALL";
+            const searchInput = document.getElementById("orders-search-input");
+            if (searchInput) searchInput.value = "";
+            const orderTypeSelect = document.getElementById("filter-order-type");
+            if (orderTypeSelect) orderTypeSelect.value = "ALL";
+            const cracSelect = document.getElementById("filter-crac");
+            if (cracSelect) cracSelect.value = "ALL";
+            const cancelledSelect = document.getElementById("filter-cancelled");
+            if (cancelledSelect) cancelledSelect.value = "ALL";
+            
+            switchTab('ORDERS');
+            renderOrdersTab();
+        }
+
+        function clearQuickFilter() {
+            state.quickFilter = null;
+            const banner = document.getElementById("quick-filter-banner");
+            if (banner) banner.classList.add("hidden");
+            renderOrdersTab();
+        }
+
+        function setOrdersStatusFilter(filter) {
+            // This is called by the operational pipeline blocks (e.g. PENDING_SHIP, COMPLETED, CANCELLED)
+            state.quickFilter = null; // Clear quickFilter if a pipeline block is clicked
+            const banner = document.getElementById("quick-filter-banner");
+            if (banner) banner.classList.add("hidden");
+
+            const statusSelect = document.getElementById("filter-status");
+            const cancelledSelect = document.getElementById("filter-cancelled");
+            
+            if (statusSelect && cancelledSelect) {
+                if (filter === 'PENDING_SHIP') {
+                    statusSelect.value = 'In Progress';
+                    cancelledSelect.value = 'ACTIVE';
+                } else if (filter === 'COMPLETED') {
+                    statusSelect.value = 'Completed';
+                    cancelledSelect.value = 'ACTIVE';
+                } else if (filter === 'CANCELLED') {
+                    statusSelect.value = 'ALL';
+                    cancelledSelect.value = 'CANCELLED';
+                } else {
+                    statusSelect.value = filter;
+                    cancelledSelect.value = 'ALL';
+                }
+            }
+            
+            // Clear other search/category/type/crac filters to avoid conflicting filters
+            const searchInput = document.getElementById("orders-search-input");
+            if (searchInput) searchInput.value = "";
+            const catSelect = document.getElementById("filter-category");
+            if (catSelect) catSelect.value = "ALL";
+            const orderTypeSelect = document.getElementById("filter-order-type");
+            if (orderTypeSelect) orderTypeSelect.value = "ALL";
+            const cracSelect = document.getElementById("filter-crac");
+            if (cracSelect) cracSelect.value = "ALL";
+            
+            renderOrdersTab();
         }
 
         // ---------------------------------------------------------
@@ -1303,6 +1393,17 @@
             if (!isNaN(d1.getTime())) return d1;
 
             return null;
+        }
+
+        function formatDateToYmd(date) {
+            if (!date) return "";
+            if (typeof date === "string") {
+                const parsed = parseRobustDate(date);
+                if (!parsed) return date;
+                date = parsed;
+            }
+            const pad = n => String(n).padStart(2, '0');
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
         }
 
         function formatDateTimeLocal(timestamp) {
@@ -1755,17 +1856,20 @@
                     else if (itemLower.includes("generator") || itemLower.includes("power") || itemLower.includes("electrical")) cat = "Heavy Electricals";
                     else if (itemLower.includes("drone") || itemLower.includes("aerial") || itemLower.includes("aviation")) cat = "Aviation Technology";
 
+                    const formattedOrderDate = formatDateToYmd(rawOrderDate);
+                    const formattedShipDate = shipDate !== "N/A" ? formatDateToYmd(shipDate) : "N/A";
+
                     parsedGemsList.push({
                         id: finalId,
                         contractNumber: rawOrderNo,
-                        orderDate: rawOrderDate,
+                        orderDate: formattedOrderDate,
                         firmName: firm,
                         productName: rawItem,
                         quantity: qty,
                         category: cat,
                         status: stateText,
                         revenue: rev,
-                        shippingDate: shipDate,
+                        shippingDate: formattedShipDate,
                         trackingNumber: trackNum,
                         cracStatus: crac,
                         profitAmount: profitAmt,
@@ -2618,6 +2722,49 @@
             const sortVal = document.getElementById("sort-orders").value;
 
             let list = [...state.gems];
+
+            // Apply Quick Filter from Dashboard if set
+            if (state.quickFilter) {
+                const refDate = getReferenceDate();
+                const todayStr = refDate.toISOString().split('T')[0];
+                const yestDate = new Date(refDate);
+                yestDate.setDate(yestDate.getDate() - 1);
+                const yestStr = yestDate.toISOString().split('T')[0];
+
+                if (state.quickFilter === "TODAY") {
+                    list = list.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === todayStr);
+                } else if (state.quickFilter === "YESTERDAY") {
+                    list = list.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === yestStr);
+                } else if (state.quickFilter === "APPROACHING" || state.quickFilter === "CRITICAL") {
+                    const deliverySlaList = [];
+                    state.gems.forEach(g => {
+                        const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                        const isShipped = g.trackingNumber && g.trackingNumber.trim() !== "";
+                        const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
+                        const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
+                        const isClosedOrShipped = isShipped || isCracDone || isDelivered;
+
+                        if (!isCancelled && !isClosedOrShipped) {
+                            const orderDate = parseRobustDate(g.orderDate);
+                            if (orderDate) {
+                                const expected = new Date(orderDate);
+                                expected.setDate(expected.getDate() + 15);
+                                const diffMs = expected.getTime() - refDate.getTime();
+                                const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                                deliverySlaList.push({ id: g.id, daysLeft: daysLeft });
+                            }
+                        }
+                    });
+
+                    if (state.quickFilter === "APPROACHING") {
+                        const ids = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).map(item => item.id);
+                        list = list.filter(g => ids.includes(g.id));
+                    } else if (state.quickFilter === "CRITICAL") {
+                        const ids = deliverySlaList.filter(item => item.daysLeft <= 1).map(item => item.id);
+                        list = list.filter(g => ids.includes(g.id));
+                    }
+                }
+            }
 
             // Search Filter
             if (query !== "") {
