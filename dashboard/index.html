@@ -2179,10 +2179,10 @@
             if (elSubKpiCracPending) elSubKpiCracPending.innerText = `${cracPending} order${cracPending !== 1 ? 's' : ''}`;
 
             // 3. Booking Comparison (Today vs Yesterday)
-            const todayStr = refDate.toISOString().split('T')[0];
+            const todayStr = formatDateToYmd(refDate);
             const yestDate = new Date(refDate);
             yestDate.setDate(yestDate.getDate() - 1);
-            const yestStr = yestDate.toISOString().split('T')[0];
+            const yestStr = formatDateToYmd(yestDate);
 
             const todayGems = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === todayStr);
             const todayRevenue = todayGems.reduce((sum, g) => sum + g.revenue, 0);
@@ -2500,7 +2500,7 @@
                 }
 
                 const dailyRevenues = last7Days.map(day => {
-                    const dateStr = day.toISOString().split('T')[0];
+                    const dateStr = formatDateToYmd(day);
                     const dailyGems = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === dateStr);
                     const revenue = dailyGems.reduce((sum, g) => sum + g.revenue, 0);
                     return {
@@ -2769,10 +2769,10 @@
             // Apply Quick Filter from Dashboard if set
             if (state.quickFilter) {
                 const refDate = getReferenceDate();
-                const todayStr = refDate.toISOString().split('T')[0];
+                const todayStr = formatDateToYmd(refDate);
                 const yestDate = new Date(refDate);
                 yestDate.setDate(yestDate.getDate() - 1);
-                const yestStr = yestDate.toISOString().split('T')[0];
+                const yestStr = formatDateToYmd(yestDate);
 
                 if (state.quickFilter === "TODAY") {
                     list = list.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === todayStr);
@@ -3601,10 +3601,10 @@
             let list = [];
 
             const refDate = getReferenceDate();
-            const todayStr = refDate.toISOString().split('T')[0];
+            const todayStr = formatDateToYmd(refDate);
             const yestDate = new Date(refDate);
             yestDate.setDate(yestDate.getDate() - 1);
-            const yestStr = yestDate.toISOString().split('T')[0];
+            const yestStr = formatDateToYmd(yestDate);
 
             if (filterType === "TODAY") {
                 displayName = "Today's Orders Quick Glance";
