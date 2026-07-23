@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +11,37 @@
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --canvas-bg: #F8FAFC;
+            --secondary-bg: #FFFFFF;
+            --soft-card-bg: #F1F5F9;
+            --outline-color: #CBD5E1;
+            --soft-grey-text: #0F172A;
+            --muted-text: #64748B;
+            --body-bg: #F8FAFC;
+            --body-text: #0F172A;
+            --chart-grid: #E2E8F0;
+            --chart-text: #64748B;
+        }
+
+        html.dark {
+            --canvas-bg: #090E11;
+            --secondary-bg: #11171B;
+            --soft-card-bg: #192227;
+            --outline-color: #232E35;
+            --soft-grey-text: #ECEFF1;
+            --muted-text: #90A4AE;
+            --body-bg: #090E11;
+            --body-text: #ECEFF1;
+            --chart-grid: #232E35;
+            --chart-text: #90A4AE;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #090E11;
-            color: #ECEFF1;
+            background-color: var(--canvas-bg);
+            color: var(--soft-grey-text);
+            transition: background-color 0.15s ease, color 0.15s ease;
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -22,14 +49,14 @@
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #090E11;
+            background: var(--canvas-bg);
         }
         ::-webkit-scrollbar-thumb {
-            background: #192227;
+            background: var(--soft-card-bg);
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #232E35;
+            background: var(--outline-color);
         }
     </style>
     <script>
@@ -38,12 +65,12 @@
                 extend: {
                     colors: {
                         govTeal: '#00A378',
-                        canvasBg: '#090E11',
-                        secondaryBg: '#11171B',
-                        softCardBg: '#192227',
-                        outlineColor: '#232E35',
-                        softGreyText: '#ECEFF1',
-                        mutedText: '#90A4AE',
+                        canvasBg: 'var(--canvas-bg)',
+                        secondaryBg: 'var(--secondary-bg)',
+                        softCardBg: 'var(--soft-card-bg)',
+                        outlineColor: 'var(--outline-color)',
+                        softGreyText: 'var(--soft-grey-text)',
+                        mutedText: 'var(--muted-text)',
                         activeGreen: '#10B981',
                         alertPink: '#EF4444',
                         warningOrange: '#F59E0B',
@@ -123,7 +150,13 @@
         </div>
 
         <!-- Sync Actions / Header Buttons -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2.5">
+            <!-- Theme Toggle Button -->
+            <button onclick="toggleTheme()" id="theme-toggle-btn" class="bg-softCardBg hover:bg-outlineColor text-softGreyText border border-outlineColor text-xs px-3 py-2 rounded-xl flex items-center space-x-1.5 transition-all shadow-sm" title="Toggle Light / Dark Theme">
+                <span id="theme-toggle-icon">☀️</span>
+                <span id="theme-toggle-label" class="font-bold text-xs hidden sm:inline">Light</span>
+            </button>
+
             <!-- Sync Indicator -->
             <div id="sync-badge" class="hidden md:flex items-center space-x-2 bg-softCardBg px-3 py-1.5 rounded-full border border-outlineColor text-xs">
                 <span class="w-2 h-2 rounded-full bg-activeGreen animate-pulse"></span>
@@ -429,7 +462,7 @@
                         </div>
 
                         <!-- In Transit Card -->
-                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-blue-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS');">
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-blue-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS'); setOrdersStatusFilter('SHIPPED');">
                             <div class="p-2.5 rounded-lg bg-blue-500/10 text-blue-500 shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
@@ -455,7 +488,7 @@
                         </div>
 
                         <!-- CRAC Pending Card -->
-                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-purple-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS');">
+                        <div class="bg-canvasBg border border-outlineColor/60 p-4 rounded-xl flex items-center space-x-3.5 hover:border-purple-500/30 transition-all cursor-pointer" onclick="switchTab('ORDERS'); setOrdersStatusFilter('CRAC_PENDING');">
                             <div class="p-2.5 rounded-lg bg-purple-500/10 text-purple-500 shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2"/>
@@ -613,24 +646,38 @@
                 </div>
 
                 <!-- Header Controls -->
-                <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <!-- Search Bar -->
-                    <div class="relative flex-1">
-                        <input type="text" id="orders-search-input" onkeyup="applyFilters()" placeholder="Search Contract No, Buyer Name, Product Name, Firm Code..." class="w-full bg-canvasBg border border-outlineColor rounded-lg px-4 py-2.5 pl-10 text-xs text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal transition-all">
-                        <span class="absolute left-3.5 top-3 text-mutedText">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </span>
+                <div class="bg-secondaryBg p-4 md:p-5 rounded-2xl border border-outlineColor space-y-4">
+                    <!-- Top Row: Full Width Search Bar & Reset Button -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <!-- Search Input with Clear Button -->
+                        <div class="relative flex-1">
+                            <input type="text" id="orders-search-input" onkeyup="applyFilters()" placeholder="Search Contract No, Buyer Name, Pincode, Item Name, Firm Code..." class="w-full bg-canvasBg border border-outlineColor rounded-xl px-4 py-3 pl-11 pr-10 text-xs sm:text-sm text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal transition-all font-medium shadow-inner">
+                            <span class="absolute left-3.5 top-3.5 text-mutedText pointer-events-none">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </span>
+                            <button onclick="clearSearchInput()" id="btn-clear-search" class="hidden absolute right-3 top-3 text-mutedText hover:text-alertPink transition-colors p-1" title="Clear Search">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Reset All Filters Button -->
+                        <button onclick="resetAllOrderFilters()" class="bg-softCardBg hover:bg-outlineColor text-softGreyText border border-outlineColor font-bold text-xs px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all shrink-0 active:scale-95 shadow-sm" title="Reset search input and all dropdown filters">
+                            <svg class="w-4 h-4 text-govTeal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2"/>
+                            </svg>
+                            <span>Reset Filters</span>
+                        </button>
                     </div>
 
-                    <!-- Filter Options Row (Compact layout) -->
-                    <div class="flex flex-wrap items-center gap-2">
+                    <!-- Filter Dropdowns Row / Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
                         <!-- Category Filter -->
-                        <select id="filter-category" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="filter-category" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-xl px-3 py-2.5 text-xs font-medium text-softGreyText focus:outline-none focus:border-govTeal">
                             <option value="ALL">All Categories</option>
                         </select>
 
                         <!-- Status Filter -->
-                        <select id="filter-status" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="filter-status" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-xl px-3 py-2.5 text-xs font-medium text-softGreyText focus:outline-none focus:border-govTeal">
                             <option value="ALL">All Statuses</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Shipped">Shipped</option>
@@ -640,34 +687,35 @@
                         </select>
 
                         <!-- Order Type Filter (GeM/Offline) -->
-                        <select id="filter-order-type" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="filter-order-type" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-xl px-3 py-2.5 text-xs font-medium text-softGreyText focus:outline-none focus:border-govTeal">
                             <option value="ALL">All Order Types</option>
                             <option value="GEM">GeM Orders Only</option>
                             <option value="OFFLINE">Offline Orders Only</option>
                         </select>
 
                         <!-- CRAC Filter -->
-                        <select id="filter-crac" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="filter-crac" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-xl px-3 py-2.5 text-xs font-medium text-softGreyText focus:outline-none focus:border-govTeal">
                             <option value="ALL">All CRAC Statuses</option>
                             <option value="TRUE">Full CRAC (Accepted)</option>
                             <option value="FALSE">Partial CRAC (Disputed)</option>
                             <option value="NA">Pending CRAC (Awaiting)</option>
+                            <option value="PENDING_ALL">Pending or Disputed CRAC</option>
                         </select>
 
                         <!-- Cancelled Filter -->
-                        <select id="filter-cancelled" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="filter-cancelled" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-xl px-3 py-2.5 text-xs font-medium text-softGreyText focus:outline-none focus:border-govTeal">
                             <option value="ALL">Active & Cancelled</option>
                             <option value="ACTIVE" selected>Active Contracts Only</option>
                             <option value="CANCELLED">Cancelled Contracts Only</option>
                         </select>
 
                         <!-- Sort Options -->
-                        <select id="sort-orders" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-lg px-3 py-2.5 text-xs text-softGreyText focus:outline-none focus:border-govTeal">
+                        <select id="sort-orders" onchange="applyFilters()" class="bg-canvasBg border border-outlineColor rounded-xl px-3 py-2.5 text-xs font-medium text-softGreyText focus:outline-none focus:border-govTeal">
                             <option value="NEWEST_FIRST">Order Date (Newest First)</option>
                             <option value="REVENUE_HIGH_TO_LOW">Revenue (High to Low)</option>
                             <option value="REVENUE_LOW_TO_HIGH">Revenue (Low to High)</option>
                             <option value="PROFIT_HIGH_TO_LOW">Profit Amount (High to Low)</option>
-                            <option value="DAYS_LEFT_SHIPPING">Shipping Date (Closest First)</option>
+                            <option value="DAYS_LEFT_SHIPPING">Urgency (Days Left)</option>
                         </select>
                     </div>
                 </div>
@@ -1107,74 +1155,74 @@
                 <!-- Col 1 & 2: Details Sheet -->
                 <div class="md:col-span-2 space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Firm Code / Name</span>
-                            <p id="modal-firm-name" class="text-xs font-semibold text-softGreyText mt-0.5">Dailyver In</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Firm Code / Name</span>
+                            <p id="modal-firm-name" class="text-sm font-bold text-softGreyText mt-1">Dailyver In</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Buyer Name & Destination</span>
-                            <p id="modal-buyer-name" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Buyer Name & Destination</span>
+                            <p id="modal-buyer-name" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Quantity Ordered</span>
-                            <p id="modal-quantity" class="text-xs font-semibold text-softGreyText mt-0.5">0</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Quantity Ordered</span>
+                            <p id="modal-quantity" class="text-sm font-bold text-softGreyText mt-1">0</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Pincode & City</span>
-                            <p id="modal-pincode-city" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Pincode & City</span>
+                            <p id="modal-pincode-city" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Order Date</span>
-                            <p id="modal-order-date" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Order Date</span>
+                            <p id="modal-order-date" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Expected Delivery Date</span>
-                            <p id="modal-expected-date" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Expected Delivery Date</span>
+                            <p id="modal-expected-date" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Shipping / Dispatch Date</span>
-                            <p id="modal-shipping-date" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Shipping / Dispatch Date</span>
+                            <p id="modal-shipping-date" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                         </div>
-                        <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                            <span class="text-[10px] text-mutedText uppercase">Tracking Number</span>
-                            <p id="modal-tracking" class="text-xs font-semibold text-softGreyText mt-0.5">N/A</p>
+                        <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                            <span class="text-xs text-mutedText uppercase font-semibold">Tracking Number</span>
+                            <p id="modal-tracking" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                         </div>
                     </div>
 
                     <!-- Financial breakdown -->
                     <div class="border-t border-outlineColor pt-4">
-                        <h4 class="text-xs font-bold text-softGreyText uppercase tracking-wider mb-3">Financial Overview</h4>
+                        <h4 class="text-sm font-bold text-softGreyText uppercase tracking-wider mb-3">Financial Overview</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                                <span class="text-[10px] text-mutedText uppercase">Revenue</span>
-                                <p id="modal-revenue" class="text-sm font-extrabold text-softGreyText mt-0.5">₹0.00</p>
+                            <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                                <span class="text-xs text-mutedText uppercase font-semibold">Revenue</span>
+                                <p id="modal-revenue" class="text-base font-black text-softGreyText mt-1">₹0.00</p>
                             </div>
-                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                                <span class="text-[10px] text-mutedText uppercase">Estimated Profit</span>
-                                <p id="modal-profit" class="text-sm font-extrabold mt-0.5 text-softGreyText">₹0.00</p>
+                            <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                                <span class="text-xs text-mutedText uppercase font-semibold">Estimated Profit</span>
+                                <p id="modal-profit" class="text-base font-black mt-1 text-softGreyText">₹0.00</p>
                             </div>
-                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                                <span class="text-[10px] text-mutedText uppercase">Profit Margin</span>
-                                <p id="modal-margin" class="text-sm font-extrabold text-govTeal mt-0.5">0.00%</p>
+                            <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                                <span class="text-xs text-mutedText uppercase font-semibold">Profit Margin</span>
+                                <p id="modal-margin" class="text-base font-black text-govTeal mt-1">0.00%</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Operational Pipelines -->
                     <div class="border-t border-outlineColor pt-4">
-                        <h4 class="text-xs font-bold text-softGreyText uppercase tracking-wider mb-3">Milestone Progress</h4>
+                        <h4 class="text-sm font-bold text-softGreyText uppercase tracking-wider mb-3">Milestone Progress</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                                <span class="text-[10px] text-mutedText uppercase">CRAC Status Label</span>
-                                <p id="modal-crac-label" class="text-xs font-bold text-softGreyText mt-0.5">N/A</p>
+                            <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                                <span class="text-xs text-mutedText uppercase font-semibold">CRAC Status Label</span>
+                                <p id="modal-crac-label" class="text-sm font-bold text-softGreyText mt-1">N/A</p>
                             </div>
-                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                                <span class="text-[10px] text-mutedText uppercase">Pipeline Milestone</span>
-                                <p id="modal-pipeline-label" class="text-xs font-bold text-infoBlue mt-0.5">N/A</p>
+                            <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                                <span class="text-xs text-mutedText uppercase font-semibold">Pipeline Milestone</span>
+                                <p id="modal-pipeline-label" class="text-sm font-bold text-infoBlue mt-1">N/A</p>
                             </div>
-                            <div class="bg-softCardBg/50 p-3 rounded-lg border border-outlineColor/60">
-                                <span class="text-[10px] text-mutedText uppercase">Deadline Alert Rating</span>
-                                <p id="modal-deadline-label" class="text-xs font-bold mt-0.5 text-softGreyText">N/A</p>
+                            <div class="bg-softCardBg/50 p-3.5 rounded-lg border border-outlineColor/60">
+                                <span class="text-xs text-mutedText uppercase font-semibold">Deadline Alert Rating</span>
+                                <p id="modal-deadline-label" class="text-sm font-bold mt-1 text-softGreyText">N/A</p>
                             </div>
                         </div>
                     </div>
@@ -1313,22 +1361,7 @@
 
             const statusSelect = document.getElementById("filter-status");
             const cancelledSelect = document.getElementById("filter-cancelled");
-            
-            if (statusSelect && cancelledSelect) {
-                if (filter === 'PENDING_SHIP') {
-                    statusSelect.value = 'In Progress';
-                    cancelledSelect.value = 'ACTIVE';
-                } else if (filter === 'COMPLETED') {
-                    statusSelect.value = 'Completed';
-                    cancelledSelect.value = 'ACTIVE';
-                } else if (filter === 'CANCELLED') {
-                    statusSelect.value = 'ALL';
-                    cancelledSelect.value = 'CANCELLED';
-                } else {
-                    statusSelect.value = filter;
-                    cancelledSelect.value = 'ALL';
-                }
-            }
+            const cracSelect = document.getElementById("filter-crac");
             
             // Clear other search/category/type/crac filters to avoid conflicting filters
             const searchInput = document.getElementById("orders-search-input");
@@ -1337,8 +1370,30 @@
             if (catSelect) catSelect.value = "ALL";
             const orderTypeSelect = document.getElementById("filter-order-type");
             if (orderTypeSelect) orderTypeSelect.value = "ALL";
-            const cracSelect = document.getElementById("filter-crac");
             if (cracSelect) cracSelect.value = "ALL";
+
+            if (statusSelect && cancelledSelect) {
+                if (filter === 'PENDING_SHIP') {
+                    statusSelect.value = 'In Progress';
+                    cancelledSelect.value = 'ACTIVE';
+                } else if (filter === 'SHIPPED') {
+                    statusSelect.value = 'Shipped';
+                    cancelledSelect.value = 'ACTIVE';
+                } else if (filter === 'COMPLETED') {
+                    statusSelect.value = 'Completed';
+                    cancelledSelect.value = 'ACTIVE';
+                } else if (filter === 'CRAC_PENDING') {
+                    statusSelect.value = 'ALL';
+                    cancelledSelect.value = 'ACTIVE';
+                    if (cracSelect) cracSelect.value = 'PENDING_ALL';
+                } else if (filter === 'CANCELLED') {
+                    statusSelect.value = 'ALL';
+                    cancelledSelect.value = 'CANCELLED';
+                } else {
+                    statusSelect.value = filter;
+                    cancelledSelect.value = 'ALL';
+                }
+            }
             
             renderOrdersTab();
         }
@@ -1433,6 +1488,119 @@
             return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`;
         }
 
+        // ---------------------------------------------------------
+        // THEME CONTROL ENGINE (LIGHT / DARK SWITCHING)
+        // ---------------------------------------------------------
+        function initTheme() {
+            const savedTheme = localStorage.getItem('gem_theme_preference') || 'light';
+            applyTheme(savedTheme);
+        }
+
+        function applyTheme(theme) {
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById("theme-toggle-icon");
+            const themeLabel = document.getElementById("theme-toggle-label");
+
+            if (theme === 'dark') {
+                htmlEl.classList.add('dark');
+                if (themeIcon) themeIcon.innerText = "🌙";
+                if (themeLabel) themeLabel.innerText = "Dark";
+            } else {
+                htmlEl.classList.remove('dark');
+                if (themeIcon) themeIcon.innerText = "☀️";
+                if (themeLabel) themeLabel.innerText = "Light";
+            }
+            localStorage.setItem('gem_theme_preference', theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            if (typeof renderDashboard === 'function') renderDashboard();
+            if (typeof renderAnalyticsTab === 'function' && typeof activeTab !== 'undefined' && activeTab === 'ANALYTICS') renderAnalyticsTab();
+        }
+
+        function resetAllOrderFilters() {
+            const searchInput = document.getElementById("orders-search-input");
+            if (searchInput) searchInput.value = "";
+
+            const clearBtn = document.getElementById("btn-clear-search");
+            if (clearBtn) clearBtn.classList.add("hidden");
+
+            const catSelect = document.getElementById("filter-category");
+            if (catSelect) catSelect.value = "ALL";
+
+            const statusSelect = document.getElementById("filter-status");
+            if (statusSelect) statusSelect.value = "ALL";
+
+            const orderTypeSelect = document.getElementById("filter-order-type");
+            if (orderTypeSelect) orderTypeSelect.value = "ALL";
+
+            const cracSelect = document.getElementById("filter-crac");
+            if (cracSelect) cracSelect.value = "ALL";
+
+            const cancelledSelect = document.getElementById("filter-cancelled");
+            if (cancelledSelect) cancelledSelect.value = "ACTIVE";
+
+            const sortSelect = document.getElementById("sort-orders");
+            if (sortSelect) sortSelect.value = "NEWEST_FIRST";
+
+            state.quickFilter = null;
+            const banner = document.getElementById("quick-filter-banner");
+            if (banner) banner.classList.add("hidden");
+
+            applyFilters();
+        }
+
+        function clearSearchInput() {
+            const searchInput = document.getElementById("orders-search-input");
+            if (searchInput) {
+                searchInput.value = "";
+                const clearBtn = document.getElementById("btn-clear-search");
+                if (clearBtn) clearBtn.classList.add("hidden");
+                applyFilters();
+            }
+        }
+
+        function getDeliverySlaList() {
+            const list = [];
+            const refDate = getReferenceDate();
+            state.gems.forEach(g => {
+                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
+                const isCompleted = g.cracStatus.trim().toUpperCase() === "TRUE";
+                const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
+                const isClosed = isCompleted || isDelivered;
+
+                if (!isCancelled && !isClosed) {
+                    const isDisputed = g.cracStatus.trim().toUpperCase() === "FALSE";
+                    let targetDate = null;
+                    if (g.shippingDate && g.shippingDate.trim() !== "" && g.shippingDate.trim() !== "N/A") {
+                        targetDate = parseRobustDate(g.shippingDate);
+                    }
+                    if (!targetDate && g.orderDate) {
+                        const oDate = parseRobustDate(g.orderDate);
+                        if (oDate) {
+                            targetDate = new Date(oDate);
+                            targetDate.setDate(targetDate.getDate() + 15);
+                        }
+                    }
+
+                    if (targetDate) {
+                        const diffMs = targetDate.getTime() - refDate.getTime();
+                        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                        list.push({
+                            order: g,
+                            daysLeft: daysLeft,
+                            isDisputed: isDisputed,
+                            expectedDateStr: targetDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                        });
+                    }
+                }
+            });
+            return list;
+        }
+
         function evaluateDeadline(order) {
             const isCancelled = order.status.toLowerCase().includes("cancelled") || order.revenue <= 0.0;
             const isDeliveredAndAccepted = order.cracStatus.trim().toUpperCase() === "TRUE";
@@ -1443,13 +1611,23 @@
             if (isDeliveredAndAccepted) {
                 return { status: "COMPLETED", daysLeft: 0, label: "Completed (Full CRAC)" };
             }
-
-            const dateStr = order.shippingDate || "";
-            if (dateStr.trim() === "" || dateStr.trim() === "N/A") {
-                return { status: "ON_TRACK", daysLeft: 99, label: "Unscheduled" };
+            if (order.cracStatus.trim().toUpperCase() === "FALSE") {
+                return { status: "CRITICAL", daysLeft: 0, label: "Partial CRAC Dispute" };
             }
 
-            const targetDate = parseRobustDate(dateStr);
+            let targetDate = null;
+            const dateStr = order.shippingDate || "";
+            if (dateStr.trim() !== "" && dateStr.trim() !== "N/A") {
+                targetDate = parseRobustDate(dateStr);
+            }
+            if (!targetDate && order.orderDate) {
+                const oDate = parseRobustDate(order.orderDate);
+                if (oDate) {
+                    targetDate = new Date(oDate);
+                    targetDate.setDate(targetDate.getDate() + 15);
+                }
+            }
+
             if (!targetDate) {
                 return { status: "ON_TRACK", daysLeft: 99, label: "On Track" };
             }
@@ -1461,10 +1639,13 @@
             let status = "ON_TRACK";
             let label = "";
 
-            if (diffDays < 0) {
+            if (diffDays <= 0) {
                 status = "OVERDUE";
                 label = `Overdue by ${Math.abs(diffDays)} days`;
-            } else if (diffDays <= 3) {
+            } else if (diffDays <= 2) {
+                status = "CRITICAL";
+                label = `Critical (${diffDays} day${diffDays === 1 ? '' : 's'} left)`;
+            } else if (diffDays <= 5) {
                 status = "APPROACHING";
                 label = `Approaching (${diffDays} days left)`;
             } else {
@@ -1569,6 +1750,7 @@
         // INITIALIZATION & CACHING WITH ADMIN SECURITY GATE
         // ---------------------------------------------------------
         window.onload = function() {
+            initTheme();
             loadFromLocalStorage();
             if (state.gems.length === 0) {
                 state.gems = JSON.parse(JSON.stringify(STATIC_MOCK_GEMS));
@@ -2220,31 +2402,12 @@
             }
 
             // 4. Delivery SLA Urgency Counter & Expected SLA Table
-            const deliverySlaList = [];
-            state.gems.forEach(g => {
-                const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
-                const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
-                const isClosedOrShipped = isCracDone || isDelivered;
+            const deliverySlaList = getDeliverySlaList();
+            const criticalSlaList = deliverySlaList.filter(item => item.isDisputed || item.daysLeft <= 2);
+            const approachingSlaList = deliverySlaList.filter(item => !item.isDisputed && item.daysLeft > 2 && item.daysLeft <= 5);
 
-                if (!isCancelled && !isClosedOrShipped) {
-                    const orderDate = parseRobustDate(g.orderDate);
-                    if (orderDate) {
-                        const expected = new Date(orderDate);
-                        expected.setDate(expected.getDate() + 15);
-                        const diffMs = expected.getTime() - refDate.getTime();
-                        const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                        deliverySlaList.push({
-                            order: g,
-                            daysLeft: daysLeft,
-                            expectedDateStr: expected.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                        });
-                    }
-                }
-            });
-
-            const criticalSla = deliverySlaList.filter(item => item.daysLeft <= 1).length;
-            const approachingSla = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).length;
+            const criticalSla = criticalSlaList.length;
+            const approachingSla = approachingSlaList.length;
 
             const elSubKpiSlaCritical = document.getElementById("sub-kpi-sla-critical");
             if (elSubKpiSlaCritical) elSubKpiSlaCritical.innerText = criticalSla;
@@ -2347,7 +2510,7 @@
             if (elPendingShip) elPendingShip.innerText = tallyReceivedCount;
             if (elInTransit) elInTransit.innerText = tallyDispatchedCount;
             if (elCompleted) elCompleted.innerText = tallyCracDoneCount;
-            if (elCracPending) elCracPending.innerText = tallyAwaitingCracCount;
+            if (elCracPending) elCracPending.innerText = tallyAwaitingCracCount + tallyDisputedCount;
             if (elCancelled) elCancelled.innerText = tallyCancelledCount;
 
             // Maintain fallback for old layout IDs if they exist
@@ -2402,10 +2565,7 @@
             if (elQuickYestCount) elQuickYestCount.innerText = `${yestCount} Order${yestCount !== 1 ? 's' : ''}`;
             if (elQuickYestBadge) elQuickYestBadge.innerText = `₹${yestRevenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
 
-            const criticalSlaList = deliverySlaList.filter(item => item.daysLeft <= 1);
             const criticalSlaRev = criticalSlaList.reduce((sum, item) => sum + item.order.revenue, 0);
-            
-            const approachingSlaList = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5);
             const approachingSlaRev = approachingSlaList.reduce((sum, item) => sum + item.order.revenue, 0);
 
             if (elQuickApprCount) elQuickApprCount.innerText = `${approachingSlaList.length} Order${approachingSlaList.length !== 1 ? 's' : ''}`;
@@ -2780,43 +2940,36 @@
                 } else if (state.quickFilter === "YESTERDAY") {
                     list = list.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === yestStr);
                 } else if (state.quickFilter === "APPROACHING" || state.quickFilter === "CRITICAL") {
-                    const deliverySlaList = [];
-                    state.gems.forEach(g => {
-                        const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                        const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
-                        const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
-                        const isClosedOrShipped = isCracDone || isDelivered;
-
-                        if (!isCancelled && !isClosedOrShipped) {
-                            const orderDate = parseRobustDate(g.orderDate);
-                            if (orderDate) {
-                                const expected = new Date(orderDate);
-                                expected.setDate(expected.getDate() + 15);
-                                const diffMs = expected.getTime() - refDate.getTime();
-                                const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                                deliverySlaList.push({ id: g.id, daysLeft: daysLeft });
-                            }
-                        }
-                    });
-
+                    const slaItems = getDeliverySlaList();
                     if (state.quickFilter === "APPROACHING") {
-                        const ids = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).map(item => item.id);
+                        const ids = slaItems.filter(item => !item.isDisputed && item.daysLeft > 2 && item.daysLeft <= 5).map(item => item.order.id);
                         list = list.filter(g => ids.includes(g.id));
                     } else if (state.quickFilter === "CRITICAL") {
-                        const ids = deliverySlaList.filter(item => item.daysLeft <= 1).map(item => item.id);
+                        const ids = slaItems.filter(item => item.isDisputed || item.daysLeft <= 2).map(item => item.order.id);
                         list = list.filter(g => ids.includes(g.id));
                     }
                 }
             }
 
-            // Search Filter
+            // Search Filter (supports pincode, buyer name, items, contract no, firm)
+            const clearBtn = document.getElementById("btn-clear-search");
+            if (clearBtn) {
+                if (query !== "") clearBtn.classList.remove("hidden");
+                else clearBtn.classList.add("hidden");
+            }
+
             if (query !== "") {
                 list = list.filter(g => 
-                    g.id.toLowerCase().includes(query) ||
-                    g.firmName.toLowerCase().includes(query) ||
-                    g.productName.toLowerCase().includes(query) ||
-                    g.buyerName.toLowerCase().includes(query) ||
-                    g.status.toLowerCase().includes(query)
+                    (g.id && g.id.toLowerCase().includes(query)) ||
+                    (g.contractNumber && g.contractNumber.toLowerCase().includes(query)) ||
+                    (g.firmName && g.firmName.toLowerCase().includes(query)) ||
+                    (g.productName && g.productName.toLowerCase().includes(query)) ||
+                    (g.buyerName && g.buyerName.toLowerCase().includes(query)) ||
+                    (g.pincode && g.pincode.toLowerCase().includes(query)) ||
+                    (g.locationCity && g.locationCity.toLowerCase().includes(query)) ||
+                    (g.category && g.category.toLowerCase().includes(query)) ||
+                    (g.status && g.status.toLowerCase().includes(query)) ||
+                    (g.trackingNumber && g.trackingNumber.toLowerCase().includes(query))
                 );
             }
 
@@ -2849,7 +3002,11 @@
             // CRAC Filter
             const cracFilter = document.getElementById("filter-crac")?.value || "ALL";
             if (cracFilter !== "ALL") {
-                list = list.filter(g => g.cracStatus.trim().toUpperCase() === cracFilter);
+                if (cracFilter === "PENDING_ALL") {
+                    list = list.filter(g => g.cracStatus.trim().toUpperCase() === "NA" || g.cracStatus.trim().toUpperCase() === "FALSE");
+                } else {
+                    list = list.filter(g => g.cracStatus.trim().toUpperCase() === cracFilter);
+                }
             }
 
             // Cancelled Filter
@@ -3116,12 +3273,12 @@
 
                     div.innerHTML = `
                         <div class="min-w-0 flex-1 pr-3">
-                            <p class="text-xs font-bold text-softGreyText">${order.id}</p>
-                            <p class="text-[10px] text-mutedText truncate">${order.firmName} • ${order.productName}</p>
+                            <p class="text-sm font-bold text-softGreyText">${order.id}</p>
+                            <p class="text-xs text-mutedText truncate">${order.firmName} • ${order.productName}</p>
                         </div>
                         <div class="text-right shrink-0">
-                            <p class="text-xs font-bold text-softGreyText">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
-                            <p class="text-[9px] ${descColor}">${descText}</p>
+                            <p class="text-sm font-bold text-softGreyText">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+                            <p class="text-xs ${descColor}">${descText}</p>
                         </div>
                     `;
                     riskList.appendChild(div);
@@ -3616,41 +3773,19 @@
                 dotColorClass = "bg-gray-400";
                 list = state.gems.filter(g => !g.status.toLowerCase().includes("cancelled") && g.orderDate === yestStr);
             } else if (filterType === "APPROACHING" || filterType === "CRITICAL") {
-                // Compute deliverySlaList using the correct closed criteria
-                const deliverySlaList = [];
-                state.gems.forEach(g => {
-                    const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                    const isCracDone = g.cracStatus.trim().toUpperCase() === "TRUE";
-                    const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
-                    const isClosedOrShipped = isCracDone || isDelivered;
-
-                    if (!isCancelled && !isClosedOrShipped) {
-                        const orderDate = parseRobustDate(g.orderDate);
-                        if (orderDate) {
-                            const expected = new Date(orderDate);
-                            expected.setDate(expected.getDate() + 15);
-                            const diffMs = expected.getTime() - refDate.getTime();
-                            const daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                            deliverySlaList.push({
-                                order: g,
-                                daysLeft: daysLeft,
-                                expectedDateStr: expected.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                            });
-                        }
-                    }
-                });
+                const deliverySlaList = getDeliverySlaList();
 
                 if (filterType === "APPROACHING") {
-                    displayName = "Approaching SLA (≤ 5 Days) Quick Glance";
+                    displayName = "Approaching SLA (3 to 5 Days) Quick Glance";
                     dotColorClass = "bg-amber-500";
-                    list = deliverySlaList.filter(item => item.daysLeft > 1 && item.daysLeft <= 5).map(item => {
+                    list = deliverySlaList.filter(item => !item.isDisputed && item.daysLeft > 2 && item.daysLeft <= 5).map(item => {
                         item.order.slaDaysLeft = item.daysLeft;
                         return item.order;
                     });
                 } else if (filterType === "CRITICAL") {
-                    displayName = "Critical Status (SLA ≤ 1 Day) Quick Glance";
+                    displayName = "Critical Status (Disputed or SLA ≤ 2 Days) Quick Glance";
                     dotColorClass = "bg-red-500";
-                    list = deliverySlaList.filter(item => item.daysLeft <= 1).map(item => {
+                    list = deliverySlaList.filter(item => item.isDisputed || item.daysLeft <= 2).map(item => {
                         item.order.slaDaysLeft = item.daysLeft;
                         return item.order;
                     });
@@ -3690,40 +3825,40 @@
                         let slaColorClass = "text-activeGreen";
                         if (order.slaDaysLeft <= 0) {
                             slaColorClass = "text-alertPink font-extrabold";
-                            slaIndicatorHtml = `<span class="px-1.5 py-0.5 rounded text-[8px] bg-alertPink/15 ${slaColorClass} border border-alertPink/20">Overdue ${Math.abs(order.slaDaysLeft)}d</span>`;
+                            slaIndicatorHtml = `<span class="px-2 py-0.5 rounded text-[10px] bg-alertPink/15 ${slaColorClass} border border-alertPink/20">Overdue ${Math.abs(order.slaDaysLeft)}d</span>`;
                         } else if (order.slaDaysLeft === 1) {
                             slaColorClass = "text-warningOrange font-extrabold";
-                            slaIndicatorHtml = `<span class="px-1.5 py-0.5 rounded text-[8px] bg-warningOrange/15 ${slaColorClass} border border-warningOrange/20">Due Tomorrow</span>`;
+                            slaIndicatorHtml = `<span class="px-2 py-0.5 rounded text-[10px] bg-warningOrange/15 ${slaColorClass} border border-warningOrange/20">Due Tomorrow</span>`;
                         } else {
                             slaColorClass = "text-warningOrange";
-                            slaIndicatorHtml = `<span class="px-1.5 py-0.5 rounded text-[8px] bg-warningOrange/10 ${slaColorClass} border border-warningOrange/10">${order.slaDaysLeft}d left</span>`;
+                            slaIndicatorHtml = `<span class="px-2 py-0.5 rounded text-[10px] bg-warningOrange/10 ${slaColorClass} border border-warningOrange/10">${order.slaDaysLeft}d left</span>`;
                         }
                     }
 
                     const card = document.createElement("div");
-                    card.className = "bg-canvasBg/40 p-3.5 rounded-xl border border-outlineColor/50 hover:border-govTeal/40 hover:bg-canvasBg/80 transition-all cursor-pointer flex flex-col justify-between space-y-2 group";
+                    card.className = "bg-canvasBg/40 p-4 rounded-xl border border-outlineColor/50 hover:border-govTeal/40 hover:bg-canvasBg/80 transition-all cursor-pointer flex flex-col justify-between space-y-3 group";
                     card.onclick = () => openOrderDetailModal(order.id);
                     card.innerHTML = `
                         <div class="flex items-start justify-between gap-2">
-                            <div class="space-y-0.5 min-w-0">
-                                <span class="text-[10px] font-mono font-bold text-govTeal group-hover:text-activeGreen transition-colors">${order.contractNumber}</span>
-                                <p class="text-xs font-bold text-white truncate max-w-[200px] sm:max-w-xs mt-0.5">${order.productName}</p>
-                                <p class="text-[10px] text-mutedText truncate max-w-[180px]">${order.firmName}</p>
+                            <div class="space-y-1 min-w-0">
+                                <span class="text-xs font-mono font-bold text-govTeal group-hover:text-activeGreen transition-colors">${order.contractNumber}</span>
+                                <p class="text-sm font-extrabold text-white truncate max-w-[200px] sm:max-w-xs mt-0.5">${order.productName}</p>
+                                <p class="text-xs text-mutedText truncate max-w-[180px]">${order.firmName}</p>
                             </div>
-                            <div class="text-right flex-shrink-0 space-y-1">
-                                <span class="text-xs font-black text-white block">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase inline-block ${statusBadgeStyle}">${statusLabel}</span>
+                            <div class="text-right flex-shrink-0 space-y-1.5">
+                                <span class="text-sm font-black text-white block">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase inline-block ${statusBadgeStyle}">${statusLabel}</span>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between border-t border-outlineColor/20 pt-2 text-[9px] text-mutedText">
-                            <div class="flex items-center space-x-1.5 truncate">
+                        <div class="flex items-center justify-between border-t border-outlineColor/20 pt-2 text-xs text-mutedText">
+                            <div class="flex items-center space-x-2 truncate">
                                 <span>Qty: <strong class="text-softGreyText font-bold">${order.quantity}</strong></span>
                                 <span>•</span>
                                 <span class="truncate">Buyer: <strong class="text-softGreyText font-bold">${order.buyerName || 'N/A'}</strong></span>
                             </div>
-                            <div class="flex items-center space-x-1.5 flex-shrink-0 ml-2">
+                            <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
                                 ${slaIndicatorHtml}
-                                <span class="text-[9px] text-govTeal/80 hover:text-govTeal font-bold">Details →</span>
+                                <span class="text-xs text-govTeal/80 hover:text-govTeal font-bold">Details →</span>
                             </div>
                         </div>
                     `;
@@ -3780,14 +3915,14 @@
 
             if (state.isProfitUnlocked) {
                 modalProf.innerText = `₹${item.profitAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
-                modalProf.className = item.profitAmount >= 0 ? "text-sm font-extrabold text-softGreyText mt-0.5" : "text-sm font-extrabold text-alertPink mt-0.5";
+                modalProf.className = item.profitAmount >= 0 ? "text-base font-black text-softGreyText mt-1" : "text-base font-black text-alertPink mt-1";
                 modalMarg.innerText = `${item.profitPercentage.toFixed(1)}%`;
-                modalMarg.className = item.profitPercentage >= 10.0 ? "text-sm font-extrabold text-govTeal mt-0.5" : "text-sm font-extrabold text-warningOrange mt-0.5";
+                modalMarg.className = item.profitPercentage >= 10.0 ? "text-base font-black text-govTeal mt-1" : "text-base font-black text-warningOrange mt-1";
             } else {
                 modalProf.innerText = "🔒 LOCKED";
-                modalProf.className = "text-sm font-extrabold text-mutedText mt-0.5";
+                modalProf.className = "text-base font-black text-mutedText mt-1";
                 modalMarg.innerText = "🔒 Hidden";
-                modalMarg.className = "text-sm font-extrabold text-mutedText mt-0.5";
+                modalMarg.className = "text-base font-black text-mutedText mt-1";
             }
 
             // Status Ratings
