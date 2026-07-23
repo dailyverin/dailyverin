@@ -1568,11 +1568,10 @@
             const refDate = getReferenceDate();
             state.gems.forEach(g => {
                 const isCancelled = g.status.toLowerCase().includes("cancelled") || g.revenue <= 0.0;
-                const isCompleted = g.cracStatus.trim().toUpperCase() === "TRUE";
-                const isDelivered = g.status.toLowerCase().includes("delivered") && !g.status.toLowerCase().includes("not delivered");
-                const isClosed = isCompleted || isDelivered;
+                const statusLower = g.status.toLowerCase();
+                const isDispatched = statusLower.includes("shipped") || statusLower.includes("delivered") || statusLower.includes("completed") || g.cracStatus.trim().toUpperCase() === "TRUE";
 
-                if (!isCancelled && !isClosed) {
+                if (!isCancelled && !isDispatched) {
                     const isDisputed = g.cracStatus.trim().toUpperCase() === "FALSE";
                     let targetDate = null;
                     if (g.shippingDate && g.shippingDate.trim() !== "" && g.shippingDate.trim() !== "N/A") {
@@ -1603,13 +1602,17 @@
 
         function evaluateDeadline(order) {
             const isCancelled = order.status.toLowerCase().includes("cancelled") || order.revenue <= 0.0;
-            const isDeliveredAndAccepted = order.cracStatus.trim().toUpperCase() === "TRUE";
+            const statusLower = order.status.toLowerCase();
+            const isDispatched = statusLower.includes("shipped") || statusLower.includes("delivered") || statusLower.includes("completed") || order.cracStatus.trim().toUpperCase() === "TRUE";
 
             if (isCancelled) {
                 return { status: "CANCELLED", daysLeft: 0, label: "Cancelled" };
             }
-            if (isDeliveredAndAccepted) {
+            if (isDispatched && order.cracStatus.trim().toUpperCase() === "TRUE") {
                 return { status: "COMPLETED", daysLeft: 0, label: "Completed (Full CRAC)" };
+            }
+            if (isDispatched) {
+                return { status: "DISPATCHED", daysLeft: 0, label: "Dispatched" };
             }
             if (order.cracStatus.trim().toUpperCase() === "FALSE") {
                 return { status: "CRITICAL", daysLeft: 0, label: "Partial CRAC Dispute" };
@@ -1636,24 +1639,13 @@
             const diffMs = targetDate.getTime() - refDate.getTime();
             const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-            let status = "ON_TRACK";
-            let label = "";
-
             if (diffDays <= 0) {
-                status = "OVERDUE";
-                label = `Overdue by ${Math.abs(diffDays)} days`;
-            } else if (diffDays <= 2) {
-                status = "CRITICAL";
-                label = `Critical (${diffDays} day${diffDays === 1 ? '' : 's'} left)`;
+                return { status: "CRITICAL", daysLeft: diffDays, label: diffDays === 0 ? "Critical (Due Today)" : `Critical (Past Due by ${Math.abs(diffDays)} days)` };
             } else if (diffDays <= 5) {
-                status = "APPROACHING";
-                label = `Approaching (${diffDays} days left)`;
+                return { status: "APPROACHING", daysLeft: diffDays, label: `Approaching (${diffDays} day${diffDays === 1 ? '' : 's'} left)` };
             } else {
-                status = "ON_TRACK";
-                label = `On Track (${diffDays} days left)`;
+                return { status: "ON_TRACK", daysLeft: diffDays, label: `On Track (${diffDays} days left)` };
             }
-
-            return { status, daysLeft: diffDays, label };
         }
 
         function calculateExpectedDeliveryDateStr(orderDateStr) {
@@ -2403,8 +2395,8 @@
 
             // 4. Delivery SLA Urgency Counter & Expected SLA Table
             const deliverySlaList = getDeliverySlaList();
-            const criticalSlaList = deliverySlaList.filter(item => item.isDisputed || item.daysLeft <= 2);
-            const approachingSlaList = deliverySlaList.filter(item => !item.isDisputed && item.daysLeft > 2 && item.daysLeft <= 5);
+            const criticalSlaList = deliverySlaList.filter(item => item.isDisputed || item.daysLeft <= 0);
+            const approachingSlaList = deliverySlaList.filter(item => !item.isDisputed && item.daysLeft > 0 && item.daysLeft <= 5);
 
             const criticalSla = criticalSlaList.length;
             const approachingSla = approachingSlaList.length;
@@ -2942,10 +2934,10 @@
                 } else if (state.quickFilter === "APPROACHING" || state.quickFilter === "CRITICAL") {
                     const slaItems = getDeliverySlaList();
                     if (state.quickFilter === "APPROACHING") {
-                        const ids = slaItems.filter(item => !item.isDisputed && item.daysLeft > 2 && item.daysLeft <= 5).map(item => item.order.id);
+                        const ids = slaItems.filter(item => !item.isDisputed && item.daysLeft > 0 && item.daysLeft <= 5).map(item => item.order.id);
                         list = list.filter(g => ids.includes(g.id));
                     } else if (state.quickFilter === "CRITICAL") {
-                        const ids = slaItems.filter(item => item.isDisputed || item.daysLeft <= 2).map(item => item.order.id);
+                        const ids = slaItems.filter(item => item.isDisputed || item.daysLeft <= 0).map(item => item.order.id);
                         list = list.filter(g => ids.includes(g.id));
                     }
                 }
@@ -3776,16 +3768,16 @@
                 const deliverySlaList = getDeliverySlaList();
 
                 if (filterType === "APPROACHING") {
-                    displayName = "Approaching SLA (3 to 5 Days) Quick Glance";
+                    displayName = "Approaching SLA (≤ 5 Days Left) Quick Glance";
                     dotColorClass = "bg-amber-500";
-                    list = deliverySlaList.filter(item => !item.isDisputed && item.daysLeft > 2 && item.daysLeft <= 5).map(item => {
+                    list = deliverySlaList.filter(item => !item.isDisputed && item.daysLeft > 0 && item.daysLeft <= 5).map(item => {
                         item.order.slaDaysLeft = item.daysLeft;
                         return item.order;
                     });
                 } else if (filterType === "CRITICAL") {
-                    displayName = "Critical Status (Disputed or SLA ≤ 2 Days) Quick Glance";
+                    displayName = "Critical Status (Disputed or SLA ≤ 0 Days Left) Quick Glance";
                     dotColorClass = "bg-red-500";
-                    list = deliverySlaList.filter(item => item.isDisputed || item.daysLeft <= 2).map(item => {
+                    list = deliverySlaList.filter(item => item.isDisputed || item.daysLeft <= 0).map(item => {
                         item.order.slaDaysLeft = item.daysLeft;
                         return item.order;
                     });
