@@ -39,6 +39,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
             background-color: var(--canvas-bg);
             color: var(--soft-grey-text);
             transition: background-color 0.15s ease, color 0.15s ease;
@@ -293,12 +295,12 @@
                     <div class="bg-gradient-to-br from-govTeal to-emerald-600 p-6 rounded-2xl shadow-xl flex flex-col justify-between relative overflow-hidden group min-h-[140px] text-white">
                         <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 w-32 h-32 rounded-full bg-white/5 pointer-events-none transition-all duration-500 group-hover:scale-110"></div>
                         <div>
-                            <span class="text-xs font-black text-emerald-100 uppercase tracking-widest block">All Firms Overview</span>
+                            <span class="text-sm font-black text-emerald-100 uppercase tracking-widest block">All Firms Overview</span>
                             <h3 id="top-kpi-all-firms-revenue" class="text-3xl sm:text-4xl font-black text-white mt-1.5">₹0</h3>
                         </div>
-                        <div class="flex items-center justify-between border-t border-white/10 pt-3 mt-4 text-xs font-semibold">
-                            <span id="top-kpi-all-firms-orders" class="font-bold text-emerald-100">0 orders tracked</span>
-                            <span class="px-2.5 py-1 rounded-full bg-white/20 text-white font-extrabold text-xs uppercase tracking-wide">Live Consolidated</span>
+                        <div class="flex items-center justify-between border-t border-white/10 pt-3 mt-4 text-sm font-semibold">
+                            <span id="top-kpi-all-firms-orders" class="font-bold text-emerald-100 text-sm">0 orders tracked</span>
+                            <span class="px-3 py-1 rounded-full bg-white/20 text-white font-extrabold text-xs uppercase tracking-wide">Live Consolidated</span>
                         </div>
                     </div>
 
@@ -308,13 +310,13 @@
                         <div>
                             <div class="flex items-center space-x-2">
                                 <span class="w-2.5 h-2.5 rounded-full bg-activeGreen animate-pulse"></span>
-                                <span id="top-kpi-current-month-label" class="text-xs font-black text-mutedText uppercase tracking-widest block">Current Month</span>
+                                <span id="top-kpi-current-month-label" class="text-sm font-black text-mutedText uppercase tracking-widest block">Current Month</span>
                             </div>
-                            <h3 id="top-kpi-current-month-revenue" class="text-3xl font-black text-softGreyText mt-2">₹0</h3>
+                            <h3 id="top-kpi-current-month-revenue" class="text-3xl sm:text-4xl font-black text-softGreyText mt-2">₹0</h3>
                         </div>
-                        <div class="flex items-center justify-between border-t border-outlineColor/60 pt-3 mt-4 text-xs font-semibold">
-                            <span id="top-kpi-current-month-orders" class="font-bold text-activeGreen text-sm">0 orders</span>
-                            <span class="text-mutedText font-medium text-xs">Realtime date evaluated</span>
+                        <div class="flex items-center justify-between border-t border-outlineColor/60 pt-3 mt-4 text-sm font-semibold">
+                            <span id="top-kpi-current-month-orders" class="font-bold text-activeGreen text-base">0 orders</span>
+                            <span class="text-mutedText font-semibold text-sm">Realtime date evaluated</span>
                         </div>
                     </div>
                 </div>
@@ -322,50 +324,50 @@
                 <!-- Quick Metric Cards (2x2 Grid of Small Cards with Revenue Badges) -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Today Metric Card -->
-                    <div onclick="toggleDashboardQuickGlance('TODAY');" class="bg-secondaryBg p-4.5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[135px] relative overflow-hidden group hover:border-emerald-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('TODAY');" class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[140px] relative overflow-hidden group hover:border-emerald-500/40 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-1">
-                            <span class="text-xs font-black text-mutedText uppercase tracking-widest block">Today</span>
-                            <h3 id="quick-kpi-today-count" class="text-2xl font-black text-softGreyText mt-1">0 Orders</h3>
+                            <span class="text-sm font-black text-mutedText uppercase tracking-widest block">Today</span>
+                            <h3 id="quick-kpi-today-count" class="text-2xl sm:text-3xl font-black text-softGreyText mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-3">
-                            <span id="quick-kpi-today-badge" class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-extrabold">₹0</span>
-                            <span class="text-xs text-mutedText font-bold tracking-wider">Live Feed</span>
+                            <span id="quick-kpi-today-badge" class="px-3 py-1 rounded-md bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-sm font-extrabold">₹0</span>
+                            <span class="text-sm text-mutedText font-bold tracking-wider">Live Feed</span>
                         </div>
                     </div>
 
                     <!-- Yesterday Metric Card -->
-                    <div onclick="toggleDashboardQuickGlance('YESTERDAY');" class="bg-secondaryBg p-4.5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[135px] relative overflow-hidden group hover:border-emerald-500/20 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('YESTERDAY');" class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[140px] relative overflow-hidden group hover:border-emerald-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-1">
-                            <span class="text-xs font-black text-mutedText uppercase tracking-widest block">Yesterday</span>
-                            <h3 id="quick-kpi-yesterday-count" class="text-2xl font-black text-softGreyText mt-1">0 Orders</h3>
+                            <span class="text-sm font-black text-mutedText uppercase tracking-widest block">Yesterday</span>
+                            <h3 id="quick-kpi-yesterday-count" class="text-2xl sm:text-3xl font-black text-softGreyText mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-3">
-                            <span id="quick-kpi-yesterday-badge" class="px-2.5 py-1 rounded-md bg-softCardBg text-softGreyText border border-outlineColor text-xs font-extrabold">₹0</span>
-                            <span class="text-xs text-mutedText font-bold tracking-wider">24h History</span>
+                            <span id="quick-kpi-yesterday-badge" class="px-3 py-1 rounded-md bg-softCardBg text-softGreyText border border-outlineColor text-sm font-extrabold">₹0</span>
+                            <span class="text-sm text-mutedText font-bold tracking-wider">24h History</span>
                         </div>
                     </div>
 
                     <!-- Approaching Metric Card -->
-                    <div onclick="toggleDashboardQuickGlance('APPROACHING');" class="bg-secondaryBg p-4.5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[135px] relative overflow-hidden group hover:border-amber-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('APPROACHING');" class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[140px] relative overflow-hidden group hover:border-amber-500/40 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-1">
-                            <span class="text-xs font-black text-mutedText uppercase tracking-widest block">Approaching</span>
-                            <h3 id="quick-kpi-approaching-count" class="text-2xl font-black text-softGreyText mt-1">0 Orders</h3>
+                            <span class="text-sm font-black text-mutedText uppercase tracking-widest block">Approaching</span>
+                            <h3 id="quick-kpi-approaching-count" class="text-2xl sm:text-3xl font-black text-softGreyText mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-3">
-                            <span id="quick-kpi-approaching-badge" class="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-extrabold">₹0</span>
-                            <span class="text-xs text-mutedText font-bold tracking-wider">SLA ≤ 5d</span>
+                            <span id="quick-kpi-approaching-badge" class="px-3 py-1 rounded-md bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-sm font-extrabold">₹0</span>
+                            <span class="text-sm text-mutedText font-bold tracking-wider">SLA ≤ 5d</span>
                         </div>
                     </div>
 
                     <!-- Critical Metric Card -->
-                    <div onclick="toggleDashboardQuickGlance('CRITICAL');" class="bg-secondaryBg p-4.5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[135px] relative overflow-hidden group hover:border-red-500/30 hover:bg-secondaryBg/80 transition-all cursor-pointer">
+                    <div onclick="toggleDashboardQuickGlance('CRITICAL');" class="bg-secondaryBg p-5 rounded-xl border border-outlineColor flex flex-col justify-between min-h-[140px] relative overflow-hidden group hover:border-red-500/40 hover:bg-secondaryBg/80 transition-all cursor-pointer">
                         <div class="space-y-1">
-                            <span class="text-xs font-black text-mutedText uppercase tracking-widest block">Critical</span>
-                            <h3 id="quick-kpi-critical-count" class="text-2xl font-black text-softGreyText mt-1">0 Orders</h3>
+                            <span class="text-sm font-black text-mutedText uppercase tracking-widest block">Critical</span>
+                            <h3 id="quick-kpi-critical-count" class="text-2xl sm:text-3xl font-black text-softGreyText mt-1">0 Orders</h3>
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-1.5 mt-3">
-                            <span id="quick-kpi-critical-badge" class="px-2.5 py-1 rounded-md bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 text-xs font-extrabold">₹0</span>
-                            <span class="text-xs text-mutedText font-bold tracking-wider">Overdue / Dispute</span>
+                            <span id="quick-kpi-critical-badge" class="px-3 py-1 rounded-md bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/30 text-sm font-extrabold">₹0</span>
+                            <span class="text-sm text-mutedText font-bold tracking-wider">Overdue / Dispute</span>
                         </div>
                     </div>
                 </div>
@@ -1838,8 +1840,17 @@
             }
         }
 
+        const CURRENT_APP_VERSION = "v5_shipped_sla_font_fix";
+
         function loadFromLocalStorage() {
             try {
+                const storedVersion = localStorage.getItem("overwatch_app_version");
+                if (storedVersion !== CURRENT_APP_VERSION) {
+                    console.log("Upgrading Overwatch cache schema to:", CURRENT_APP_VERSION);
+                    localStorage.removeItem("overwatch_gems");
+                    localStorage.setItem("overwatch_app_version", CURRENT_APP_VERSION);
+                }
+
                 const storedGems = localStorage.getItem("overwatch_gems");
                 const storedNotes = localStorage.getItem("overwatch_notes");
                 const storedTasks = localStorage.getItem("overwatch_tasks");
@@ -3080,22 +3091,22 @@
                     const rowProfitText = state.isProfitUnlocked ? `₹${item.profitAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}` : "🔒 Hidden";
 
                     tr.innerHTML = `
-                        <td class="p-4 font-bold text-sm text-softGreyText">${item.id}</td>
-                        <td class="p-4 text-sm font-semibold text-softGreyText">${item.firmName}</td>
+                        <td class="p-4 font-bold text-base text-softGreyText">${item.id}</td>
+                        <td class="p-4 text-base font-semibold text-softGreyText">${item.firmName}</td>
                         <td class="p-4">
-                            <div class="font-bold text-sm text-softGreyText truncate max-w-[200px]">${item.productName}</div>
-                            <div class="text-xs text-mutedText font-medium mt-0.5">${item.category}</div>
+                            <div class="font-bold text-base text-softGreyText truncate max-w-[220px]">${item.productName}</div>
+                            <div class="text-sm text-mutedText font-semibold mt-0.5">${item.category}</div>
                         </td>
-                        <td class="p-4 text-sm font-medium text-softGreyText">${item.orderDate}</td>
+                        <td class="p-4 text-base font-medium text-softGreyText">${item.orderDate}</td>
                         <td class="p-4">
-                            <span class="px-3 py-1 rounded-full border text-xs font-extrabold ${statusBadgeColor}">${shipment.statusLabel}</span>
+                            <span class="px-3 py-1 rounded-full border text-sm font-extrabold ${statusBadgeColor}">${shipment.statusLabel}</span>
                         </td>
-                        <td class="p-4 text-sm font-bold text-softGreyText">₹${item.revenue.toLocaleString('en-IN')}</td>
-                        <td class="p-4 text-sm font-semibold text-softGreyText">${rowProfitText}</td>
+                        <td class="p-4 text-base font-bold text-softGreyText">₹${item.revenue.toLocaleString('en-IN')}</td>
+                        <td class="p-4 text-base font-semibold text-softGreyText">${rowProfitText}</td>
                         <td class="p-4">
-                            <span class="px-2.5 py-1 rounded text-xs font-extrabold border ${cracBadge}">${cracVal === 'TRUE' ? 'FULL' : cracVal === 'FALSE' ? 'DISPUTED' : 'PENDING'}</span>
+                            <span class="px-3 py-1 rounded text-sm font-extrabold border ${cracBadge}">${cracVal === 'TRUE' ? 'FULL' : cracVal === 'FALSE' ? 'DISPUTED' : 'PENDING'}</span>
                         </td>
-                        <td class="p-4 text-xs font-bold ${deadlineColor}">${deadline.label}</td>
+                        <td class="p-4 text-sm font-bold ${deadlineColor}">${deadline.label}</td>
                         <td class="p-4 text-center">
                             <button class="text-govTeal hover:text-govTeal/80 text-xs font-black tracking-wider hover:underline">DETAILS</button>
                         </td>
@@ -3810,7 +3821,7 @@
             listContainer.innerHTML = "";
             if (list.length === 0) {
                 listContainer.innerHTML = `
-                    <div class="col-span-full py-8 text-center text-mutedText text-xs bg-canvasBg/20 rounded-xl border border-outlineColor/20 font-medium">
+                    <div class="col-span-full py-8 text-center text-mutedText text-sm bg-canvasBg/20 rounded-xl border border-outlineColor/20 font-medium">
                         No active orders match this category at this time.
                     </div>
                 `;
@@ -3835,13 +3846,13 @@
                         let slaColorClass = "text-activeGreen";
                         if (order.slaDaysLeft <= 0) {
                             slaColorClass = "text-alertPink font-extrabold";
-                            slaIndicatorHtml = `<span class="px-2.5 py-1 rounded text-xs bg-alertPink/15 ${slaColorClass} border border-alertPink/20 font-bold">Overdue ${Math.abs(order.slaDaysLeft)}d</span>`;
+                            slaIndicatorHtml = `<span class="px-2.5 py-1 rounded text-sm bg-alertPink/15 ${slaColorClass} border border-alertPink/20 font-bold">Overdue ${Math.abs(order.slaDaysLeft)}d</span>`;
                         } else if (order.slaDaysLeft === 1) {
                             slaColorClass = "text-warningOrange font-extrabold";
-                            slaIndicatorHtml = `<span class="px-2.5 py-1 rounded text-xs bg-warningOrange/15 ${slaColorClass} border border-warningOrange/20 font-bold">Due Tomorrow</span>`;
+                            slaIndicatorHtml = `<span class="px-2.5 py-1 rounded text-sm bg-warningOrange/15 ${slaColorClass} border border-warningOrange/20 font-bold">Due Tomorrow</span>`;
                         } else {
                             slaColorClass = "text-warningOrange";
-                            slaIndicatorHtml = `<span class="px-2.5 py-1 rounded text-xs bg-warningOrange/10 ${slaColorClass} border border-warningOrange/10 font-bold">${order.slaDaysLeft}d left</span>`;
+                            slaIndicatorHtml = `<span class="px-2.5 py-1 rounded text-sm bg-warningOrange/10 ${slaColorClass} border border-warningOrange/10 font-bold">${order.slaDaysLeft}d left</span>`;
                         }
                     }
 
@@ -3851,16 +3862,16 @@
                     card.innerHTML = `
                         <div class="flex items-start justify-between gap-2">
                             <div class="space-y-1 min-w-0">
-                                <span class="text-xs font-mono font-bold text-govTeal group-hover:text-activeGreen transition-colors">${order.contractNumber}</span>
-                                <p class="text-sm font-extrabold text-softGreyText truncate max-w-[200px] sm:max-w-xs mt-0.5">${order.productName}</p>
-                                <p class="text-xs text-mutedText font-semibold truncate max-w-[180px]">${order.firmName}</p>
+                                <span class="text-sm font-mono font-bold text-govTeal group-hover:text-activeGreen transition-colors">${order.contractNumber}</span>
+                                <p class="text-base font-extrabold text-softGreyText truncate max-w-[200px] sm:max-w-xs mt-0.5">${order.productName}</p>
+                                <p class="text-sm text-mutedText font-semibold truncate max-w-[180px]">${order.firmName}</p>
                             </div>
                             <div class="text-right flex-shrink-0 space-y-1.5">
-                                <span class="text-base font-black text-softGreyText block">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
-                                <span class="px-2.5 py-1 rounded text-xs font-bold uppercase inline-block ${statusBadgeStyle}">${statusLabel}</span>
+                                <span class="text-lg font-black text-softGreyText block">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                                <span class="px-2.5 py-1 rounded text-sm font-bold uppercase inline-block ${statusBadgeStyle}">${statusLabel}</span>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between border-t border-outlineColor/20 pt-2 text-xs text-mutedText">
+                        <div class="flex items-center justify-between border-t border-outlineColor/20 pt-2 text-sm text-mutedText">
                             <div class="flex items-center space-x-2 truncate">
                                 <span>Qty: <strong class="text-softGreyText font-bold">${order.quantity}</strong></span>
                                 <span>•</span>
@@ -3868,7 +3879,7 @@
                             </div>
                             <div class="flex items-center space-x-2 flex-shrink-0 ml-2">
                                 ${slaIndicatorHtml}
-                                <span class="text-xs text-govTeal/80 hover:text-govTeal font-bold">Details →</span>
+                                <span class="text-sm text-govTeal/80 hover:text-govTeal font-bold">Details →</span>
                             </div>
                         </div>
                     `;
