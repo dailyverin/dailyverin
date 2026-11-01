@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet.js Interactive Map CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -59,6 +62,116 @@
         }
         ::-webkit-scrollbar-thumb:hover {
             background: var(--outline-color);
+        }
+
+        /* Leaflet Map Custom Styling */
+        #india-order-map {
+            z-index: 10;
+        }
+        .leaflet-container {
+            background-color: var(--canvas-bg) !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .leaflet-popup-content-wrapper {
+            background-color: var(--secondary-bg) !important;
+            color: var(--soft-grey-text) !important;
+            border-radius: 16px !important;
+            border: 1px solid var(--outline-color) !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+            padding: 4px !important;
+        }
+        .leaflet-popup-content {
+            margin: 12px 14px !important;
+            line-height: 1.4 !important;
+        }
+        .leaflet-popup-tip {
+            background-color: var(--secondary-bg) !important;
+        }
+        .leaflet-popup-close-button {
+            color: var(--muted-text) !important;
+            padding: 8px 8px 0 0 !important;
+        }
+        .leaflet-popup-close-button:hover {
+            color: var(--soft-grey-text) !important;
+        }
+        .leaflet-control-zoom a {
+            background-color: var(--secondary-bg) !important;
+            color: var(--soft-grey-text) !important;
+            border-color: var(--outline-color) !important;
+        }
+        .leaflet-control-zoom a:hover {
+            background-color: var(--soft-card-bg) !important;
+        }
+        /* Custom State Cluster Marker */
+        .state-map-marker {
+            background: transparent;
+            border: none;
+        }
+        .state-map-marker-inner {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: -0.01em;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            box-shadow: 0 4px 14px 0 rgba(0, 163, 120, 0.35);
+            backdrop-filter: blur(8px);
+        }
+        .state-map-marker-inner:hover {
+            transform: scale(1.12) translateY(-2px);
+            box-shadow: 0 8px 24px 0 rgba(0, 163, 120, 0.55);
+            z-index: 9999;
+        }
+        /* Custom City Point Marker */
+        .city-map-marker {
+            background: transparent;
+            border: none;
+        }
+        .city-map-marker-inner {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(6px);
+        }
+        .city-map-marker-inner:hover {
+            transform: scale(1.15) translateY(-2px);
+            z-index: 9999;
+        }
+        .marker-pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            display: inline-block;
+            position: relative;
+        }
+        .marker-pulse-dot::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.6;
+            animation: marker-pulse-ring 1.8s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+        @keyframes marker-pulse-ring {
+            0% { transform: scale(0.6); opacity: 0.8; }
+            100% { transform: scale(2.2); opacity: 0; }
         }
     </style>
     <script>
@@ -211,6 +324,14 @@
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
                             </div>
                             <span>Analytics</span>
+                        </button>
+
+                        <!-- India Geo Map Link -->
+                        <button onclick="switchTab('MAP')" id="nav-MAP" class="w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent">
+                            <div id="nav-MAP-pill" class="p-2 rounded-full bg-softCardBg text-mutedText transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+                            </div>
+                            <span>India Geo Map</span>
                         </button>
 
                         <!-- Alerts Link -->
@@ -1021,6 +1142,246 @@
                 </div>
             </section>
 
+            <!-- ================= TAB: INDIA GEO MAP ================= -->
+            <section id="tab-content-MAP" class="hidden space-y-6">
+                <!-- Welcome Banner -->
+                <div class="bg-gradient-to-r from-govTeal/10 via-infoBlue/5 to-transparent p-5 rounded-2xl border border-govTeal/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-govTeal/20 text-govTeal border border-govTeal/30">Geographic Overwatch</span>
+                            <span class="w-2 h-2 rounded-full bg-activeGreen animate-ping"></span>
+                        </div>
+                        <h2 class="text-xl font-extrabold text-softGreyText tracking-tight mt-1">India Order Intelligence & Logistics Map</h2>
+                        <p class="text-xs text-mutedText mt-0.5">Interactive nationwide spatial view of government GeM contracts and corporate dispatches. Drill down from national states to municipal delivery cities.</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="resetIndiaMapView()" class="bg-softCardBg hover:bg-outlineColor text-softGreyText border border-outlineColor text-xs px-3.5 py-2 rounded-xl font-bold flex items-center space-x-1.5 transition-all shadow-sm">
+                            <svg class="w-4 h-4 text-govTeal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Reset to All India</span>
+                        </button>
+                        <button onclick="exportGeoSummary()" class="bg-govTeal hover:bg-govTeal/90 text-canvasBg text-xs px-3.5 py-2 rounded-xl font-bold flex items-center space-x-1.5 transition-all shadow-md">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <span>Export Geo CSV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Map Control Toolbar -->
+                <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor shadow-sm space-y-4">
+                    <!-- Row 1: Metric Selection (User Requirement: Choose what to see) -->
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-outlineColor">
+                        <div>
+                            <span class="text-[11px] font-black uppercase tracking-wider text-mutedText block">Metric Display Mode (Choose what you want to see on Map):</span>
+                            <p class="text-xs text-softGreyText mt-0.5">Toggle what numbers or currency values are displayed on state and city markers.</p>
+                        </div>
+                        <div class="inline-flex p-1 bg-canvasBg rounded-xl border border-outlineColor self-start lg:self-auto">
+                            <button id="map-metric-btn-COUNT" onclick="setMapMetric('COUNT')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-govTeal text-canvasBg shadow-sm flex items-center space-x-1.5">
+                                <span>📦 Order Numbers (Count)</span>
+                            </button>
+                            <button id="map-metric-btn-AMOUNT" onclick="setMapMetric('AMOUNT')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-mutedText hover:text-softGreyText transition-all flex items-center space-x-1.5">
+                                <span>💰 Order Amount (₹ Revenue)</span>
+                            </button>
+                            <button id="map-metric-btn-AVG_AMOUNT" onclick="setMapMetric('AVG_AMOUNT')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-mutedText hover:text-softGreyText transition-all flex items-center space-x-1.5">
+                                <span>📊 Avg Order Value (₹)</span>
+                            </button>
+                            <button id="map-metric-btn-QTY" onclick="setMapMetric('QTY')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-mutedText hover:text-softGreyText transition-all flex items-center space-x-1.5">
+                                <span>🔢 Units Quantity</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Filtering and Jump Options -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <!-- State Jump Selector -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-mutedText">Select State / UT to Zoom:</label>
+                            <select id="map-state-select" onchange="onMapStateSelectChange(this.value)" class="w-full bg-canvasBg border border-outlineColor rounded-xl px-3 py-2 text-xs text-softGreyText font-semibold focus:outline-none focus:border-govTeal">
+                                <option value="ALL">🇮🇳 All India (Country View)</option>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-mutedText">Order Delivery Status:</label>
+                            <select id="map-status-filter" onchange="onMapStatusFilterChange(this.value)" class="w-full bg-canvasBg border border-outlineColor rounded-xl px-3 py-2 text-xs text-softGreyText font-semibold focus:outline-none focus:border-govTeal">
+                                <option value="ALL">All Order Statuses</option>
+                                <option value="In Progress">In Progress (Dispatch Pending)</option>
+                                <option value="Shipped">Shipped (In Transit)</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Completed">Completed (CRAC Accepted)</option>
+                                <option value="CRITICAL">SLA Critical (≤ 1 Day / Overdue)</option>
+                            </select>
+                        </div>
+
+                        <!-- Firm / Vendor Filter -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-mutedText">Operating Firm:</label>
+                            <select id="map-vendor-filter" onchange="onMapVendorFilterChange(this.value)" class="w-full bg-canvasBg border border-outlineColor rounded-xl px-3 py-2 text-xs text-softGreyText font-semibold focus:outline-none focus:border-govTeal">
+                                <option value="ALL">All Operating Firms</option>
+                                <option value="Dailyver In">Dailyver In</option>
+                                <option value="Future Scientific">Future Scientific</option>
+                                <option value="H S Retail">H S Retail</option>
+                                <option value="V S Constructors">V S Constructors</option>
+                            </select>
+                        </div>
+
+                        <!-- City / State Search -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-mutedText">Quick Search City / Pincode:</label>
+                            <div class="relative">
+                                <input id="map-search-input" type="text" oninput="onMapSearchInput(this.value)" placeholder="e.g. Mumbai, Surat, 560001..." class="w-full bg-canvasBg border border-outlineColor rounded-xl pl-8 pr-3 py-2 text-xs text-softGreyText placeholder-mutedText focus:outline-none focus:border-govTeal font-medium">
+                                <svg class="w-3.5 h-3.5 text-mutedText absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- National KPI Stats Row -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor shadow-sm">
+                        <span class="text-[10px] font-bold text-mutedText uppercase block">Active National Volume</span>
+                        <div class="flex items-baseline space-x-1.5 mt-1">
+                            <span id="map-kpi-metric-val" class="text-xl font-black text-govTeal">0 Orders</span>
+                        </div>
+                        <span id="map-kpi-sub-1" class="text-[11px] text-mutedText mt-0.5 block">Across all filtered states</span>
+                    </div>
+
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor shadow-sm">
+                        <span class="text-[10px] font-bold text-mutedText uppercase block">States & UTs Covered</span>
+                        <div class="flex items-baseline space-x-1.5 mt-1">
+                            <span id="map-kpi-states-count" class="text-xl font-black text-infoBlue">0</span>
+                            <span class="text-xs text-mutedText font-semibold">Territories</span>
+                        </div>
+                        <span id="map-kpi-sub-2" class="text-[11px] text-mutedText mt-0.5 block">Nationwide coverage footprint</span>
+                    </div>
+
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor shadow-sm">
+                        <span class="text-[10px] font-bold text-mutedText uppercase block">Active Municipal Hubs</span>
+                        <div class="flex items-baseline space-x-1.5 mt-1">
+                            <span id="map-kpi-cities-count" class="text-xl font-black text-activeGreen">0</span>
+                            <span class="text-xs text-mutedText font-semibold">Cities</span>
+                        </div>
+                        <span id="map-kpi-sub-3" class="text-[11px] text-mutedText mt-0.5 block">Direct dispatch delivery points</span>
+                    </div>
+
+                    <div class="bg-secondaryBg p-4 rounded-xl border border-outlineColor shadow-sm">
+                        <span class="text-[10px] font-bold text-mutedText uppercase block">Top Dispatch Destination</span>
+                        <div class="flex items-baseline space-x-1.5 mt-1">
+                            <span id="map-kpi-top-state" class="text-lg font-black text-warningOrange truncate">N/A</span>
+                        </div>
+                        <span id="map-kpi-top-state-metric" class="text-[11px] text-mutedText mt-0.5 block">0 Orders (₹0)</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Map Canvas Card -->
+                <div class="bg-secondaryBg p-4 md:p-5 rounded-2xl border border-outlineColor shadow-sm space-y-3">
+                    <!-- Map Controls Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center space-x-2">
+                            <div id="map-zoom-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-govTeal/15 text-govTeal border border-govTeal/30 flex items-center space-x-1.5 shadow-sm">
+                                <span class="w-2 h-2 rounded-full bg-govTeal animate-pulse"></span>
+                                <span id="map-zoom-badge-text">🇮🇳 Full Country View (State Clusters)</span>
+                            </div>
+                            <span id="map-active-metric-pill" class="text-[11px] font-semibold text-mutedText bg-softCardBg px-2.5 py-1 rounded-lg border border-outlineColor">Showing: Order Numbers</span>
+                        </div>
+
+                        <!-- Regional Quick Zoom Presets -->
+                        <div class="flex items-center space-x-1.5 text-xs font-semibold">
+                            <span class="text-[10px] uppercase text-mutedText mr-1 hidden sm:inline">Region Jump:</span>
+                            <button onclick="zoomToRegion('ALL')" class="px-2.5 py-1 rounded-lg bg-softCardBg hover:bg-outlineColor text-softGreyText text-[11px] font-bold transition-all">All India</button>
+                            <button onclick="zoomToRegion('NORTH')" class="px-2.5 py-1 rounded-lg bg-softCardBg hover:bg-outlineColor text-softGreyText text-[11px] font-bold transition-all">North</button>
+                            <button onclick="zoomToRegion('WEST')" class="px-2.5 py-1 rounded-lg bg-softCardBg hover:bg-outlineColor text-softGreyText text-[11px] font-bold transition-all">West</button>
+                            <button onclick="zoomToRegion('SOUTH')" class="px-2.5 py-1 rounded-lg bg-softCardBg hover:bg-outlineColor text-softGreyText text-[11px] font-bold transition-all">South</button>
+                            <button onclick="zoomToRegion('EAST')" class="px-2.5 py-1 rounded-lg bg-softCardBg hover:bg-outlineColor text-softGreyText text-[11px] font-bold transition-all">East</button>
+                            <button onclick="zoomToRegion('CENTRAL')" class="px-2.5 py-1 rounded-lg bg-softCardBg hover:bg-outlineColor text-softGreyText text-[11px] font-bold transition-all">Central</button>
+                        </div>
+                    </div>
+
+                    <!-- Map Container -->
+                    <div class="relative w-full rounded-xl overflow-hidden border border-outlineColor">
+                        <div id="india-order-map" class="w-full h-[580px] bg-canvasBg"></div>
+
+                        <!-- Floating Map Legend & Helper -->
+                        <div class="absolute bottom-4 left-4 z-[500] bg-secondaryBg/95 backdrop-blur-md border border-outlineColor px-3.5 py-2.5 rounded-xl shadow-xl max-w-sm pointer-events-auto">
+                            <div class="flex items-center space-x-2 text-[11px] font-bold text-softGreyText">
+                                <span class="text-govTeal text-sm">💡</span>
+                                <span>Interactive Map Controls:</span>
+                            </div>
+                            <p class="text-[10px] text-mutedText mt-1 leading-relaxed">
+                                • Click any <strong class="text-softGreyText">State Bubble</strong> to zoom into that state.<br>
+                                • Zooming in smoothly transitions from State totals to <strong class="text-govTeal">City Hubs</strong>.<br>
+                                • Click any <strong class="text-govTeal">City Hub Marker</strong> to inspect individual contracts.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2-Column Section: State Leaderboard & Active Region Order Roster -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Col 1: States Ranking Leaderboard -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor shadow-sm space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-softGreyText uppercase tracking-wider">States Performance Ranking</h3>
+                                <p class="text-xs text-mutedText mt-0.5">Ranked by current selected metric. Click row or zoom icon to fly to state.</p>
+                            </div>
+                            <span id="map-states-table-count" class="text-[10px] font-bold bg-softCardBg border border-outlineColor px-2.5 py-1 rounded-lg text-mutedText">0 States</span>
+                        </div>
+
+                        <div class="overflow-x-auto max-h-[420px] overflow-y-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead class="sticky top-0 bg-softCardBg/90 backdrop-blur-sm border-b border-outlineColor text-[10px] uppercase font-bold text-mutedText tracking-wider">
+                                    <tr>
+                                        <th class="p-2.5">#</th>
+                                        <th class="p-2.5">State / UT</th>
+                                        <th class="p-2.5 text-center">Orders</th>
+                                        <th class="p-2.5 text-right">Total Amount (₹)</th>
+                                        <th class="p-2.5 text-right">Avg Ticket</th>
+                                        <th class="p-2.5 text-center">National Share</th>
+                                        <th class="p-2.5 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="map-states-table-body" class="divide-y divide-outlineColor">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: City Delivery Hubs & Regional Contract Details -->
+                    <div class="bg-secondaryBg p-5 rounded-2xl border border-outlineColor shadow-sm space-y-4 flex flex-col">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 id="map-region-title" class="text-sm font-bold text-softGreyText uppercase tracking-wider">All Active Delivery Cities</h3>
+                                    <span id="map-region-badge" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-govTeal/10 text-govTeal border border-govTeal/25 uppercase">National View</span>
+                                </div>
+                                <p id="map-region-desc" class="text-xs text-mutedText mt-0.5">Municipal delivery hubs and recipient government departments.</p>
+                            </div>
+                            <button id="map-clear-region-btn" onclick="resetIndiaMapView()" class="hidden text-xs text-govTeal hover:underline font-bold">Show All India</button>
+                        </div>
+
+                        <!-- Top Cities Quick Cards Grid -->
+                        <div id="map-cities-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[160px] overflow-y-auto pr-1">
+                            <!-- Dynamic City Cards -->
+                        </div>
+
+                        <!-- Order Roster for Selected State/City -->
+                        <div class="border-t border-outlineColor pt-3 flex-1 flex flex-col">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-softGreyText uppercase tracking-wider">Orders In Selected Location:</span>
+                                <span id="map-region-orders-count" class="text-[10px] font-bold bg-softCardBg border border-outlineColor px-2 py-0.5 rounded text-mutedText">0 Orders</span>
+                            </div>
+
+                            <div id="map-region-orders-list" class="space-y-2.5 max-h-[220px] overflow-y-auto pr-1 flex-1">
+                                <!-- Dynamic Orders Cards -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
 
             <!-- ================= TAB: ALERTS ================= -->
             <section id="tab-content-ALERTS" class="hidden space-y-6">
@@ -1300,7 +1661,18 @@
             { id: "GEMC-143098", contractNumber: "GEMC-143098", orderDate: "2026-06-02", firmName: "V S Constructors", productName: "Strategic Multi-Sensor Drone Aerial Mapping Rig", quantity: 15, category: "Aviation Technology", status: "In Progress", revenue: 890000.0, shippingDate: "2026-06-11", trackingNumber: "FEDEX-TATA-77", cracStatus: "FALSE", profitAmount: 133500.0, profitPercentage: 15.0, rowNumber: 85, buyerName: "Space & Drone Mapping Agency", pincode: "500001", locationCity: "Hyderabad" },
             { id: "GEMC-200388", contractNumber: "GEMC-200388", orderDate: "2026-04-12", firmName: "Dailyver In", productName: "Automated Thermal Imaging Security Perimeter Shield", quantity: 8, category: "Security Tech", status: "Completed", revenue: 1200000.0, shippingDate: "2026-05-15", trackingNumber: "EXP-982-AD", cracStatus: "TRUE", profitAmount: 240000.0, profitPercentage: 20.0, rowNumber: 92, buyerName: "Adani Defense Base", pincode: "382001", locationCity: "Ahmedabad" },
             { id: "OFFLINE-9828", contractNumber: "OFFLINE-9828", orderDate: "2026-05-30", firmName: "H S Retail", productName: "Standard Ergonomic Steel File Cabinets", quantity: 35, category: "Office Supplies", status: "Shipped", revenue: 45000.0, shippingDate: "2026-06-12", trackingNumber: "LOCAL-FURN-310", cracStatus: "NA", profitAmount: 3150.0, profitPercentage: 7.0, rowNumber: 110, buyerName: "City Court Registrar", pincode: "110001", locationCity: "New Delhi" },
-            { id: "GEMC-341998", contractNumber: "GEMC-341998", orderDate: "2026-05-01", firmName: "Future Scientific", productName: "Government Secure Internal Cloud Server Node", quantity: 2, category: "Enterprise IT", status: "Cancelled", revenue: 560000.0, shippingDate: "2026-05-20", trackingNumber: "", cracStatus: "NA", profitAmount: -11200.0, profitPercentage: -2.0, rowNumber: 145, buyerName: "Secure Datacenter Wing", pincode: "201301", locationCity: "Noida" }
+            { id: "GEMC-341998", contractNumber: "GEMC-341998", orderDate: "2026-05-01", firmName: "Future Scientific", productName: "Government Secure Internal Cloud Server Node", quantity: 2, category: "Enterprise IT", status: "Cancelled", revenue: 560000.0, shippingDate: "2026-05-20", trackingNumber: "", cracStatus: "NA", profitAmount: -11200.0, profitPercentage: -2.0, rowNumber: 145, buyerName: "Secure Datacenter Wing", pincode: "201301", locationCity: "Noida" },
+            { id: "GEMC-772101", contractNumber: "GEMC-772101", orderDate: "2026-06-08", firmName: "V S Constructors", productName: "Precision Industrial CNC Machine Controllers", quantity: 6, category: "Heavy Electricals", status: "In Progress", revenue: 480000.0, shippingDate: "2026-06-19", trackingNumber: "VSC-PN-772", cracStatus: "NA", profitAmount: 72000.0, profitPercentage: 15.0, rowNumber: 152, buyerName: "Automotive Research Wing", pincode: "411001", locationCity: "Pune" },
+            { id: "GEMC-619022", contractNumber: "GEMC-619022", orderDate: "2026-06-04", firmName: "Dailyver In", productName: "High-Output Commercial Solar Inverter Station", quantity: 18, category: "Heavy Electricals", status: "Shipped", revenue: 920000.0, shippingDate: "2026-06-10", trackingNumber: "DLV-JPR-619", cracStatus: "NA", profitAmount: 184000.0, profitPercentage: 20.0, rowNumber: 155, buyerName: "Rajasthan Renewable Energy Corp", pincode: "302001", locationCity: "Jaipur" },
+            { id: "GEMC-448109", contractNumber: "GEMC-448109", orderDate: "2026-05-18", firmName: "Future Scientific", productName: "Commercial Municipal Water Purification Plant", quantity: 2, category: "Housekeeping", status: "Completed", revenue: 1650000.0, shippingDate: "2026-05-29", trackingNumber: "FUT-KOL-448", cracStatus: "TRUE", profitAmount: 297000.0, profitPercentage: 18.0, rowNumber: 160, buyerName: "Public Health Engineering Dept", pincode: "700001", locationCity: "Kolkata" },
+            { id: "GEMC-902334", contractNumber: "GEMC-902334", orderDate: "2026-06-09", firmName: "Dailyver In", productName: "Automated Refrigerated Biomedical Centrifuge", quantity: 14, category: "Security Tech", status: "In Progress", revenue: 2100000.0, shippingDate: "2026-06-20", trackingNumber: "DLV-CHN-902", cracStatus: "NA", profitAmount: 420000.0, profitPercentage: 20.0, rowNumber: 165, buyerName: "Tamil Nadu Medical Services Corp", pincode: "600001", locationCity: "Chennai" },
+            { id: "GEMC-831005", contractNumber: "GEMC-831005", orderDate: "2026-06-01", firmName: "H S Retail", productName: "Municipal Smart Traffic IoT Radar Monitors", quantity: 25, category: "Telecom Hardware", status: "Shipped", revenue: 680000.0, shippingDate: "2026-06-09", trackingNumber: "HSR-LKO-831", cracStatus: "NA", profitAmount: 47600.0, profitPercentage: 7.0, rowNumber: 170, buyerName: "Lucknow Smart City Command", pincode: "226001", locationCity: "Lucknow" },
+            { id: "GEMC-512998", contractNumber: "GEMC-512998", orderDate: "2026-05-15", firmName: "Future Scientific", productName: "Continuous Ambient Air Quality Monitoring Station", quantity: 3, category: "Security Tech", status: "Completed", revenue: 840000.0, shippingDate: "2026-05-25", trackingNumber: "FUT-BPL-512", cracStatus: "TRUE", profitAmount: 151200.0, profitPercentage: 18.0, rowNumber: 175, buyerName: "MP Pollution Control Board", pincode: "462001", locationCity: "Bhopal" },
+            { id: "GEMC-391802", contractNumber: "GEMC-391802", orderDate: "2026-06-06", firmName: "Dailyver In", productName: "Smart Digital Interactive Classroom Boards", quantity: 12, category: "Office Supplies", status: "In Progress", revenue: 520000.0, shippingDate: "2026-06-18", trackingNumber: "DLV-PAT-391", cracStatus: "NA", profitAmount: 104000.0, profitPercentage: 20.0, rowNumber: 180, buyerName: "Bihar Education Infrastructure", pincode: "800001", locationCity: "Patna" },
+            { id: "GEMC-220911", contractNumber: "GEMC-220911", orderDate: "2026-05-28", firmName: "V S Constructors", productName: "Dual-Frequency Marine Navigation Echo Sounder", quantity: 4, category: "Aviation Technology", status: "Shipped", revenue: 1800000.0, shippingDate: "2026-06-07", trackingNumber: "VSC-KCH-220", cracStatus: "NA", profitAmount: 270000.0, profitPercentage: 15.0, rowNumber: 185, buyerName: "Cochin Shipyard Logistics", pincode: "682001", locationCity: "Kochi" },
+            { id: "GEMC-119280", contractNumber: "GEMC-119280", orderDate: "2026-05-20", firmName: "H S Retail", productName: "Automated Speed Violation Radar Displays", quantity: 8, category: "Telecom Hardware", status: "Completed", revenue: 390000.0, shippingDate: "2026-06-02", trackingNumber: "HSR-CHD-119", cracStatus: "TRUE", profitAmount: 27300.0, profitPercentage: 7.0, rowNumber: 190, buyerName: "Chandigarh Transport Undertaking", pincode: "160017", locationCity: "Chandigarh" },
+            { id: "GEMC-661044", contractNumber: "GEMC-661044", orderDate: "2026-06-03", firmName: "Future Scientific", productName: "High-Decibel Disaster Cyclone Warning Sirens", quantity: 10, category: "Heavy Electricals", status: "In Progress", revenue: 760000.0, shippingDate: "2026-06-17", trackingNumber: "FUT-BBS-661", cracStatus: "NA", profitAmount: 136800.0, profitPercentage: 18.0, rowNumber: 195, buyerName: "Odisha Disaster Management Wing", pincode: "751001", locationCity: "Bhubaneswar" },
+            { id: "GEMC-740112", contractNumber: "GEMC-740112", orderDate: "2026-05-22", firmName: "Dailyver In", productName: "Off-Grid Heavy Solar Battery Storage Bank", quantity: 6, category: "Heavy Electricals", status: "Delivered", revenue: 1420000.0, shippingDate: "2026-06-05", trackingNumber: "DLV-GUW-740", cracStatus: "TRUE", profitAmount: 284000.0, profitPercentage: 20.0, rowNumber: 200, buyerName: "Assam Power Distribution Corp", pincode: "781001", locationCity: "Guwahati" }
         ];
 
         // ---------------------------------------------------------
@@ -1325,7 +1697,14 @@
             syncLogs: [],
             isHighValueRiskExpanded: false,
             selectedStatusFilter: 'ALL',
-            selectedVendorFilter: 'ALL'
+            selectedVendorFilter: 'ALL',
+            // Geographic Map State
+            mapMetric: 'COUNT', // 'COUNT' | 'AMOUNT' | 'AVG_AMOUNT' | 'QTY'
+            mapSelectedState: 'ALL',
+            mapSelectedCity: null,
+            mapStatusFilter: 'ALL',
+            mapVendorFilter: 'ALL',
+            mapSearchQuery: ''
         };
 
         function toggleHighValueRisk() {
@@ -1599,6 +1978,7 @@
                 if (themeLabel) themeLabel.innerText = "Light";
             }
             localStorage.setItem('gem_theme_preference', theme);
+            if (typeof updateMapTileTheme === 'function') updateMapTileTheme(theme);
         }
 
         function toggleTheme() {
@@ -1938,7 +2318,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = "v5_shipped_sla_font_fix";
+        const CURRENT_APP_VERSION = "v6_india_geo_map";
 
         function loadFromLocalStorage() {
             try {
@@ -2313,17 +2693,33 @@
             state.currentTab = tabName;
             
             // Toggle side highlights
-            ['DASHBOARD', 'ORDERS', 'ANALYTICS', 'ALERTS', 'TASKS', 'SETTINGS'].forEach(t => {
+            ['DASHBOARD', 'ORDERS', 'ANALYTICS', 'MAP', 'ALERTS', 'TASKS', 'SETTINGS'].forEach(t => {
                 const btn = document.getElementById(`nav-${t}`);
+                const pill = document.getElementById(`nav-${t}-pill`);
                 const panel = document.getElementById(`tab-content-${t}`);
-                if (t === tabName) {
-                    btn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-govTeal bg-govTeal/10";
-                    panel.classList.remove("hidden");
-                } else {
-                    btn.className = "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-mutedText hover:text-softGreyText hover:bg-softCardBg";
-                    panel.classList.add("hidden");
+                if (btn && panel) {
+                    if (t === tabName) {
+                        btn.className = "w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-bold transition-all text-white bg-govTeal/10 border border-govTeal/25";
+                        if (pill) pill.className = "p-2 rounded-full bg-govTeal text-canvasBg shadow-md shadow-govTeal/25 transition-all";
+                        panel.classList.remove("hidden");
+                    } else {
+                        btn.className = "w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all text-mutedText hover:text-white hover:bg-softCardBg/20 border border-transparent";
+                        if (pill) pill.className = "p-2 rounded-full bg-softCardBg text-mutedText transition-all";
+                        panel.classList.add("hidden");
+                    }
                 }
             });
+
+            if (tabName === 'MAP') {
+                setTimeout(() => {
+                    if (!indiaMapInstance) {
+                        initIndiaMap();
+                    } else {
+                        indiaMapInstance.invalidateSize();
+                        refreshMapMarkers();
+                    }
+                }, 120);
+            }
 
             renderUI();
         }
@@ -2369,6 +2765,7 @@
             if (state.currentTab === 'DASHBOARD') renderDashboardTab();
             else if (state.currentTab === 'ORDERS') renderOrdersTab();
             else if (state.currentTab === 'ANALYTICS') renderAnalyticsTab();
+            else if (state.currentTab === 'MAP') renderMapTab();
             else if (state.currentTab === 'ALERTS') renderAlertsTab();
             else if (state.currentTab === 'TASKS') renderTasksTab();
             else if (state.currentTab === 'SETTINGS') renderSettingsTab();
@@ -3812,8 +4209,943 @@
         }
 
         // ---------------------------------------------------------
-        // RENDER: OVERWATCH ALERTS CONSOLE
+        // RENDER: INDIA GEO MAP & SPATIAL INTELLIGENCE ENGINE
         // ---------------------------------------------------------
+        const INDIAN_STATES = {
+            "Delhi NCT": { center: [28.6139, 77.2090], zoom: 9.5, name: "Delhi NCT", region: "NORTH" },
+            "Delhi": { center: [28.6139, 77.2090], zoom: 9.5, name: "Delhi NCT", region: "NORTH" },
+            "Maharashtra": { center: [19.7515, 75.7139], zoom: 7.0, name: "Maharashtra", region: "WEST" },
+            "Karnataka": { center: [15.3173, 75.7139], zoom: 7.0, name: "Karnataka", region: "SOUTH" },
+            "Gujarat": { center: [22.2587, 71.1924], zoom: 7.0, name: "Gujarat", region: "WEST" },
+            "Telangana": { center: [17.8495, 79.1151], zoom: 7.2, name: "Telangana", region: "SOUTH" },
+            "Uttar Pradesh": { center: [26.8467, 80.9462], zoom: 6.8, name: "Uttar Pradesh", region: "NORTH" },
+            "Rajasthan": { center: [27.0238, 74.2179], zoom: 6.8, name: "Rajasthan", region: "WEST" },
+            "Tamil Nadu": { center: [11.1271, 78.6569], zoom: 7.0, name: "Tamil Nadu", region: "SOUTH" },
+            "West Bengal": { center: [22.9868, 87.8550], zoom: 7.0, name: "West Bengal", region: "EAST" },
+            "Kerala": { center: [10.8505, 76.2711], zoom: 7.2, name: "Kerala", region: "SOUTH" },
+            "Madhya Pradesh": { center: [22.9734, 78.6569], zoom: 6.8, name: "Madhya Pradesh", region: "CENTRAL" },
+            "Bihar": { center: [25.0961, 85.3131], zoom: 7.0, name: "Bihar", region: "EAST" },
+            "Haryana": { center: [29.0588, 76.0856], zoom: 7.5, name: "Haryana", region: "NORTH" },
+            "Punjab": { center: [31.1471, 75.3412], zoom: 7.5, name: "Punjab", region: "NORTH" },
+            "Andhra Pradesh": { center: [15.9129, 79.7400], zoom: 7.0, name: "Andhra Pradesh", region: "SOUTH" },
+            "Odisha": { center: [20.9517, 85.0985], zoom: 7.0, name: "Odisha", region: "EAST" },
+            "Assam": { center: [26.2006, 92.9376], zoom: 7.0, name: "Assam", region: "EAST" },
+            "Jharkhand": { center: [23.6102, 85.2799], zoom: 7.0, name: "Jharkhand", region: "EAST" },
+            "Chhattisgarh": { center: [21.2787, 81.8661], zoom: 7.0, name: "Chhattisgarh", region: "CENTRAL" },
+            "Uttarakhand": { center: [30.0668, 79.0193], zoom: 7.5, name: "Uttarakhand", region: "NORTH" },
+            "Himachal Pradesh": { center: [31.1048, 77.1734], zoom: 7.5, name: "Himachal Pradesh", region: "NORTH" },
+            "Jammu and Kashmir": { center: [33.7782, 76.5762], zoom: 7.0, name: "Jammu & Kashmir", region: "NORTH" },
+            "Goa": { center: [15.2993, 74.1240], zoom: 9.0, name: "Goa", region: "WEST" },
+            "Chandigarh": { center: [30.7333, 76.7794], zoom: 11.0, name: "Chandigarh", region: "NORTH" }
+        };
+
+        const INDIAN_CITIES = {
+            "New Delhi": { lat: 28.6139, lng: 77.2090, state: "Delhi NCT" },
+            "Delhi": { lat: 28.6692, lng: 77.1025, state: "Delhi NCT" },
+            "Noida": { lat: 28.5355, lng: 77.3910, state: "Uttar Pradesh" },
+            "Greater Noida": { lat: 28.4744, lng: 77.5040, state: "Uttar Pradesh" },
+            "Ghaziabad": { lat: 28.6692, lng: 77.4538, state: "Uttar Pradesh" },
+            "Gurugram": { lat: 28.4595, lng: 77.0266, state: "Haryana" },
+            "Gurgaon": { lat: 28.4595, lng: 77.0266, state: "Haryana" },
+            "Faridabad": { lat: 28.4089, lng: 77.3178, state: "Haryana" },
+            "Mumbai": { lat: 19.0760, lng: 72.8777, state: "Maharashtra" },
+            "Pune": { lat: 18.5204, lng: 73.8567, state: "Maharashtra" },
+            "Nagpur": { lat: 21.1458, lng: 79.0882, state: "Maharashtra" },
+            "Nashik": { lat: 19.9975, lng: 73.7898, state: "Maharashtra" },
+            "Thane": { lat: 19.2183, lng: 72.9781, state: "Maharashtra" },
+            "Navi Mumbai": { lat: 19.0330, lng: 73.0297, state: "Maharashtra" },
+            "Bangalore": { lat: 12.9716, lng: 77.5946, state: "Karnataka" },
+            "Bengaluru": { lat: 12.9716, lng: 77.5946, state: "Karnataka" },
+            "Mysore": { lat: 12.2958, lng: 76.6394, state: "Karnataka" },
+            "Mangalore": { lat: 12.9141, lng: 74.8560, state: "Karnataka" },
+            "Hyderabad": { lat: 17.3850, lng: 78.4867, state: "Telangana" },
+            "Secunderabad": { lat: 17.4399, lng: 78.4983, state: "Telangana" },
+            "Warangal": { lat: 17.9689, lng: 79.5941, state: "Telangana" },
+            "Visakhapatnam": { lat: 17.6868, lng: 83.2185, state: "Andhra Pradesh" },
+            "Vijayawada": { lat: 16.5062, lng: 80.6480, state: "Andhra Pradesh" },
+            "Ahmedabad": { lat: 23.0225, lng: 72.5714, state: "Gujarat" },
+            "Surat": { lat: 21.1702, lng: 72.8311, state: "Gujarat" },
+            "Vadodara": { lat: 22.3072, lng: 73.1812, state: "Gujarat" },
+            "Rajkot": { lat: 22.3039, lng: 70.8022, state: "Gujarat" },
+            "Gandhinagar": { lat: 23.2156, lng: 72.6369, state: "Gujarat" },
+            "Chennai": { lat: 13.0827, lng: 80.2707, state: "Tamil Nadu" },
+            "Coimbatore": { lat: 11.0168, lng: 76.9558, state: "Tamil Nadu" },
+            "Madurai": { lat: 9.9252, lng: 78.1198, state: "Tamil Nadu" },
+            "Kolkata": { lat: 22.5726, lng: 88.3639, state: "West Bengal" },
+            "Howrah": { lat: 22.5958, lng: 88.2636, state: "West Bengal" },
+            "Jaipur": { lat: 26.9124, lng: 75.7873, state: "Rajasthan" },
+            "Jodhpur": { lat: 26.2389, lng: 73.0243, state: "Rajasthan" },
+            "Udaipur": { lat: 24.5854, lng: 73.7125, state: "Rajasthan" },
+            "Kota": { lat: 25.2138, lng: 75.8648, state: "Rajasthan" },
+            "Lucknow": { lat: 26.8467, lng: 80.9462, state: "Uttar Pradesh" },
+            "Kanpur": { lat: 26.4499, lng: 80.3319, state: "Uttar Pradesh" },
+            "Agra": { lat: 27.1767, lng: 78.0081, state: "Uttar Pradesh" },
+            "Varanasi": { lat: 25.3176, lng: 82.9739, state: "Uttar Pradesh" },
+            "Prayagraj": { lat: 25.4358, lng: 81.8463, state: "Uttar Pradesh" },
+            "Kochi": { lat: 9.9312, lng: 76.2673, state: "Kerala" },
+            "Thiruvananthapuram": { lat: 8.5241, lng: 76.9366, state: "Kerala" },
+            "Bhopal": { lat: 23.2599, lng: 77.4126, state: "Madhya Pradesh" },
+            "Indore": { lat: 22.7196, lng: 75.8577, state: "Madhya Pradesh" },
+            "Gwalior": { lat: 26.2183, lng: 78.1828, state: "Madhya Pradesh" },
+            "Patna": { lat: 25.5941, lng: 85.1376, state: "Bihar" },
+            "Ranchi": { lat: 23.3441, lng: 85.3096, state: "Jharkhand" },
+            "Chandigarh": { lat: 30.7333, lng: 76.7794, state: "Chandigarh" },
+            "Ludhiana": { lat: 30.9010, lng: 75.8573, state: "Punjab" },
+            "Amritsar": { lat: 31.6340, lng: 74.8723, state: "Punjab" },
+            "Bhubaneswar": { lat: 20.2961, lng: 85.8245, state: "Odisha" },
+            "Guwahati": { lat: 26.1445, lng: 91.7362, state: "Assam" },
+            "Raipur": { lat: 21.2514, lng: 81.6296, state: "Chhattisgarh" },
+            "Dehradun": { lat: 30.3165, lng: 78.0322, state: "Uttarakhand" },
+            "Shimla": { lat: 31.1048, lng: 77.1734, state: "Himachal Pradesh" },
+            "Jammu": { lat: 32.7266, lng: 74.8570, state: "Jammu and Kashmir" },
+            "Srinagar": { lat: 34.0837, lng: 74.7973, state: "Jammu and Kashmir" },
+            "Panaji": { lat: 15.4909, lng: 73.8278, state: "Goa" }
+        };
+
+        function formatIndianCurrencyShort(num) {
+            const val = Math.abs(Number(num) || 0);
+            if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`;
+            if (val >= 100000) return `₹${(val / 100000).toFixed(1)} L`;
+            if (val >= 1000) return `₹${(val / 1000).toFixed(0)} K`;
+            return `₹${val.toFixed(0)}`;
+        }
+
+        function resolveOrderGeo(order) {
+            // 1. Direct locationCity match
+            if (order.locationCity && order.locationCity !== "N/A" && order.locationCity.trim() !== "") {
+                const targetCity = order.locationCity.trim();
+                const matchedKey = Object.keys(INDIAN_CITIES).find(k => k.toLowerCase() === targetCity.toLowerCase());
+                if (matchedKey) {
+                    return {
+                        city: matchedKey,
+                        state: INDIAN_CITIES[matchedKey].state,
+                        lat: INDIAN_CITIES[matchedKey].lat,
+                        lng: INDIAN_CITIES[matchedKey].lng
+                    };
+                }
+            }
+
+            // 2. Buyer Name text scanning
+            if (order.buyerName) {
+                const bLower = order.buyerName.toLowerCase();
+                for (const [cityName, info] of Object.entries(INDIAN_CITIES)) {
+                    if (bLower.includes(cityName.toLowerCase())) {
+                        return {
+                            city: cityName,
+                            state: info.state,
+                            lat: info.lat,
+                            lng: info.lng
+                        };
+                    }
+                }
+            }
+
+            // 3. Pincode prefix fallback
+            if (order.pincode && /^\d{6}$/.test(order.pincode.trim())) {
+                const prefix = order.pincode.trim().substring(0, 2);
+                if (prefix === "11") return { city: "New Delhi", state: "Delhi NCT", lat: 28.6139, lng: 77.2090 };
+                if (["12", "13"].includes(prefix)) return { city: "Gurugram", state: "Haryana", lat: 28.4595, lng: 77.0266 };
+                if (["14", "15", "16"].includes(prefix)) return { city: "Chandigarh", state: "Punjab", lat: 30.7333, lng: 76.7794 };
+                if (prefix === "17") return { city: "Shimla", state: "Himachal Pradesh", lat: 31.1048, lng: 77.1734 };
+                if (["18", "19"].includes(prefix)) return { city: "Jammu", state: "Jammu and Kashmir", lat: 32.7266, lng: 74.8570 };
+                if (["20", "21", "22", "23", "24", "25", "26", "27", "28"].includes(prefix)) return { city: "Lucknow", state: "Uttar Pradesh", lat: 26.8467, lng: 80.9462 };
+                if (["30", "31", "32", "33", "34"].includes(prefix)) return { city: "Jaipur", state: "Rajasthan", lat: 26.9124, lng: 75.7873 };
+                if (["36", "37", "38", "39"].includes(prefix)) return { city: "Ahmedabad", state: "Gujarat", lat: 23.0225, lng: 72.5714 };
+                if (["40", "41", "42", "43", "44"].includes(prefix)) return { city: "Mumbai", state: "Maharashtra", lat: 19.0760, lng: 72.8777 };
+                if (["45", "46", "47", "48", "49"].includes(prefix)) return { city: "Bhopal", state: "Madhya Pradesh", lat: 23.2599, lng: 77.4126 };
+                if (["50", "51", "52", "53"].includes(prefix)) return { city: "Hyderabad", state: "Telangana", lat: 17.3850, lng: 78.4867 };
+                if (["56", "57", "58", "59"].includes(prefix)) return { city: "Bangalore", state: "Karnataka", lat: 12.9716, lng: 77.5946 };
+                if (["60", "61", "62", "63", "64"].includes(prefix)) return { city: "Chennai", state: "Tamil Nadu", lat: 13.0827, lng: 80.2707 };
+                if (["67", "68", "69"].includes(prefix)) return { city: "Kochi", state: "Kerala", lat: 9.9312, lng: 76.2673 };
+                if (["70", "71", "72", "73", "74"].includes(prefix)) return { city: "Kolkata", state: "West Bengal", lat: 22.5726, lng: 88.3639 };
+                if (["75", "76", "77"].includes(prefix)) return { city: "Bhubaneswar", state: "Odisha", lat: 20.2961, lng: 85.8245 };
+                if (["78", "79"].includes(prefix)) return { city: "Guwahati", state: "Assam", lat: 26.1445, lng: 91.7362 };
+                if (["80", "81", "82", "83", "84", "85"].includes(prefix)) return { city: "Patna", state: "Bihar", lat: 25.5941, lng: 85.1376 };
+            }
+
+            // 4. Default fallback
+            return {
+                city: "New Delhi",
+                state: "Delhi NCT",
+                lat: 28.6139,
+                lng: 77.2090
+            };
+        }
+
+        let indiaMapInstance = null;
+        let indiaMapTileLayer = null;
+        let indiaStateLayerGroup = null;
+        let indiaCityLayerGroup = null;
+
+        function initIndiaMap() {
+            const container = document.getElementById('india-order-map');
+            if (!container) return;
+
+            if (typeof L === 'undefined') {
+                console.warn("Leaflet library is still loading, will retry in 200ms...");
+                setTimeout(initIndiaMap, 200);
+                return;
+            }
+
+            if (indiaMapInstance) {
+                indiaMapInstance.invalidateSize();
+                refreshMapMarkers();
+                return;
+            }
+
+            // Create Leaflet instance
+            indiaMapInstance = L.map('india-order-map', {
+                center: [22.9734, 78.6569],
+                zoom: 4.8,
+                minZoom: 4,
+                maxZoom: 16,
+                zoomControl: false,
+                attributionControl: false
+            });
+
+            // Add Zoom Control to Top Right
+            L.control.zoom({ position: 'topright' }).addTo(indiaMapInstance);
+
+            // Add CartoDB Base Tiles (Dark / Light responsive)
+            const isDark = document.documentElement.classList.contains('dark');
+            const tileUrl = isDark
+                ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+            indiaMapTileLayer = L.tileLayer(tileUrl, {
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(indiaMapInstance);
+
+            // Layer Groups
+            indiaStateLayerGroup = L.layerGroup().addTo(indiaMapInstance);
+            indiaCityLayerGroup = L.layerGroup().addTo(indiaMapInstance);
+
+            // Event Listeners for Dynamic Auto-Zoom Drilldown
+            indiaMapInstance.on('zoomend', function() {
+                updateMapZoomBadge();
+                refreshMapMarkers();
+            });
+
+            indiaMapInstance.on('click', function(e) {
+                // If user clicks on empty map space at zoom < 6.5, clear state selection
+                if (indiaMapInstance.getZoom() <= 5.5 && state.mapSelectedState !== 'ALL') {
+                    state.mapSelectedState = 'ALL';
+                    state.mapSelectedCity = null;
+                    const stateSel = document.getElementById("map-state-select");
+                    if (stateSel) stateSel.value = 'ALL';
+                    renderMapTab();
+                    refreshMapMarkers();
+                }
+            });
+
+            setTimeout(() => {
+                indiaMapInstance.invalidateSize();
+                refreshMapMarkers();
+            }, 100);
+        }
+
+        function updateMapTileTheme(theme) {
+            if (!indiaMapInstance || !indiaMapTileLayer) return;
+            const tileUrl = theme === 'dark'
+                ? 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png'
+                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+            indiaMapTileLayer.setUrl(tileUrl);
+        }
+
+        function updateMapZoomBadge() {
+            if (!indiaMapInstance) return;
+            const zoom = indiaMapInstance.getZoom();
+            const textEl = document.getElementById("map-zoom-badge-text");
+            if (!textEl) return;
+
+            if (zoom < 6.5) {
+                textEl.innerText = "🇮🇳 Country Overview (State Distribution)";
+            } else if (zoom < 9.5) {
+                textEl.innerText = "📍 Regional View (State Logistics Hubs)";
+            } else {
+                textEl.innerText = "🏙️ City Level (Municipal Delivery Hubs)";
+            }
+        }
+
+        function setMapMetric(metric) {
+            state.mapMetric = metric;
+
+            // Update Metric Button Highlights
+            ['COUNT', 'AMOUNT', 'AVG_AMOUNT', 'QTY'].forEach(m => {
+                const btn = document.getElementById(`map-metric-btn-${m}`);
+                if (btn) {
+                    if (m === metric) {
+                        btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-govTeal text-canvasBg shadow-sm flex items-center space-x-1.5";
+                    } else {
+                        btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-mutedText hover:text-softGreyText transition-all flex items-center space-x-1.5";
+                    }
+                }
+            });
+
+            // Update Label Pill
+            const pill = document.getElementById("map-active-metric-pill");
+            if (pill) {
+                if (metric === 'COUNT') pill.innerText = "Showing: Order Numbers (Count)";
+                else if (metric === 'AMOUNT') pill.innerText = "Showing: Order Value (₹ Amount)";
+                else if (metric === 'AVG_AMOUNT') pill.innerText = "Showing: Average Order Value (₹)";
+                else if (metric === 'QTY') pill.innerText = "Showing: Ordered Units (Quantity)";
+            }
+
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function onMapStateSelectChange(stateVal) {
+            if (stateVal === 'ALL') {
+                resetIndiaMapView();
+            } else {
+                zoomToState(stateVal);
+            }
+        }
+
+        function onMapStatusFilterChange(statusVal) {
+            state.mapStatusFilter = statusVal;
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function onMapVendorFilterChange(vendorVal) {
+            state.mapVendorFilter = vendorVal;
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function onMapSearchInput(query) {
+            state.mapSearchQuery = query.trim().toLowerCase();
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function zoomToState(stateName) {
+            state.mapSelectedState = stateName;
+            state.mapSelectedCity = null;
+
+            const stateSel = document.getElementById("map-state-select");
+            if (stateSel) stateSel.value = stateName;
+
+            const stateInfo = INDIAN_STATES[stateName];
+            if (stateInfo && indiaMapInstance) {
+                indiaMapInstance.flyTo(stateInfo.center, Math.max(stateInfo.zoom, 7.5), {
+                    duration: 1.0,
+                    easeLinearity: 0.25
+                });
+            }
+
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function zoomToCity(cityName) {
+            state.mapSelectedCity = cityName;
+            const cityInfo = INDIAN_CITIES[cityName];
+
+            if (cityInfo && indiaMapInstance) {
+                state.mapSelectedState = cityInfo.state;
+                const stateSel = document.getElementById("map-state-select");
+                if (stateSel) stateSel.value = cityInfo.state;
+
+                indiaMapInstance.flyTo([cityInfo.lat, cityInfo.lng], 11.0, {
+                    duration: 1.0,
+                    easeLinearity: 0.25
+                });
+            }
+
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function zoomToRegion(region) {
+            if (!indiaMapInstance) return;
+
+            state.mapSelectedState = 'ALL';
+            state.mapSelectedCity = null;
+            const stateSel = document.getElementById("map-state-select");
+            if (stateSel) stateSel.value = 'ALL';
+
+            if (region === 'NORTH') indiaMapInstance.flyTo([29.2, 77.0], 6.2, { duration: 0.8 });
+            else if (region === 'WEST') indiaMapInstance.flyTo([21.0, 73.0], 6.2, { duration: 0.8 });
+            else if (region === 'SOUTH') indiaMapInstance.flyTo([13.2, 78.5], 6.0, { duration: 0.8 });
+            else if (region === 'EAST') indiaMapInstance.flyTo([23.8, 87.0], 6.0, { duration: 0.8 });
+            else if (region === 'CENTRAL') indiaMapInstance.flyTo([23.2, 79.5], 6.0, { duration: 0.8 });
+            else indiaMapInstance.flyTo([22.9734, 78.6569], 4.8, { duration: 0.8 });
+
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function resetIndiaMapView() {
+            state.mapSelectedState = 'ALL';
+            state.mapSelectedCity = null;
+            state.mapSearchQuery = '';
+
+            const stateSel = document.getElementById("map-state-select");
+            if (stateSel) stateSel.value = 'ALL';
+
+            const searchIn = document.getElementById("map-search-input");
+            if (searchIn) searchIn.value = '';
+
+            if (indiaMapInstance) {
+                indiaMapInstance.flyTo([22.9734, 78.6569], 4.8, { duration: 1.0 });
+            }
+
+            renderMapTab();
+            refreshMapMarkers();
+        }
+
+        function getFilteredGeoOrders() {
+            return state.gems.filter(g => {
+                // Ignore zero revenue cancelled orders unless specifically filtered
+                if (state.mapStatusFilter !== 'Cancelled' && g.status.toLowerCase().includes("cancelled") && g.revenue <= 0) {
+                    return false;
+                }
+
+                // Filter by status
+                if (state.mapStatusFilter !== 'ALL') {
+                    if (state.mapStatusFilter === 'CRITICAL') {
+                        const dl = evaluateDeadline(g);
+                        if (dl.status !== 'OVERDUE' && dl.daysLeft > 1) return false;
+                    } else if (g.status.toLowerCase() !== state.mapStatusFilter.toLowerCase()) {
+                        return false;
+                    }
+                }
+
+                // Filter by vendor firm
+                if (state.mapVendorFilter !== 'ALL') {
+                    if (g.firmName.toLowerCase() !== state.mapVendorFilter.toLowerCase()) return false;
+                }
+
+                return true;
+            }).map(g => {
+                const geo = resolveOrderGeo(g);
+                return { order: g, geo: geo };
+            });
+        }
+
+        function renderMapTab() {
+            const geoOrders = getFilteredGeoOrders();
+
+            // Populate State Dropdown Options
+            const stateSel = document.getElementById("map-state-select");
+            if (stateSel) {
+                const existingVal = stateSel.value || 'ALL';
+                const uniqueStates = [...new Set(geoOrders.map(item => item.geo.state))].sort();
+
+                let optionsHtml = `<option value="ALL">🇮🇳 All India (Country View - ${geoOrders.length} Orders)</option>`;
+                uniqueStates.forEach(s => {
+                    const countInState = geoOrders.filter(o => o.geo.state === s).length;
+                    const revInState = geoOrders.filter(o => o.geo.state === s).reduce((sum, o) => sum + o.order.revenue, 0);
+                    optionsHtml += `<option value="${s}">${s} (${countInState} Orders - ${formatIndianCurrencyShort(revInState)})</option>`;
+                });
+                stateSel.innerHTML = optionsHtml;
+                stateSel.value = state.mapSelectedState;
+            }
+
+            // Filter by search query if present
+            let activeOrders = geoOrders;
+            if (state.mapSearchQuery !== '') {
+                const q = state.mapSearchQuery;
+                activeOrders = activeOrders.filter(item => 
+                    item.geo.state.toLowerCase().includes(q) ||
+                    item.geo.city.toLowerCase().includes(q) ||
+                    (item.order.pincode && item.order.pincode.includes(q)) ||
+                    (item.order.buyerName && item.order.buyerName.toLowerCase().includes(q))
+                );
+            }
+
+            // Aggregate by State
+            const stateAgg = {};
+            activeOrders.forEach(item => {
+                const s = item.geo.state;
+                if (!stateAgg[s]) {
+                    stateAgg[s] = { state: s, count: 0, revenue: 0, qty: 0, orders: [], cities: new Set() };
+                }
+                stateAgg[s].count++;
+                stateAgg[s].revenue += item.order.revenue;
+                stateAgg[s].qty += item.order.quantity || 1;
+                stateAgg[s].orders.push(item);
+                stateAgg[s].cities.add(item.geo.city);
+            });
+
+            // Aggregate by City
+            const cityAgg = {};
+            activeOrders.forEach(item => {
+                const c = item.geo.city;
+                if (!cityAgg[c]) {
+                    cityAgg[c] = { city: c, state: item.geo.state, count: 0, revenue: 0, qty: 0, orders: [] };
+                }
+                cityAgg[c].count++;
+                cityAgg[c].revenue += item.order.revenue;
+                cityAgg[c].qty += item.order.quantity || 1;
+                cityAgg[c].orders.push(item);
+            });
+
+            // Calculate Totals
+            const totalCount = activeOrders.length;
+            const totalRevenue = activeOrders.reduce((sum, o) => sum + o.order.revenue, 0);
+            const totalQty = activeOrders.reduce((sum, o) => sum + (o.order.quantity || 1), 0);
+            const avgOrderValue = totalCount > 0 ? (totalRevenue / totalCount) : 0;
+
+            // Update KPI 1: Active Metric Headline
+            const kpiMetricVal = document.getElementById("map-kpi-metric-val");
+            const kpiSub1 = document.getElementById("map-kpi-sub-1");
+            if (kpiMetricVal && kpiSub1) {
+                if (state.mapMetric === 'COUNT') {
+                    kpiMetricVal.innerText = `${totalCount} Orders`;
+                    kpiSub1.innerText = `Total volume across ${Object.keys(stateAgg).length} states`;
+                } else if (state.mapMetric === 'AMOUNT') {
+                    kpiMetricVal.innerText = formatIndianCurrencyShort(totalRevenue);
+                    kpiSub1.innerText = `Gross order contract valuation`;
+                } else if (state.mapMetric === 'AVG_AMOUNT') {
+                    kpiMetricVal.innerText = `₹${Math.round(avgOrderValue).toLocaleString('en-IN')}`;
+                    kpiSub1.innerText = `Average order size nationwide`;
+                } else if (state.mapMetric === 'QTY') {
+                    kpiMetricVal.innerText = `${totalQty} Units`;
+                    kpiSub1.innerText = `Total physical product items ordered`;
+                }
+            }
+
+            // Update KPI 2: States Count
+            const kpiStatesCount = document.getElementById("map-kpi-states-count");
+            if (kpiStatesCount) kpiStatesCount.innerText = Object.keys(stateAgg).length;
+
+            // Update KPI 3: Municipal Hubs Count
+            const kpiCitiesCount = document.getElementById("map-kpi-cities-count");
+            if (kpiCitiesCount) kpiCitiesCount.innerText = Object.keys(cityAgg).length;
+
+            // Update KPI 4: Top State
+            const stateList = Object.values(stateAgg);
+            stateList.sort((a, b) => {
+                if (state.mapMetric === 'AMOUNT') return b.revenue - a.revenue;
+                if (state.mapMetric === 'AVG_AMOUNT') return (b.revenue / b.count) - (a.revenue / a.count);
+                if (state.mapMetric === 'QTY') return b.qty - a.qty;
+                return b.count - a.count;
+            });
+
+            const topState = stateList[0] || null;
+            const kpiTopState = document.getElementById("map-kpi-top-state");
+            const kpiTopMetric = document.getElementById("map-kpi-top-state-metric");
+            if (kpiTopState && kpiTopMetric) {
+                if (topState) {
+                    kpiTopState.innerText = topState.state;
+                    if (state.mapMetric === 'AMOUNT') {
+                        kpiTopMetric.innerText = `${formatIndianCurrencyShort(topState.revenue)} (${topState.count} orders)`;
+                    } else if (state.mapMetric === 'AVG_AMOUNT') {
+                        kpiTopMetric.innerText = `Avg ₹${Math.round(topState.revenue / topState.count).toLocaleString('en-IN')}`;
+                    } else if (state.mapMetric === 'QTY') {
+                        kpiTopMetric.innerText = `${topState.qty} units (${topState.count} orders)`;
+                    } else {
+                        kpiTopMetric.innerText = `${topState.count} orders (${formatIndianCurrencyShort(topState.revenue)})`;
+                    }
+                } else {
+                    kpiTopState.innerText = "No Records";
+                    kpiTopMetric.innerText = "0 Orders";
+                }
+            }
+
+            // Render States Table
+            const tableBody = document.getElementById("map-states-table-body");
+            const tableCount = document.getElementById("map-states-table-count");
+            if (tableCount) tableCount.innerText = `${stateList.length} States Active`;
+
+            if (tableBody) {
+                tableBody.innerHTML = "";
+                if (stateList.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-mutedText">No geographic orders found matching current filters.</td></tr>`;
+                } else {
+                    stateList.forEach((st, idx) => {
+                        const tr = document.createElement("tr");
+                        const isSelected = state.mapSelectedState === st.state;
+                        tr.className = `hover:bg-softCardBg/50 transition-all cursor-pointer ${isSelected ? 'bg-govTeal/10 border-l-4 border-govTeal font-bold' : ''}`;
+                        tr.onclick = () => zoomToState(st.state);
+
+                        const avgTicket = st.count > 0 ? (st.revenue / st.count) : 0;
+                        const pctOfTotal = totalRevenue > 0 ? ((st.revenue / totalRevenue) * 100).toFixed(1) : "0.0";
+                        const pctCount = totalCount > 0 ? ((st.count / totalCount) * 100).toFixed(1) : "0.0";
+                        const displayPct = state.mapMetric === 'AMOUNT' ? pctOfTotal : pctCount;
+
+                        tr.innerHTML = `
+                            <td class="p-2.5 font-bold text-mutedText">${idx + 1}</td>
+                            <td class="p-2.5">
+                                <span class="font-bold text-softGreyText block">${st.state}</span>
+                                <span class="text-[10px] text-mutedText">${st.cities.size} delivery hubs</span>
+                            </td>
+                            <td class="p-2.5 text-center font-bold text-softGreyText">${st.count}</td>
+                            <td class="p-2.5 text-right font-black text-softGreyText">₹${st.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+                            <td class="p-2.5 text-right font-semibold text-mutedText">₹${Math.round(avgTicket).toLocaleString('en-IN')}</td>
+                            <td class="p-2.5 text-center">
+                                <div class="flex items-center space-x-1.5 justify-center">
+                                    <div class="w-16 bg-outlineColor rounded-full h-1.5 overflow-hidden">
+                                        <div class="bg-govTeal h-full rounded-full" style="width: ${Math.min(100, displayPct)}%"></div>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-mutedText">${displayPct}%</span>
+                                </div>
+                            </td>
+                            <td class="p-2.5 text-center">
+                                <button onclick="event.stopPropagation(); zoomToState('${st.state}')" class="px-2 py-1 rounded bg-govTeal/10 hover:bg-govTeal/20 text-govTeal font-bold text-[10px] transition-all flex items-center space-x-1 mx-auto" title="Zoom to ${st.state}">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                    <span>Zoom</span>
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                }
+            }
+
+            // Render City Hub Cards & Regional Order List
+            const regionTitle = document.getElementById("map-region-title");
+            const regionBadge = document.getElementById("map-region-badge");
+            const regionDesc = document.getElementById("map-region-desc");
+            const clearRegionBtn = document.getElementById("map-clear-region-btn");
+
+            if (state.mapSelectedState === 'ALL') {
+                if (regionTitle) regionTitle.innerText = "All Active Delivery Cities";
+                if (regionBadge) {
+                    regionBadge.innerText = "National View";
+                    regionBadge.className = "px-2 py-0.5 rounded-full text-[9px] font-bold bg-govTeal/10 text-govTeal border border-govTeal/25 uppercase";
+                }
+                if (regionDesc) regionDesc.innerText = "Showing municipal dispatch destinations across all states in India.";
+                if (clearRegionBtn) clearRegionBtn.classList.add("hidden");
+            } else {
+                if (regionTitle) regionTitle.innerText = `${state.mapSelectedState} Delivery Hubs`;
+                if (regionBadge) {
+                    regionBadge.innerText = "State Filtered";
+                    regionBadge.className = "px-2 py-0.5 rounded-full text-[9px] font-bold bg-infoBlue/10 text-infoBlue border border-infoBlue/25 uppercase";
+                }
+                if (regionDesc) regionDesc.innerText = `Direct municipal deliveries and buyers inside ${state.mapSelectedState}.`;
+                if (clearRegionBtn) clearRegionBtn.classList.remove("hidden");
+            }
+
+            // City Hub Cards
+            const citiesGrid = document.getElementById("map-cities-cards-grid");
+            if (citiesGrid) {
+                citiesGrid.innerHTML = "";
+                let displayCities = Object.values(cityAgg);
+                if (state.mapSelectedState !== 'ALL') {
+                    displayCities = displayCities.filter(c => c.state === state.mapSelectedState);
+                }
+
+                // Sort cities by current metric
+                displayCities.sort((a, b) => {
+                    if (state.mapMetric === 'AMOUNT') return b.revenue - a.revenue;
+                    if (state.mapMetric === 'AVG_AMOUNT') return (b.revenue / b.count) - (a.revenue / a.count);
+                    if (state.mapMetric === 'QTY') return b.qty - a.qty;
+                    return b.count - a.count;
+                });
+
+                if (displayCities.length === 0) {
+                    citiesGrid.innerHTML = `<div class="col-span-3 text-center py-4 text-xs text-mutedText">No delivery cities found in this location.</div>`;
+                } else {
+                    displayCities.slice(0, 9).forEach(c => {
+                        const isCitySelected = state.mapSelectedCity === c.city;
+                        const card = document.createElement("div");
+                        card.className = `p-2.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${isCitySelected ? 'bg-govTeal/15 border-govTeal text-softGreyText' : 'bg-softCardBg/40 border-outlineColor/70 hover:border-govTeal/50'}`;
+                        card.onclick = () => zoomToCity(c.city);
+
+                        let metricText = `${c.count} Orders`;
+                        if (state.mapMetric === 'AMOUNT') metricText = formatIndianCurrencyShort(c.revenue);
+                        else if (state.mapMetric === 'AVG_AMOUNT') metricText = `Avg ₹${formatIndianCurrencyShort(Math.round(c.revenue / c.count))}`;
+                        else if (state.mapMetric === 'QTY') metricText = `${c.qty} Units`;
+
+                        card.innerHTML = `
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-xs text-softGreyText truncate">${c.city}</span>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-govTeal/10 text-govTeal">${metricText}</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1 text-[10px] text-mutedText">
+                                <span class="truncate">${c.state}</span>
+                                <span class="font-bold text-softGreyText">₹${(c.revenue / 1000).toFixed(0)}k</span>
+                            </div>
+                        `;
+                        citiesGrid.appendChild(card);
+                    });
+                }
+            }
+
+            // Render Orders in Selected Region
+            const ordersList = document.getElementById("map-region-orders-list");
+            const ordersCountEl = document.getElementById("map-region-orders-count");
+
+            let targetOrders = activeOrders;
+            if (state.mapSelectedCity) {
+                targetOrders = targetOrders.filter(o => o.geo.city === state.mapSelectedCity);
+            } else if (state.mapSelectedState !== 'ALL') {
+                targetOrders = targetOrders.filter(o => o.geo.state === state.mapSelectedState);
+            }
+
+            if (ordersCountEl) ordersCountEl.innerText = `${targetOrders.length} Order${targetOrders.length !== 1 ? 's' : ''}`;
+
+            if (ordersList) {
+                ordersList.innerHTML = "";
+                if (targetOrders.length === 0) {
+                    ordersList.innerHTML = `<div class="p-6 text-center text-xs text-mutedText">No contracts active in this region.</div>`;
+                } else {
+                    targetOrders.forEach(({ order, geo }) => {
+                        const card = document.createElement("div");
+                        card.className = "bg-softCardBg/50 p-2.5 rounded-xl border border-outlineColor/70 hover:border-govTeal/40 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2";
+
+                        // Status badge styling
+                        let statusBadge = `<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-govTeal/15 text-govTeal border border-govTeal/25">${order.status}</span>`;
+                        if (order.status.toLowerCase().includes("shipped")) {
+                            statusBadge = `<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-infoBlue/15 text-infoBlue border border-infoBlue/25">${order.status}</span>`;
+                        } else if (order.status.toLowerCase().includes("delivered") || order.status.toLowerCase().includes("completed")) {
+                            statusBadge = `<span class="px-2 py-0.5 rounded text-[9px] font-bold bg-activeGreen/15 text-activeGreen border border-activeGreen/25">${order.status}</span>`;
+                        }
+
+                        card.innerHTML = `
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-mono font-bold text-xs text-softGreyText truncate">${order.id}</span>
+                                    <button onclick="copyToClipboard('${order.id}', 'Order ID', event)" class="p-1 rounded bg-softCardBg text-mutedText hover:text-softGreyText text-[9px] transition-all" title="Copy Order ID">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    </button>
+                                    ${statusBadge}
+                                </div>
+                                <p class="text-xs text-softGreyText font-semibold truncate mt-0.5" title="${order.productName}">${order.productName}</p>
+                                <div class="flex items-center space-x-2 text-[10px] text-mutedText mt-0.5">
+                                    <span>📍 ${geo.city}, ${geo.state}</span>
+                                    <span>•</span>
+                                    <span class="truncate max-w-[140px]">${order.buyerName || 'Dept Hub'}</span>
+                                    <span>•</span>
+                                    <span class="font-bold text-softGreyText">₹${order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1.5 self-end sm:self-center">
+                                <button onclick="openOrderDetailModal('${order.id}')" class="px-2.5 py-1 rounded-lg bg-govTeal hover:bg-govTeal/90 text-canvasBg font-bold text-[11px] transition-all shadow-sm">
+                                    Inspect
+                                </button>
+                            </div>
+                        `;
+                        ordersList.appendChild(card);
+                    });
+                }
+            }
+        }
+
+        function refreshMapMarkers() {
+            if (!indiaMapInstance || !indiaStateLayerGroup || !indiaCityLayerGroup) return;
+
+            indiaStateLayerGroup.clearLayers();
+            indiaCityLayerGroup.clearLayers();
+
+            const geoOrders = getFilteredGeoOrders();
+            const currentZoom = indiaMapInstance.getZoom();
+
+            // Aggregate Data
+            const stateAgg = {};
+            const cityAgg = {};
+
+            geoOrders.forEach(item => {
+                const s = item.geo.state;
+                if (!stateAgg[s]) {
+                    stateAgg[s] = { state: s, count: 0, revenue: 0, qty: 0, orders: [], cities: new Set(), latSum: 0, lngSum: 0 };
+                }
+                stateAgg[s].count++;
+                stateAgg[s].revenue += item.order.revenue;
+                stateAgg[s].qty += item.order.quantity || 1;
+                stateAgg[s].orders.push(item);
+                stateAgg[s].cities.add(item.geo.city);
+                stateAgg[s].latSum += item.geo.lat;
+                stateAgg[s].lngSum += item.geo.lng;
+
+                const c = item.geo.city;
+                if (!cityAgg[c]) {
+                    cityAgg[c] = { city: c, state: item.geo.state, lat: item.geo.lat, lng: item.geo.lng, count: 0, revenue: 0, qty: 0, orders: [] };
+                }
+                cityAgg[c].count++;
+                cityAgg[c].revenue += item.order.revenue;
+                cityAgg[c].qty += item.order.quantity || 1;
+                cityAgg[c].orders.push(item);
+            });
+
+            // Decide whether to show State Clusters or City Hubs based on user requirements:
+            // "first it will show full orders of the country, then when clicking on state or zooming in on the state will show the orders number or amounts, the zooming in will go to city level from where we are receiving orders"
+            const showCityLevel = currentZoom >= 6.5 || state.mapSelectedState !== 'ALL';
+
+            if (!showCityLevel) {
+                // ================= NATIONAL VIEW: STATE CLUSTER BUBBLES =================
+                Object.values(stateAgg).forEach(st => {
+                    const stateMeta = INDIAN_STATES[st.state];
+                    const center = stateMeta ? stateMeta.center : [st.latSum / st.count, st.lngSum / st.count];
+
+                    // Determine metric display text
+                    let metricDisplay = `${st.count} Orders`;
+                    if (state.mapMetric === 'AMOUNT') metricDisplay = formatIndianCurrencyShort(st.revenue);
+                    else if (state.mapMetric === 'AVG_AMOUNT') metricDisplay = `Avg ₹${formatIndianCurrencyShort(Math.round(st.revenue / st.count))}`;
+                    else if (state.mapMetric === 'QTY') metricDisplay = `${st.qty} Units`;
+
+                    // Dynamic Color Intensity
+                    let bgGradient = "linear-gradient(135deg, rgba(0, 163, 120, 0.95), rgba(16, 185, 129, 0.85))";
+                    let textColor = "#090E11";
+                    if (st.revenue > 2000000 || st.count >= 4) {
+                        bgGradient = "linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(0, 163, 120, 0.9))";
+                    }
+
+                    const markerHtml = `
+                        <div class="state-map-marker-inner" style="background: ${bgGradient}; color: ${textColor};">
+                            <span class="mr-1.5 font-bold">${st.state}</span>
+                            <span class="px-2 py-0.5 rounded-full bg-black/25 text-white text-[10px] font-black tracking-tight">${metricDisplay}</span>
+                        </div>
+                    `;
+
+                    const customIcon = L.divIcon({
+                        className: 'state-map-marker',
+                        html: markerHtml,
+                        iconSize: [140, 36],
+                        iconAnchor: [70, 18]
+                    });
+
+                    const marker = L.marker(center, { icon: customIcon });
+
+                    // Tooltip on Hover
+                    marker.bindTooltip(`
+                        <div class="p-1 text-xs">
+                            <strong class="text-govTeal">${st.state}</strong><br>
+                            <span>Total Orders: <strong>${st.count}</strong></span><br>
+                            <span>Total Value: <strong>₹${st.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</strong></span><br>
+                            <span>Active Hubs: <strong>${st.cities.size} Cities</strong></span>
+                        </div>
+                    `, { direction: 'top', offset: [0, -10] });
+
+                    // Click to Zoom in smoothly to State
+                    marker.on('click', () => {
+                        zoomToState(st.state);
+                    });
+
+                    marker.addTo(indiaStateLayerGroup);
+                });
+            } else {
+                // ================= REGIONAL / MUNICIPAL VIEW: CITY LEVEL MARKERS =================
+                Object.values(cityAgg).forEach(ct => {
+                    // If a specific state is chosen, only render or prioritize that state's cities
+                    if (state.mapSelectedState !== 'ALL' && ct.state !== state.mapSelectedState) {
+                        return;
+                    }
+
+                    let metricDisplay = `${ct.count} Orders`;
+                    if (state.mapMetric === 'AMOUNT') metricDisplay = formatIndianCurrencyShort(ct.revenue);
+                    else if (state.mapMetric === 'AVG_AMOUNT') metricDisplay = `Avg ₹${formatIndianCurrencyShort(Math.round(ct.revenue / ct.count))}`;
+                    else if (state.mapMetric === 'QTY') metricDisplay = `${ct.qty} Units`;
+
+                    const isCityActive = state.mapSelectedCity === ct.city;
+
+                    const markerHtml = `
+                        <div class="city-map-marker-inner ${isCityActive ? 'ring-2 ring-govTeal scale-110' : ''}" style="background: var(--secondary-bg); color: var(--soft-grey-text); border: 1.5px solid #00A378;">
+                            <span class="marker-pulse-dot" style="background: #00A378;"></span>
+                            <span class="font-bold mr-1">${ct.city}:</span>
+                            <span class="text-govTeal font-extrabold">${metricDisplay}</span>
+                        </div>
+                    `;
+
+                    const cityIcon = L.divIcon({
+                        className: 'city-map-marker',
+                        html: markerHtml,
+                        iconSize: [130, 32],
+                        iconAnchor: [65, 16]
+                    });
+
+                    const marker = L.marker([ct.lat, ct.lng], { icon: cityIcon });
+
+                    // Rich Interactive Popup with Individual City Orders
+                    let ordersMarkup = ct.orders.map(o => `
+                        <div class="p-2 rounded-lg bg-softCardBg/50 border border-outlineColor text-xs space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-mono font-bold text-softGreyText">${o.order.id}</span>
+                                <span class="font-bold text-govTeal">₹${o.order.revenue.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>
+                            </div>
+                            <p class="text-[11px] text-softGreyText font-medium truncate">${o.order.productName}</p>
+                            <div class="flex items-center justify-between pt-1">
+                                <span class="text-[10px] text-mutedText truncate">${o.order.buyerName || 'Hub'}</span>
+                                <button onclick="openOrderDetailModal('${o.order.id}')" class="px-2 py-0.5 rounded bg-govTeal text-canvasBg text-[10px] font-bold hover:bg-govTeal/90 transition-all">
+                                    View Contract
+                                </button>
+                            </div>
+                        </div>
+                    `).join("");
+
+                    const popupContent = `
+                        <div class="p-1 space-y-2 max-w-[280px]">
+                            <div class="border-b border-outlineColor pb-2">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-extrabold text-sm text-softGreyText">${ct.city}</h4>
+                                    <span class="px-2 py-0.5 rounded text-[9px] font-bold bg-govTeal/15 text-govTeal">${ct.state}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mt-2 text-center text-xs">
+                                    <div class="bg-softCardBg p-1.5 rounded">
+                                        <span class="text-[9px] text-mutedText uppercase block">Total Orders</span>
+                                        <strong class="text-softGreyText">${ct.count}</strong>
+                                    </div>
+                                    <div class="bg-softCardBg p-1.5 rounded">
+                                        <span class="text-[9px] text-mutedText uppercase block">Revenue</span>
+                                        <strong class="text-govTeal">${formatIndianCurrencyShort(ct.revenue)}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5 max-h-[160px] overflow-y-auto pr-0.5">
+                                <span class="text-[10px] font-bold text-mutedText uppercase block">Recent City Contracts:</span>
+                                ${ordersMarkup}
+                            </div>
+                        </div>
+                    `;
+
+                    marker.bindPopup(popupContent);
+
+                    marker.on('click', () => {
+                        state.mapSelectedCity = ct.city;
+                        renderMapTab();
+                    });
+
+                    marker.addTo(indiaCityLayerGroup);
+
+                    if (isCityActive) {
+                        setTimeout(() => marker.openPopup(), 100);
+                    }
+                });
+            }
+        }
+
+        function exportGeoSummary() {
+            const geoOrders = getFilteredGeoOrders();
+            if (geoOrders.length === 0) {
+                alert("No geographic orders found in current filter.");
+                return;
+            }
+
+            const rows = [
+                ["Contract ID", "Order Date", "Firm Name", "Product Name", "Quantity", "Revenue", "State", "City", "Pincode", "Status", "Buyer Name"]
+            ];
+
+            geoOrders.forEach(({ order, geo }) => {
+                rows.push([
+                    `"${order.id}"`,
+                    `"${order.orderDate}"`,
+                    `"${order.firmName}"`,
+                    `"${order.productName.replace(/"/g, '""')}"`,
+                    order.quantity,
+                    order.revenue,
+                    `"${geo.state}"`,
+                    `"${geo.city}"`,
+                    `"${order.pincode}"`,
+                    `"${order.status}"`,
+                    `"${(order.buyerName || '').replace(/"/g, '""')}"`
+                ]);
+            });
+
+            const csvContent = "data:text/csv;charset=utf-8," + rows.map(r => r.join(",")).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `GeM_India_Geo_Orders_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
         function renderAlertsTab() {
             const container = document.getElementById("alerts-grid-container");
             const emptyView = document.getElementById("alerts-empty-view");
